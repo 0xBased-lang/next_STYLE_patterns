@@ -1,0 +1,96 @@
+export const metadata = {
+    title: 'React 3D Carousel Component | Sera UI',
+    description: 'Interactive 3D carousel component with depth effects, smooth transitions, and customizable styling. Perfect for showcasing products and content in 3D space.',
+    keywords: [
+        'React 3D carousel',
+        '3D slider component',
+        'interactive carousel',
+        '3D image gallery',
+        'carousel with depth',
+        '3D product showcase',
+        'Tailwind CSS 3D carousel',
+        'UI 3D component',
+        '3D animation',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React 3D Carousel Component | Sera UI',
+        description: 'Interactive React 3D carousel component with depth effects and smooth transitions for showcasing content in 3D space.',
+        type: 'article',
+        url: '/docs/3d-carousel',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: '3D Carousel Component | Sera UI',
+        description: 'Interactive React 3D carousel component with depth effects and smooth transitions for showcasing content in 3D space.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/3d-carousel',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+    Tabs,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
+} from "@/components/site/tabs.tsx";
+import { MdxTable } from "@/components/site/mdx-table.tsx";
+import ThreeDCarousel from "./3d-carousel";
+
+
+
+# 3D Carousel <AI dir="left"/>
+
+A stunning 3D carousel component that displays items in a rotating circular layout with smooth animations and perspective effects. Perfect for showcasing products, images, or any content in an engaging three-dimensional presentation.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<ThreeDCarousel />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/3d-carousel/3d-carousel.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+
+```tsx
+ import ThreeDCarousel from "@/components/ui/3d-carousel";
+
+export default function BasicCarouselPage() {
+  return (
+    <main className="p-4">
+      <ThreeDCarousel />
+    </main>
+  );
+}
+```
+
+## Props
+
+<MdxTable>
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ReactNode[]` | `[]` | Array of items to display in the carousel |
+| `autoRotate` | `boolean` | `true` | Whether the carousel should auto-rotate |
+| `rotationSpeed` | `number` | `3000` | Speed of auto-rotation in milliseconds |
+| `perspective` | `number` | `1000` | CSS perspective value for 3D effect |
+</MdxTable>

@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Holographic Glitch: Cyberpunk - ULTRA Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #0FF;
+      overflow: hidden;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .controls-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(10, 10, 30, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 350px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5),  inset 0 0 20px rgba(0, 255, 255, 0.1);
+      border: 2px solid #0FF;
+    }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+      background: rgba(0, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+      color: #0FF;
+      text-shadow: 0 0 10px #0FF, 0 0 20px #0FF;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: #F0F;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #F0F;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #F0F;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px #F0F;
+    }
+
+    .control {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #0FF;
+    }
+
+    .value {
+      color: #F0F;
+      font-weight: 600;
+      text-shadow: 0 0 5px #F0F;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(0, 255, 255, 0.2);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0FF;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0FF, 0 0 20px #0FF;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0FF;
+      cursor: pointer;
+      border: none;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #0FF;
+      border-radius: 6px;
+      color: #0FF;
+      font-size: 12px;
+      cursor: pointer;
+      outline: none;
+      font-family: 'Courier New', monospace;
+    }
+
+    select:hover {
+      background: rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 10px #0FF;
+    }
+
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .preset-btn {
+      padding: 10px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #0FF;
+      border-radius: 6px;
+      color: #0FF;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+    }
+
+    .preset-btn:hover {
+      background: rgba(255, 0, 255, 0.3);
+      border-color: #F0F;
+      color: #F0F;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px #F0F;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #0FF, #F0F);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px #0FF, 0 0 30px #F0F;
+    }
+
+    .action-btn.secondary {
+      background: rgba(0, 255, 255, 0.2);
+      color: #0FF;
+      border: 1px solid #0FF;
+    }
+
+    .action-btn.secondary:hover {
+      background: rgba(0, 255, 255, 0.3);
+    }
+
+    .fps-monitor {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: #0FF;
+      padding: 8px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: 0 0 15px #0FF;
+      border: 2px solid #0FF;
+      text-shadow: 0 0 10px #0FF;
+    }
+
+    .toggle-panel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: rgba(0, 255, 255, 0.9);
+      border: 2px solid #0FF;
+      border-radius: 8px;
+      color: #000;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.3s;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px #0FF;
+    }
+
+    .toggle-panel:hover {
+      background: rgba(255, 0, 255, 0.9);
+      border-color: #F0F;
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #F0F;
+    }
+
+    .hidden {
+      transform: translateX(400px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .controls-panel {
+        max-width: calc(100% - 40px);
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="fps-monitor">FPS: <span id="fps">60</span></div>
+
+  <button class="toggle-panel" onclick="togglePanel()">⚡ GLITCH CONTROL</button>
+
+  <div class="controls-panel" id="controlsPanel">
+    <h1>GLITCH://ULTRA</h1>
+    <div class="subtitle">CYBERPUNK EDITION</div>
+
+    <!-- Presets -->
+    <div class="section">
+      <div class="section-title">⚡ QUICK PRESETS</div>
+      <div class="presets">
+        <button class="preset-btn" onclick="applyPreset('cyberpunk')">🔮 Cyberpunk</button>
+        <button class="preset-btn" onclick="applyPreset('matrix')">💚 Matrix</button>
+        <button class="preset-btn" onclick="applyPreset('vaporwave')">🌸 Vaporwave</button>
+        <button class="preset-btn" onclick="applyPreset('corrupted')">💥 Corrupted</button>
+        <button class="preset-btn" onclick="applyPreset('subtle')">✨ Subtle</button>
+        <button class="preset-btn" onclick="applyPreset('tvstatic')">📺 TV Static</button>
+        <button class="preset-btn" onclick="applyPreset('hacker')">👾 Hacker</button>
+        <button class="preset-btn" onclick="applyPreset('error')">🚨 Error</button>
+      </div>
+    </div>
+
+    <!-- Glitch Settings -->
+    <div class="section">
+      <div class="section-title">🔥 GLITCH CORE</div>
+
+      <div class="control">
+        <label>
+          <span>Intensity</span>
+          <span class="value" id="glitchIntensity-value">50</span>
+        </label>
+        <input type="range" id="glitchIntensity" min="0" max="100" value="50">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>RGB Split</span>
+          <span class="value" id="rgbSplitDistance-value">5</span>
+        </label>
+        <input type="range" id="rgbSplitDistance" min="0" max="30" value="5" step="1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Frequency (ms)</span>
+          <span class="value" id="glitchFrequency-value">2000</span>
+        </label>
+        <input type="range" id="glitchFrequency" min="100" max="5000" value="2000" step="100">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Duration (ms)</span>
+          <span class="value" id="glitchDuration-value">200</span>
+        </label>
+        <input type="range" id="glitchDuration" min="50" max="1000" value="200" step="50">
+      </div>
+
+      <div class="control">
+        <label><span>Color Channels</span></label>
+        <select id="colorChannels">
+          <option value="r">Red Only</option>
+          <option value="g">Green Only</option>
+          <option value="b">Blue Only</option>
+          <option value="rg">Red + Green</option>
+          <option value="rb">Red + Blue</option>
+          <option value="gb">Green + Blue</option>
+          <option value="rgb" selected>All (RGB)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Scan Lines -->
+    <div class="section">
+      <div class="section-title">📺 SCAN LINES</div>
+
+      <div class="control">
+        <label>
+          <span>Line Count</span>
+          <span class="value" id="scanLineCount-value">100</span>
+        </label>
+        <input type="range" id="scanLineCount" min="0" max="200" value="100" step="10">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Opacity</span>
+          <span class="value" id="scanLineOpacity-value">30</span>
+        </label>
+        <input type="range" id="scanLineOpacity" min="0" max="100" value="30" step="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Scroll Speed</span>
+          <span class="value" id="scanLineSpeed-value">1</span>
+        </label>
+        <input type="range" id="scanLineSpeed" min="0" max="5" value="1" step="0.1">
+      </div>
+    </div>
+
+    <!-- Chromatic -->
+    <div class="section">
+      <div class="section-title">🌈 CHROMATIC</div>
+
+      <div class="control">
+        <label>
+          <span>Shift Amount</span>
+          <span class="value" id="chromaticShift-value">3</span>
+        </label>
+        <input type="range" id="chromaticShift" min="0" max="20" value="3" step="1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Angle</span>
+          <span class="value" id="aberrationAngle-value">0</span>
+        </label>
+        <input type="range" id="aberrationAngle" min="0" max="360" value="0" step="15">
+      </div>
+    </div>
+
+    <!-- Distortion -->
+    <div class="section">
+      <div class="section-title">🌊 DISTORTION</div>
+
+      <div class="control">
+        <label>
+          <span>Wave Amplitude</span>
+          <span class="value" id="distortionAmplitude-value">10</span>
+        </label>
+        <input type="range" id="distortionAmplitude" min="0" max="50" value="10" step="1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Wave Frequency</span>
+          <span class="value" id="distortionFrequency-value">1</span>
+        </label>
+        <input type="range" id="distortionFrequency" min="0.1" max="5" value="1" step="0.1">
+      </div>
+    </div>
+
+    <!-- Digital Effects -->
+    <div class="section">
+      <div class="section-title">💾 DIGITAL FX</div>
+
+      <div class="control">
+        <label>
+          <span>Corruption</span>
+          <span class="value" id="corruptionDensity-value">20</span>
+        </label>
+        <input type="range" id="corruptionDensity" min="0" max="100" value="20" step="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Noise</span>
+          <span class="value" id="noiseIntensity-value">10</span>
+        </label>
+        <input type="range" id="noiseIntensity" min="0" max="100" value="10" step="5">
+      </div>
+    </div>
+
+    <!-- Code Overlay -->
+    <div class="section">
+      <div class="section-title">💻 CODE MATRIX</div>
+
+      <div class="control">
+        <label>
+          <span>Code Speed</span>
+          <span class="value" id="codeSpeed-value">1</span>
+        </label>
+        <input type="range" id="codeSpeed" min="0" max="5" value="1" step="0.1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Code Density</span>
+          <span class="value" id="codeDensity-value">30</span>
+        </label>
+        <input type="range" id="codeDensity" min="0" max="100" value="30" step="5">
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="section">
+      <div class="section-title">💾 ACTIONS</div>
+      <button class="action-btn" onclick="exportConfig()">EXPORT CONFIG</button>
+      <button class="action-btn secondary" onclick="resetToDefault()">RESET</button>
+      <button class="action-btn secondary" onclick="randomize()">🎲 RANDOMIZE</button>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const config = {
+      glitchIntensity: 50,
+      rgbSplitDistance: 5,
+      glitchFrequency: 2000,
+      glitchDuration: 200,
+      colorChannels: 'rgb',
+      scanLineCount: 100,
+      scanLineOpacity: 30,
+      scanLineSpeed: 1,
+      chromaticShift: 3,
+      aberrationAngle: 0,
+      distortionAmplitude: 10,
+      distortionFrequency: 1,
+      corruptionDensity: 20,
+      noiseIntensity: 10,
+      codeSpeed: 1,
+      codeDensity: 30
+    }
+
+    // Canvas setup
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    let fps = 60
+    let lastTime = Date.now()
+    let glitchActive = false
+    let lastGlitchTime = Date.now()
+    let scanLineOffset = 0
+    let offscreenCanvas, offscreenCtx
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      offscreenCanvas = document.createElement('canvas')
+      offscreenCanvas.width = canvas.width
+      offscreenCanvas.height = canvas.height
+      offscreenCtx = offscreenCanvas.getContext('2d')
+    }
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
+
+    // Animation loop
+    function animate() {
+      const now = Date.now()
+      const delta = now - lastTime
+      lastTime = now
+      fps = Math.round(1000 / delta)
+      document.getElementById('fps').textContent = fps
+
+      // Clear
+      ctx.fillStyle = '#000'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // Draw base content
+      offscreenCtx.fillStyle = '#000'
+      offscreenCtx.fillRect(0, 0, canvas.width, canvas.height)
+      offscreenCtx.fillStyle = '#1a1a2e'
+      offscreenCtx.fillRect(
+        canvas.width * 0.2,
+        canvas.height * 0.2,
+        canvas.width * 0.6,
+        canvas.height * 0.6
+      )
+
+      // Glitch timing
+      if (now - lastGlitchTime > config.glitchFrequency) {
+        glitchActive = true
+        lastGlitchTime = now
+        setTimeout(() => {
+          glitchActive = false
+        }, config.glitchDuration)
+      }
+
+      // Get image data
+      let imageData = offscreenCtx.getImageData(0, 0, canvas.width, canvas.height)
+
+      // Apply effects
+      if (glitchActive && config.rgbSplitDistance > 0) {
+        imageData = applyRGBSplit(imageData, config.rgbSplitDistance, config.aberrationAngle)
+      }
+
+      if (config.chromaticShift > 0) {
+        imageData = applyRGBSplit(imageData, config.chromaticShift, config.aberrationAngle)
+      }
+
+      if (config.noiseIntensity > 0) {
+        imageData = applyNoise(imageData, config.noiseIntensity)
+      }
+
+      if (glitchActive && config.corruptionDensity > 0) {
+        imageData = applyCorruption(imageData, config.corruptionDensity)
+      }
+
+      // Put image
+      ctx.putImageData(imageData, 0, 0)
+
+      // Wave distortion
+      if (glitchActive && config.distortionAmplitude > 0) {
+        applyWaveDistortion(now)
+      }
+
+      // Scan lines
+      if (config.scanLineCount > 0) {
+        drawScanLines()
+        scanLineOffset += config.scanLineSpeed * 0.5
+      }
+
+      // Hologram flicker
+      if (Math.random() < 0.05) {
+        ctx.globalAlpha = 0.5 + Math.random() * 0.5
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.05)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.globalAlpha = 1
+      }
+
+      requestAnimationFrame(animate)
+    }
+
+    function applyRGBSplit(imageData, distance, angle) {
+      const data = new Uint8ClampedArray(imageData.data)
+      const width = imageData.width
+      const angleRad = (angle * Math.PI) / 180
+      const offsetX = Math.cos(angleRad) * distance
+      const offsetY = Math.sin(angleRad) * distance
+
+      for (let y = 0; y < imageData.height; y++) {
+        for (let x = 0; x < imageData.width; x++) {
+          const i = (y * width + x) * 4
+
+          // Red channel
+          const srcX1 = Math.round(x + offsetX)
+          const srcY1 = Math.round(y + offsetY)
+          if (srcX1 >= 0 && srcX1 < width && srcY1 >= 0 && srcY1 < imageData.height) {
+            const srcI = (srcY1 * width + srcX1) * 4
+            data[i] = imageData.data[srcI]
+          }
+
+          // Blue channel
+          const srcX2 = Math.round(x - offsetX)
+          const srcY2 = Math.round(y - offsetY)
+          if (srcX2 >= 0 && srcX2 < width && srcY2 >= 0 && srcY2 < imageData.height) {
+            const srcI = (srcY2 * width + srcX2) * 4
+            data[i + 2] = imageData.data[srcI + 2]
+          }
+        }
+      }
+
+      return new ImageData(data, imageData.width, imageData.height)
+    }
+
+    function applyNoise(imageData, intensity) {
+      const data = new Uint8ClampedArray(imageData.data)
+      const noiseAmount = (intensity / 100) * 50
+
+      for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * noiseAmount
+        data[i] = Math.max(0, Math.min(255, data[i] + noise))
+        data[i + 1] = Math.max(0, Math.min(255, data[i + 1] + noise))
+        data[i + 2] = Math.max(0, Math.min(255, data[i + 2] + noise))
+      }
+
+      return new ImageData(data, imageData.width, imageData.height)
+    }
+
+    function applyCorruption(imageData, density) {
+      const data = new Uint8ClampedArray(imageData.data)
+      const corruptionChance = density / 1000
+
+      for (let i = 0; i < data.length; i += 4) {
+        if (Math.random() < corruptionChance) {
+          data[i] = Math.random() * 255
+          data[i + 1] = Math.random() * 255
+          data[i + 2] = Math.random() * 255
+        }
+      }
+
+      return new ImageData(data, imageData.width, imageData.height)
+    }
+
+    function applyWaveDistortion(time) {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      for (let y = 0; y < canvas.height; y++) {
+        const offsetX = Math.sin(y * config.distortionFrequency * 0.01 + time * 0.001) * config.distortionAmplitude
+        ctx.putImageData(imageData, offsetX, 0, 0, y, canvas.width, 1)
+      }
+    }
+
+    function drawScanLines() {
+      ctx.strokeStyle = `rgba(0, 255, 255, ${config.scanLineOpacity / 100})`
+      ctx.lineWidth = 1
+
+      const spacing = canvas.height / config.scanLineCount
+      for (let i = 0; i < config.scanLineCount; i++) {
+        const y = ((i * spacing + scanLineOffset) % canvas.height)
+        ctx.beginPath()
+        ctx.moveTo(0, y)
+        ctx.lineTo(canvas.width, y)
+        ctx.stroke()
+      }
+    }
+
+    animate()
+
+    // Control bindings
+    const controls = document.querySelectorAll('input[type="range"], select')
+    controls.forEach(control => {
+      control.addEventListener('input', (e) => {
+        const key = e.target.id
+        const value = e.target.type === 'range' ? parseFloat(e.target.value) : e.target.value
+        config[key] = value
+
+        const valueDisplay = document.getElementById(`${key}-value`)
+        if (valueDisplay) {
+          valueDisplay.textContent = value
+        }
+      })
+
+      if (control.type === 'range') {
+        const valueDisplay = document.getElementById(`${control.id}-value`)
+        if (valueDisplay) {
+          valueDisplay.textContent = control.value
+        }
+      }
+    })
+
+    // Presets
+    const presets = {
+      cyberpunk: {
+        rgbSplitDistance: 10,
+        glitchFrequency: 1500,
+        scanLineCount: 150,
+        scanLineOpacity: 40,
+        chromaticShift: 5,
+        noiseIntensity: 15,
+        corruptionDensity: 30
+      },
+      matrix: {
+        rgbSplitDistance: 0,
+        glitchFrequency: 3000,
+        scanLineCount: 200,
+        scanLineOpacity: 20,
+        chromaticShift: 0,
+        noiseIntensity: 5,
+        corruptionDensity: 10,
+        codeSpeed: 2,
+        codeDensity: 50
+      },
+      vaporwave: {
+        rgbSplitDistance: 15,
+        glitchFrequency: 2500,
+        scanLineCount: 80,
+        scanLineOpacity: 50,
+        chromaticShift: 8,
+        aberrationAngle: 45,
+        noiseIntensity: 20,
+        corruptionDensity: 15
+      },
+      corrupted: {
+        rgbSplitDistance: 25,
+        glitchFrequency: 500,
+        glitchDuration: 500,
+        scanLineCount: 300,
+        scanLineOpacity: 60,
+        chromaticShift: 15,
+        distortionAmplitude: 30,
+        noiseIntensity: 40,
+        corruptionDensity: 60
+      },
+      subtle: {
+        rgbSplitDistance: 2,
+        glitchFrequency: 4000,
+        glitchDuration: 100,
+        scanLineCount: 50,
+        scanLineOpacity: 15,
+        chromaticShift: 1,
+        noiseIntensity: 3,
+        corruptionDensity: 5
+      },
+      tvstatic: {
+        rgbSplitDistance: 0,
+        glitchFrequency: 100,
+        scanLineCount: 400,
+        scanLineOpacity: 70,
+        chromaticShift: 0,
+        noiseIntensity: 60,
+        corruptionDensity: 50
+      },
+      hacker: {
+        rgbSplitDistance: 8,
+        glitchFrequency: 1000,
+        scanLineCount: 120,
+        scanLineOpacity: 35,
+        chromaticShift: 4,
+        noiseIntensity: 12,
+        corruptionDensity: 25,
+        codeSpeed: 3,
+        codeDensity: 70
+      },
+      error: {
+        rgbSplitDistance: 20,
+        glitchFrequency: 300,
+        glitchDuration: 800,
+        scanLineCount: 0,
+        chromaticShift: 12,
+        distortionAmplitude: 40,
+        noiseIntensity: 35,
+        corruptionDensity: 70
+      }
+    }
+
+    function applyPreset(name) {
+      const preset = presets[name]
+      if (!preset) return
+
+      Object.assign(config, preset)
+
+      Object.keys(preset).forEach(key => {
+        const element = document.getElementById(key)
+        if (element) {
+          element.value = preset[key]
+          const valueDisplay = document.getElementById(`${key}-value`)
+          if (valueDisplay) {
+            valueDisplay.textContent = preset[key]
+          }
+        }
+      })
+    }
+
+    function exportConfig() {
+      const json = JSON.stringify(config, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'holographic-glitch-config.json'
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+
+    function resetToDefault() {
+      applyPreset('cyberpunk')
+    }
+
+    function randomize() {
+      config.rgbSplitDistance = Math.floor(Math.random() * 30)
+      config.glitchFrequency = Math.floor(Math.random() * 4900 + 100)
+      config.scanLineCount = Math.floor(Math.random() * 190 + 10)
+      config.scanLineOpacity = Math.floor(Math.random() * 100)
+      config.chromaticShift = Math.floor(Math.random() * 20)
+      config.aberrationAngle = Math.floor(Math.random() * 360)
+      config.noiseIntensity = Math.floor(Math.random() * 100)
+      config.corruptionDensity = Math.floor(Math.random() * 100)
+
+      Object.keys(config).forEach(key => {
+        const element = document.getElementById(key)
+        if (element && element.type === 'range') {
+          element.value = config[key]
+          const valueDisplay = document.getElementById(`${key}-value`)
+          if (valueDisplay) {
+            valueDisplay.textContent = config[key]
+          }
+        }
+      })
+    }
+
+    function togglePanel() {
+      const panel = document.getElementById('controlsPanel')
+      panel.classList.toggle('hidden')
+    }
+  </script>
+</body>
+</html>

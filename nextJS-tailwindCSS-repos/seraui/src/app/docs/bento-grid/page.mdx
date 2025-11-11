@@ -1,0 +1,72 @@
+export const metadata = {
+    title: 'React Bento Grid Component | Sera UI',
+    description: 'Modern bento grid layout components with responsive design and customizable grid items. Perfect for dashboard layouts and content organization.',
+    keywords: [
+        'React bento grid',
+        'grid layout',
+        'dashboard grid',
+        'responsive grid',
+        'bento box layout',
+        'grid component',
+        'Tailwind CSS grid',
+        'UI grid library',
+        'layout component',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Bento Grid Component | Sera UI',
+        description: 'Modern React bento grid layout components with responsive design and customizable grid items for dashboard layouts.',
+        type: 'article',
+        url: '/docs/bento-grid',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Bento Grid Component | Sera UI',
+        description: 'Modern React bento grid layout components with responsive design and customizable grid items for dashboard layouts.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/bento-grid',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+    Tabs,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import { Table, StatusBadge } from "@/components/ui/table";
+import BentoGridCom from "./bento-grid"
+
+
+
+
+# Bento Grid <AI dir="left"/>
+The Bento grid is a clean and elegant layout designed to highlight a product's features in a clear and organized manner.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<BentoGridCom />} componentName="BentoGridCom" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/bento-grid/bento-grid.tsx" />
+  </TabsContent>
+</Tabs>

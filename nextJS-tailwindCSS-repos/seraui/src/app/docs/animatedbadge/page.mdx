@@ -1,0 +1,84 @@
+export const metadata = {
+    title: 'React Animated Badge Component | Sera UI',
+    description: 'Dynamic animated badge components with pulse effects, color transitions, and interactive animations. Perfect for status indicators and notifications.',
+    keywords: [
+        'React animated badge',
+        'animated status badge',
+        'pulse badge',
+        'badge with animation',
+        'dynamic badge',
+        'interactive badge',
+        'Tailwind CSS animated badge',
+        'UI animated component',
+        'badge transitions',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Animated Badge Component | Sera UI',
+        description: 'Dynamic React animated badge components with pulse effects, color transitions, and interactive animations.',
+        type: 'article',
+        url: '/docs/animatedbadge',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Animated Badge Component | Sera UI',
+        description: 'Dynamic React animated badge components with pulse effects, color transitions, and interactive animations.',
+        images: ["/og-image.png"],
+    },
+    alternates: {
+        canonical: '/docs/animatedbadge',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import AnimatedBadgeView from "./animatedbadge.tsx"
+
+
+
+# Animated Badges <AI dir="left"/>
+A collection of animated badges with a linear gradient border.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AnimatedBadgeView />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/animatedbadge/animatedbadge.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Usage
+
+```tsx
+import { AnimatedBadge } from './animatedbadge'
+
+const AnimatedBadgeView = () => {
+  return (
+    <>
+      <AnimatedBadge text="Sera UI" icon={<FlowerIcon />} borderColor="via-white" />
+    </>
+  )
+}
+```

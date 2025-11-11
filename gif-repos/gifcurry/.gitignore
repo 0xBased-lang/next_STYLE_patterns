@@ -1,0 +1,14 @@
+._gifcurry_trash_/*
+gifcurry-linux-*
+.cabal-sandbox/*
+.stack-work/*
+*.stack*
+.upload_docs_to_hackage
+dist/*
+haddock/*
+cabal.sandbox.config
+*gui.glade~
+*~
+Gifcurry-*-docs*
+
+!haddock/.gitkeep

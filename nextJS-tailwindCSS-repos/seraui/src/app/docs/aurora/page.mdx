@@ -1,0 +1,70 @@
+export const metadata = {
+    title: 'React Aurora Component | Sera UI',
+    description: 'Beautiful aurora background component with animated gradient effects and customizable colors. Perfect for creating stunning visual backgrounds and hero sections.',
+    keywords: [
+        'React aurora component',
+        'aurora background',
+        'animated gradient',
+        'background effects',
+        'aurora animation',
+        'gradient background',
+        'Tailwind CSS aurora',
+        'UI background library',
+        'visual effects',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Aurora Component | Sera UI',
+        description: 'Beautiful React aurora background component with animated gradient effects for creating stunning visual backgrounds.',
+        type: 'article',
+        url: '/docs/aurora',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Aurora Component | Sera UI',
+        description: 'Beautiful React aurora background component with animated gradient effects for creating stunning visual backgrounds.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/aurora',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import AuroraView from "./aurora.tsx"
+
+
+# Aurora Text <AI dir="left"/>
+
+A beautiful Aurora Borealis effect for text, with customizable colors and speed. Perfect for creating a magical, mystical, or futuristic atmosphere in your applications.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AuroraView />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/aurora/aurora.tsx" />
+  </TabsContent>
+</Tabs>

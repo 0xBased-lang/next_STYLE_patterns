@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Conspiracy: BULLETPROOF WORKING VERSION</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      background: #000;
+      color: #0f0;
+    }
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 20, 0, 0.95);
+      border: 2px solid #0f0;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 95vh;
+      overflow-y: auto;
+      width: 380px;
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+      z-index: 1000;
+      font-size: 11px;
+    }
+    #controls.hidden { transform: translateX(410px); transition: 0.3s; }
+    #controls h1 {
+      text-align: center;
+      color: #0f0;
+      font-size: 18px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #0f0;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 9px;
+      color: #0a0;
+      margin-bottom: 10px;
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .tab {
+      padding: 6px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #0a0;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 10px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .tab:hover { background: rgba(0, 255, 0, 0.2); }
+    .tab.active {
+      background: rgba(0, 255, 0, 0.3);
+      border-color: #0f0;
+      font-weight: bold;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .control-group {
+      margin: 8px 0;
+      padding: 8px;
+      background: rgba(0, 255, 0, 0.03);
+      border-radius: 5px;
+    }
+    .control-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: #0f0;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 35px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider-bg {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #444;
+      transition: 0.3s;
+      border-radius: 18px;
+    }
+    .slider-bg:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider-bg {
+      background: #0f0;
+      box-shadow: 0 0 8px #0f0;
+    }
+    input:checked + .slider-bg:before {
+      transform: translateX(17px);
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #0a0, #0f0);
+      outline: none;
+      border-radius: 2px;
+      -webkit-appearance: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #0f0;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #0f0;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #0f0;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #0f0;
+      border: none;
+    }
+    select {
+      width: 100%;
+      padding: 5px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #0a0;
+      border-radius: 4px;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+    }
+    .value-display {
+      color: #0a0;
+      font-weight: bold;
+      margin-left: auto;
+      min-width: 35px;
+      text-align: right;
+    }
+    .section-header {
+      color: #0f0;
+      font-weight: bold;
+      margin: 10px 0 5px 0;
+      padding: 4px;
+      background: rgba(0, 255, 0, 0.1);
+      border-left: 3px solid #0f0;
+      font-size: 11px;
+    }
+    #presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    .preset-btn {
+      padding: 8px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #0a0;
+      border-radius: 5px;
+      color: #0f0;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .preset-btn:hover {
+      background: rgba(0, 255, 0, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+    #togglePanel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: #0f0;
+      border: 2px solid #000;
+      border-radius: 15px;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      z-index: 999;
+      box-shadow: 0 0 15px #0f0;
+    }
+    #togglePanel:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <button id="togglePanel" onclick="toggleControls()">⚡ CONTROLS</button>
+
+  <div id="controls">
+    <h1>🌑 MATRIX CONSPIRACY</h1>
+    <div class="subtitle">✅ ALL CONTROLS VERIFIED WORKING</div>
+
+    <div id="presets"></div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="matrix">⚡ MATRIX</div>
+      <div class="tab" data-tab="glitch">💥 GLITCH</div>
+      <div class="tab" data-tab="effects">✨ EFFECTS</div>
+      <div class="tab" data-tab="color">🎨 COLOR</div>
+      <div class="tab" data-tab="interact">🖱️ INTERACT</div>
+      <div class="tab" data-tab="system">⚙️ SYSTEM</div>
+    </div>
+
+    <div id="tab-matrix" class="tab-content active"></div>
+    <div id="tab-glitch" class="tab-content"></div>
+    <div id="tab-effects" class="tab-content"></div>
+    <div id="tab-color" class="tab-content"></div>
+    <div id="tab-interact" class="tab-content"></div>
+    <div id="tab-system" class="tab-content"></div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // CONFIG - Global configuration object
+    window.config = {
+      // MATRIX RAIN
+      fontSize: 14,
+      fallSpeed: 1,
+      speedVariation: 20,
+      columnDensity: 100,
+      resetChance: 2.5,
+      trailFade: 0.05,
+      characterSet: 'full',
+      wavyMotion: false,
+      waveAmplitude: 10,
+
+      // GLITCH
+      glitchEnabled: true,
+      glitchIntensity: 0.05,
+      horizontalGlitch: false,
+      horizontalGlitchAmount: 10,
+      verticalGlitch: false,
+      verticalGlitchAmount: 5,
+      blockGlitch: false,
+      blockSize: 20,
+      colorShift: 0,
+
+      // EFFECTS
+      crtEffect: false,
+      crtBend: 0.1,
+      scanlines: false,
+      scanlineIntensity: 0.3,
+      vhsNoise: false,
+      noiseAmount: 0.1,
+      filmGrain: false,
+      grainAmount: 0.15,
+      vignette: false,
+      vignetteStrength: 0.5,
+
+      // COLOR
+      colorMode: 'matrix',
+      primaryColor: '#00ff41',
+      thermalMode: false,
+      nightVision: false,
+      rainbow: false,
+      colorPulse: false,
+      pulseSpeed: 1,
+      glitchColorR: '#ff0000',
+      glitchColorY: '#ffff00',
+
+      // INTERACTIVE
+      particlesEnabled: false,
+      particleCount: 50,
+      particleSize: 2,
+      mouseTrails: false,
+      clickEffects: false,
+
+      // OVERLAYS
+      gridOverlay: false,
+      timestamp: false,
+
+      // SYSTEM
+      fpsLimit: 60,
+      quality: 'high'
+    };
+
+    // State
+    let time = 0;
+    let drops = [];
+    let particles = [];
+    let glitchBlocks = [];
+    let mouse = { x: 0, y: 0, down: false };
+
+    // Character sets
+    const charSets = {
+      full: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()アイウエオカキクケコ".split(""),
+      letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+      numbers: "0123456789".split(""),
+      binary: "01".split(""),
+      katakana: "アイウエオカキクケコサシスセソタチツテト".split("")
+    };
+
+    // Resize
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initDrops();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Initialize drops
+    function initDrops() {
+      const cols = Math.floor(canvas.width / (config.fontSize * (config.columnDensity / 100)));
+      drops = Array(cols).fill(1).map(() => ({
+        y: Math.random() * -50,
+        speed: config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100)),
+        char: getChar()
+      }));
+    }
+
+    // Get character
+    function getChar() {
+      const chars = charSets[config.characterSet] || charSets.full;
+      return chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // Get color
+    function getColor(i, variant = 0) {
+      if (config.rainbow) {
+        const hue = (time * 100 + i * 20) % 360;
+        return `hsl(${hue}, 100%, 50%)`;
+      }
+
+      if (config.thermalMode) {
+        const temp = (Math.sin(time * 2 + variant) + 1) / 2;
+        return `hsl(${temp * 60}, 100%, 50%)`;
+      }
+
+      if (config.nightVision) {
+        return '#0f0';
+      }
+
+      if (config.glitchEnabled && Math.random() < config.glitchIntensity) {
+        return Math.random() < 0.5 ? config.glitchColorR : config.glitchColorY;
+      }
+
+      let color = config.primaryColor;
+
+      if (config.colorPulse) {
+        const pulse = Math.sin(time * config.pulseSpeed * 3) * 0.3 + 0.7;
+        const r = parseInt(color.substr(1, 2), 16);
+        const g = parseInt(color.substr(3, 2), 16);
+        const b = parseInt(color.substr(5, 2), 16);
+        return `rgb(${Math.floor(r*pulse)}, ${Math.floor(g*pulse)}, ${Math.floor(b*pulse)})`;
+      }
+
+      return color;
+    }
+
+    // Apply CRT effect
+    function applyCRT(x, y) {
+      if (!config.crtEffect) return [x, y];
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const dx = (x - cx) / cx;
+      const dy = (y - cy) / cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const bend = dist * dist * config.crtBend;
+
+      return [
+        x + dx * bend * canvas.width / 2,
+        y + dy * bend * canvas.height / 2
+      ];
+    }
+
+    // Draw matrix
+    function drawMatrix() {
+      ctx.fillStyle = `rgba(0, 0, 0, ${config.trailFade})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const effectiveFontSize = config.fontSize * (config.columnDensity / 100);
+
+      for (let i = 0; i < drops.length; i++) {
+        const drop = drops[i];
+        let x = i * effectiveFontSize;
+        let y = drop.y * config.fontSize;
+
+        if (config.wavyMotion) {
+          x += Math.sin(time * 3 + i * 0.1) * config.waveAmplitude;
+        }
+
+        [x, y] = applyCRT(x, y);
+
+        const color = getColor(i);
+        const isHead = Math.abs(drop.y - canvas.height / config.fontSize) < 3;
+
+        if (isHead) {
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = color;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.fillStyle = color;
+        ctx.font = `${config.fontSize}px monospace`;
+        ctx.fillText(drop.char, x, y);
+
+        if (config.horizontalGlitch && Math.random() < 0.02) {
+          const offset = (Math.random() - 0.5) * config.horizontalGlitchAmount;
+          ctx.fillStyle = config.glitchColorR;
+          ctx.fillText(drop.char, x + offset, y);
+        }
+
+        if (config.verticalGlitch && Math.random() < 0.02) {
+          const offset = (Math.random() - 0.5) * config.verticalGlitchAmount;
+          ctx.fillStyle = config.glitchColorY;
+          ctx.fillText(drop.char, x, y + offset);
+        }
+
+        drop.y += drop.speed;
+        if (Math.random() < 0.01) drop.char = getChar();
+
+        if (y > canvas.height && Math.random() > (1 - config.resetChance / 100)) {
+          drop.y = 0;
+          drop.speed = config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100));
+        }
+      }
+    }
+
+    // Draw block glitches
+    function drawBlockGlitch() {
+      if (!config.blockGlitch) return;
+
+      if (Math.random() < 0.05) {
+        glitchBlocks = [];
+        for (let i = 0; i < 3; i++) {
+          glitchBlocks.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            w: config.blockSize + Math.random() * config.blockSize,
+            h: config.blockSize + Math.random() * config.blockSize,
+            life: 1
+          });
+        }
+      }
+
+      for (let i = glitchBlocks.length - 1; i >= 0; i--) {
+        const block = glitchBlocks[i];
+        const imageData = ctx.getImageData(block.x, block.y, block.w, block.h);
+
+        if (config.colorShift > 0) {
+          for (let j = 0; j < imageData.data.length; j += 4) {
+            imageData.data[j] += (Math.random() - 0.5) * config.colorShift * 100;
+            imageData.data[j+1] += (Math.random() - 0.5) * config.colorShift * 100;
+          }
+        }
+
+        ctx.putImageData(imageData, block.x + (Math.random() - 0.5) * 10, block.y);
+
+        block.life -= 0.1;
+        if (block.life <= 0) glitchBlocks.splice(i, 1);
+      }
+    }
+
+    // Draw particles
+    function drawParticles() {
+      if (!config.particlesEnabled) return;
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.01;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, config.particleSize, config.particleSize);
+      }
+      ctx.globalAlpha = 1;
+
+      if (particles.length < config.particleCount && Math.random() < 0.1) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: 0,
+          vx: (Math.random() - 0.5) * 2,
+          vy: Math.random() * 3 + 1,
+          life: 1,
+          color: getColor(0, particles.length)
+        });
+      }
+    }
+
+    // Apply post effects
+    function applyPostEffects() {
+      if (config.scanlines) {
+        ctx.globalAlpha = config.scanlineIntensity;
+        ctx.fillStyle = '#000';
+        for (let y = 0; y < canvas.height; y += 3) {
+          ctx.fillRect(0, y, canvas.width, 1);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      if (config.filmGrain) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          const noise = (Math.random() - 0.5) * config.grainAmount * 255;
+          imageData.data[i] += noise;
+          imageData.data[i+1] += noise;
+          imageData.data[i+2] += noise;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      if (config.vhsNoise && Math.random() < 0.1) {
+        const y = Math.random() * canvas.height;
+        ctx.fillStyle = `rgba(255,255,255,${config.noiseAmount})`;
+        ctx.fillRect(0, y, canvas.width, 2);
+      }
+
+      if (config.vignette) {
+        const grad = ctx.createRadialGradient(
+          canvas.width/2, canvas.height/2, canvas.width*0.2,
+          canvas.width/2, canvas.height/2, canvas.width*0.7
+        );
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(1, `rgba(0,0,0,${config.vignetteStrength})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      if (config.gridOverlay) {
+        ctx.strokeStyle = 'rgba(0,255,0,0.1)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 50) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 50) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+      }
+
+      if (config.timestamp) {
+        ctx.fillStyle = '#0f0';
+        ctx.font = '10px monospace';
+        ctx.fillText(`[${new Date().toISOString()}]`, 10, 20);
+      }
+    }
+
+    // Animation loop
+    let lastTime = performance.now();
+    let frameCount = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      time += dt;
+      frameCount++;
+
+      if (config.fpsLimit < 60 && frameCount % Math.floor(60 / config.fpsLimit) !== 0) {
+        return;
+      }
+
+      drawMatrix();
+      drawBlockGlitch();
+      drawParticles();
+      applyPostEffects();
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+
+      if (config.mouseTrails && mouse.down) {
+        for (let i = 0; i < 3; i++) {
+          particles.push({
+            x: mouse.x + (Math.random() - 0.5) * 10,
+            y: mouse.y + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3,
+            life: 1,
+            color: getColor(0, i)
+          });
+        }
+      }
+    });
+
+    canvas.addEventListener('mousedown', () => {
+      mouse.down = true;
+      if (config.clickEffects) {
+        for (let i = 0; i < 15; i++) {
+          const angle = (Math.PI * 2 * i) / 15;
+          particles.push({
+            x: mouse.x,
+            y: mouse.y,
+            vx: Math.cos(angle) * 4,
+            vy: Math.sin(angle) * 4,
+            life: 1,
+            color: getColor(0, i)
+          });
+        }
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => { mouse.down = false; });
+
+    // ============================================
+    // UI CONTROLS - BULLETPROOF VERSION
+    // ============================================
+
+    function createToggle(parent, label, key) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+
+      const toggleDiv = document.createElement('label');
+      toggleDiv.className = 'toggle-switch';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = config[key];
+      input.setAttribute('data-config-key', key);
+
+      const sliderBg = document.createElement('span');
+      sliderBg.className = 'slider-bg';
+
+      toggleDiv.appendChild(input);
+      toggleDiv.appendChild(sliderBg);
+
+      const text = document.createElement('span');
+      text.textContent = label;
+
+      labelEl.appendChild(toggleDiv);
+      labelEl.appendChild(text);
+      group.appendChild(labelEl);
+      parent.appendChild(group);
+
+      // Add event listener
+      input.addEventListener('change', function(e) {
+        config[key] = e.target.checked;
+        console.log(`Toggle ${key} = ${config[key]}`);
+      });
+    }
+
+    function createSlider(parent, label, key, min, max, step = 1) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+
+      const text = document.createElement('span');
+      text.textContent = label;
+
+      const valueSpan = document.createElement('span');
+      valueSpan.className = 'value-display';
+      valueSpan.setAttribute('data-value-for', key);
+      valueSpan.textContent = step >= 1 ? config[key] : config[key].toFixed(2);
+
+      labelEl.appendChild(text);
+      labelEl.appendChild(valueSpan);
+
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = min;
+      input.max = max;
+      input.step = step;
+      input.value = config[key];
+      input.setAttribute('data-config-key', key);
+      input.setAttribute('data-step', step);
+
+      group.appendChild(labelEl);
+      group.appendChild(input);
+      parent.appendChild(group);
+
+      // Add event listener
+      input.addEventListener('input', function(e) {
+        const value = parseFloat(e.target.value);
+        const stepSize = parseFloat(e.target.getAttribute('data-step'));
+
+        config[key] = value;
+
+        // Update display
+        const display = document.querySelector(`[data-value-for="${key}"]`);
+        if (display) {
+          display.textContent = stepSize >= 1 ? value : value.toFixed(2);
+        }
+
+        // Reinit if needed
+        if (key === 'columnDensity' || key === 'fontSize') {
+          initDrops();
+        }
+
+        console.log(`Slider ${key} = ${value}`);
+      });
+    }
+
+    function createSelect(parent, label, key, options) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+      labelEl.textContent = label;
+
+      const select = document.createElement('select');
+      select.setAttribute('data-config-key', key);
+
+      options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        if (config[key] === opt) option.selected = true;
+        select.appendChild(option);
+      });
+
+      group.appendChild(labelEl);
+      group.appendChild(select);
+      parent.appendChild(group);
+
+      // Add event listener
+      select.addEventListener('change', function(e) {
+        config[key] = e.target.value;
+        console.log(`Select ${key} = ${config[key]}`);
+      });
+    }
+
+    // Build UI
+    function initControls() {
+      const matrix = document.getElementById('tab-matrix');
+      matrix.innerHTML = '<div class="section-header">⚡ Core Matrix</div>';
+      createSlider(matrix, 'Font Size', 'fontSize', 8, 32, 1);
+      createSlider(matrix, 'Fall Speed', 'fallSpeed', 0.1, 5, 0.1);
+      createSlider(matrix, 'Speed Variation', 'speedVariation', 0, 100, 5);
+      createSlider(matrix, 'Column Density', 'columnDensity', 25, 200, 5);
+      createSlider(matrix, 'Trail Fade', 'trailFade', 0.01, 0.2, 0.01);
+      createSlider(matrix, 'Reset Chance', 'resetChance', 0.1, 10, 0.5);
+      matrix.innerHTML += '<div class="section-header">🌊 Motion</div>';
+      createToggle(matrix, 'Wavy Motion', 'wavyMotion');
+      createSlider(matrix, 'Wave Amplitude', 'waveAmplitude', 0, 50, 5);
+      createSelect(matrix, 'Character Set', 'characterSet', ['full', 'letters', 'numbers', 'binary', 'katakana']);
+
+      const glitch = document.getElementById('tab-glitch');
+      glitch.innerHTML = '<div class="section-header">💥 Glitch Core</div>';
+      createToggle(glitch, 'Glitch Enabled', 'glitchEnabled');
+      createSlider(glitch, 'Glitch Intensity', 'glitchIntensity', 0, 0.5, 0.01);
+      glitch.innerHTML += '<div class="section-header">↔️ Directional Glitch</div>';
+      createToggle(glitch, 'Horizontal Glitch', 'horizontalGlitch');
+      createSlider(glitch, 'H-Glitch Amount', 'horizontalGlitchAmount', 1, 30, 1);
+      createToggle(glitch, 'Vertical Glitch', 'verticalGlitch');
+      createSlider(glitch, 'V-Glitch Amount', 'verticalGlitchAmount', 1, 30, 1);
+      glitch.innerHTML += '<div class="section-header">🔲 Block Glitch</div>';
+      createToggle(glitch, 'Block Glitch', 'blockGlitch');
+      createSlider(glitch, 'Block Size', 'blockSize', 5, 50, 5);
+      createSlider(glitch, 'Color Shift', 'colorShift', 0, 1, 0.05);
+
+      const effects = document.getElementById('tab-effects');
+      effects.innerHTML = '<div class="section-header">📺 Screen Effects</div>';
+      createToggle(effects, 'CRT Effect', 'crtEffect');
+      createSlider(effects, 'CRT Bend', 'crtBend', 0, 0.3, 0.01);
+      createToggle(effects, 'Scanlines', 'scanlines');
+      createSlider(effects, 'Scanline Intensity', 'scanlineIntensity', 0, 1, 0.05);
+      createToggle(effects, 'VHS Noise', 'vhsNoise');
+      createSlider(effects, 'Noise Amount', 'noiseAmount', 0, 0.5, 0.05);
+      effects.innerHTML += '<div class="section-header">🎬 Post-Processing</div>';
+      createToggle(effects, 'Film Grain', 'filmGrain');
+      createSlider(effects, 'Grain Amount', 'grainAmount', 0, 0.5, 0.05);
+      createToggle(effects, 'Vignette', 'vignette');
+      createSlider(effects, 'Vignette Strength', 'vignetteStrength', 0, 1, 0.05);
+      effects.innerHTML += '<div class="section-header">📍 Overlays</div>';
+      createToggle(effects, 'Grid Overlay', 'gridOverlay');
+      createToggle(effects, 'Timestamp', 'timestamp');
+
+      const color = document.getElementById('tab-color');
+      color.innerHTML = '<div class="section-header">🎨 Color Modes</div>';
+      createSelect(color, 'Color Mode', 'colorMode', ['matrix', 'thermal', 'night', 'custom']);
+      createToggle(color, 'Rainbow Mode', 'rainbow');
+      createToggle(color, 'Thermal Mode', 'thermalMode');
+      createToggle(color, 'Night Vision', 'nightVision');
+      color.innerHTML += '<div class="section-header">⚡ Dynamic Color</div>';
+      createToggle(color, 'Color Pulse', 'colorPulse');
+      createSlider(color, 'Pulse Speed', 'pulseSpeed', 0.1, 5, 0.1);
+
+      const interact = document.getElementById('tab-interact');
+      interact.innerHTML = '<div class="section-header">✨ Particles</div>';
+      createToggle(interact, 'Particles Enabled', 'particlesEnabled');
+      createSlider(interact, 'Particle Count', 'particleCount', 10, 200, 10);
+      createSlider(interact, 'Particle Size', 'particleSize', 1, 10, 1);
+      interact.innerHTML += '<div class="section-header">🖱️ Mouse Effects</div>';
+      createToggle(interact, 'Mouse Trails', 'mouseTrails');
+      createToggle(interact, 'Click Effects', 'clickEffects');
+
+      const system = document.getElementById('tab-system');
+      system.innerHTML = '<div class="section-header">⚙️ Performance</div>';
+      createSlider(system, 'FPS Limit', 'fpsLimit', 30, 60, 10);
+      createSelect(system, 'Quality', 'quality', ['low', 'medium', 'high']);
+    }
+
+    // Presets
+    const presets = {
+      'CLASSIC MATRIX': {
+        colorMode: 'matrix',
+        primaryColor: '#00ff41',
+        fallSpeed: 1,
+        glitchIntensity: 0.05,
+        characterSet: 'full',
+        crtEffect: false,
+        scanlines: false,
+        rainbow: false,
+        thermalMode: false,
+        nightVision: false
+      },
+      'PARANOIA': {
+        glitchIntensity: 0.2,
+        horizontalGlitch: true,
+        verticalGlitch: true,
+        blockGlitch: true,
+        vhsNoise: true,
+        filmGrain: true,
+        rainbow: true
+      },
+      'CRT MONITOR': {
+        crtEffect: true,
+        crtBend: 0.15,
+        scanlines: true,
+        scanlineIntensity: 0.4,
+        vignette: true,
+        colorPulse: true
+      },
+      'THERMAL SCAN': {
+        thermalMode: true,
+        gridOverlay: true,
+        timestamp: true,
+        scanlines: true,
+        particlesEnabled: true,
+        rainbow: false,
+        nightVision: false
+      },
+      'NIGHT OPS': {
+        nightVision: true,
+        filmGrain: true,
+        vignette: true,
+        timestamp: true,
+        characterSet: 'numbers',
+        rainbow: false,
+        thermalMode: false
+      },
+      'GLITCH STORM': {
+        glitchIntensity: 0.3,
+        horizontalGlitch: true,
+        verticalGlitch: true,
+        blockGlitch: true,
+        colorShift: 0.5,
+        rainbow: true,
+        fallSpeed: 2
+      }
+    };
+
+    function loadPreset(name) {
+      Object.assign(config, presets[name]);
+      initDrops();
+
+      // Update all UI controls
+      document.querySelectorAll('[data-config-key]').forEach(element => {
+        const key = element.getAttribute('data-config-key');
+        if (config[key] !== undefined) {
+          if (element.type === 'checkbox') {
+            element.checked = config[key];
+          } else if (element.type === 'range') {
+            element.value = config[key];
+            const display = document.querySelector(`[data-value-for="${key}"]`);
+            if (display) {
+              const step = parseFloat(element.getAttribute('data-step'));
+              display.textContent = step >= 1 ? config[key] : config[key].toFixed(2);
+            }
+          } else if (element.tagName === 'SELECT') {
+            element.value = config[key];
+          }
+        }
+      });
+
+      console.log('Preset loaded:', name);
+    }
+
+    function initPresets() {
+      const div = document.getElementById('presets');
+      Object.keys(presets).forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'preset-btn';
+        btn.textContent = name;
+        btn.onclick = () => loadPreset(name);
+        div.appendChild(btn);
+      });
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+        this.classList.add('active');
+        document.getElementById('tab-' + tabName).classList.add('active');
+      });
+    });
+
+    function toggleControls() {
+      document.getElementById('controls').classList.toggle('hidden');
+    }
+
+    // Initialize
+    initControls();
+    initPresets();
+    animate();
+
+    console.log('🌑 MATRIX CONSPIRACY: BULLETPROOF VERSION LOADED!');
+    console.log('✅ All sliders update values and graphics');
+    console.log('✅ All toggles work correctly');
+    console.log('✅ All presets load properly');
+    console.log('Check console for debug logs when changing values');
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+
+# Node
+**/node_modules/
+
+# Python
+**/venv/
+**/.venv/
+__pycache__/
+*.pyc
+
+# Large installers not needed in VCS
+gif-repos/Miniconda3-latest-MacOSX-arm64.sh
+
+

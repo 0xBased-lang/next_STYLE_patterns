@@ -1,0 +1,87 @@
+{
+  "mcp_config": {
+    "name": "ui-ux-mcp",
+    "description": "Comprehensive UI/UX MCP Server",
+    "command": "node",
+    "args": ["dist/index.js"],
+    "env": {
+      "FIGMA_ACCESS_TOKEN": "your-figma-token-here",
+      "STORYBOOK_URL": "http://localhost:6006",
+      "PLAYWRIGHT_HEADLESS": "true"
+    }
+  },
+  "example_usage": {
+    "figma_to_react": {
+      "tool": "workflow_design_to_code",
+      "params": {
+        "figmaFileKey": "example-file-key",
+        "nodeIds": ["node-1", "node-2"],
+        "framework": "react",
+        "styling": "tailwind"
+      }
+    },
+    "create_button": {
+      "tool": "component_create",
+      "params": {
+        "name": "PrimaryButton",
+        "type": "react",
+        "props": [
+          {
+            "name": "label",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "onClick",
+            "type": "function",
+            "required": true
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "default": false
+          }
+        ],
+        "accessibility": {
+          "role": "button",
+          "ariaLabel": "Primary action button"
+        }
+      }
+    },
+    "animation_timeline": {
+      "tool": "animation_create_timeline",
+      "params": {
+        "library": "framer-motion",
+        "animations": [
+          {
+            "target": ".hero",
+            "properties": {
+              "opacity": 1,
+              "y": 0
+            },
+            "duration": 0.6,
+            "delay": 0.2,
+            "easing": "ease-out"
+          },
+          {
+            "target": ".subtitle",
+            "properties": {
+              "opacity": 1,
+              "x": 0
+            },
+            "duration": 0.4,
+            "delay": 0.4,
+            "easing": "ease-in-out"
+          }
+        ]
+      }
+    },
+    "ux_analysis": {
+      "tool": "workflow_optimize_ux",
+      "params": {
+        "url": "https://example.com",
+        "analyses": ["performance", "accessibility", "mobile", "seo"]
+      }
+    }
+  }
+}

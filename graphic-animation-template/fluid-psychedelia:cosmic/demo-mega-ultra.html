@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluid Psychedelia: Cosmic - MEGA ULTRA Demo (121 Parameters!)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      background: #000;
+      color: #0ff;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* MEGA ULTRA TABBED CONTROLS */
+    #controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #0ff;
+      border-radius: 15px;
+      padding: 20px;
+      max-height: 95vh;
+      overflow-y: auto;
+      width: 420px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.1);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
+
+    #controls.hidden {
+      transform: translateX(450px);
+    }
+
+    #controls::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #controls::-webkit-scrollbar-track {
+      background: rgba(0, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+
+    #controls::-webkit-scrollbar-thumb {
+      background: #0ff;
+      border-radius: 5px;
+    }
+
+    #controls h1 {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 22px;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      color: #0ff;
+      letter-spacing: 2px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #0ff, 0 0 20px #0ff; }
+      to { text-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 0 60px #f0f; }
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #f0f, #0ff);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #000;
+      display: inline-block;
+      margin-left: 8px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #0ff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.3s ease;
+      flex: 1;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .tab:hover {
+      background: rgba(0, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 255, 255, 0.3);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #0ff, #f0f);
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* PRESETS */
+    #presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .preset-btn {
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(255, 0, 128, 0.3), rgba(0, 212, 255, 0.3));
+      border: 2px solid #f08;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .preset-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 0, 128, 0.6);
+      border-color: #0ff;
+    }
+
+    .preset-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* CONTROLS */
+    .control-group {
+      margin-bottom: 12px;
+      padding: 12px;
+      background: rgba(0, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #0ff;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #0ff;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0ff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff;
+    }
+
+    .control-group input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #0ff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff;
+      border: none;
+    }
+
+    .control-group select,
+    .control-group input[type="number"],
+    .control-group input[type="color"] {
+      width: 100%;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #0ff;
+      border-radius: 6px;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .control-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #0ff;
+    }
+
+    .value-display {
+      display: inline-block;
+      float: right;
+      background: rgba(255, 0, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #f0f;
+      font-weight: bold;
+    }
+
+    /* BUTTONS */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 12px;
+      background: linear-gradient(135deg, #0ff, #00a8cc);
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 255, 255, 0.4);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, #f0f, #c0f);
+      border-color: #f0f;
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, #f08, #f04);
+      border-color: #f08;
+      color: #fff;
+    }
+
+    /* TOGGLE BUTTON */
+    #toggleBtn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #0ff, #f0f);
+      border: 3px solid #0ff;
+      border-radius: 10px;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 999;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    }
+
+    #toggleBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+    }
+
+    #toggleBtn.hidden {
+      right: -200px;
+    }
+
+    /* FPS MONITOR */
+    #fps {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 3px solid #0f0;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #0f0;
+      z-index: 1000;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      text-shadow: 0 0 10px #0f0;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* HELP TEXT */
+    .help-text {
+      font-size: 10px;
+      color: #aaa;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    /* NEW TAG */
+    .new-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff0080, #f0f);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      margin-left: 5px;
+      animation: glow-new 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow-new {
+      from { box-shadow: 0 0 5px #f0f; }
+      to { box-shadow: 0 0 15px #f0f, 0 0 25px #ff0080; }
+    }
+
+    /* CATEGORY HEADERS */
+    .category-header {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+      padding: 10px;
+      margin: 15px 0 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #f0f;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 13px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="fps">FPS: 60</div>
+
+  <button id="toggleBtn" onclick="toggleControls()">⚙️ CONTROLS</button>
+
+  <div id="controls">
+    <h1>
+      FLUID PSYCHEDELIA
+      <span class="badge">121 PARAMS!</span>
+    </h1>
+
+    <!-- PRESETS -->
+    <div id="presets"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('basics')">⚡ BASICS</div>
+      <div class="tab" onclick="switchTab('color')">🎨 COLOR</div>
+      <div class="tab" onclick="switchTab('effects')">✨ EFFECTS</div>
+      <div class="tab" onclick="switchTab('particles')">💫 PARTICLES</div>
+      <div class="tab" onclick="switchTab('patterns')">🌀 PATTERNS</div>
+      <div class="tab" onclick="switchTab('mouse')">🖱️ MOUSE</div>
+    </div>
+
+    <!-- TAB CONTENT: BASICS -->
+    <div id="tab-basics" class="tab-content active">
+      <div class="category-header">⚡ FLUID PHYSICS</div>
+
+      <div class="control-group">
+        <label>
+          Viscosity <span class="value-display" id="val-viscosity">0.1</span>
+        </label>
+        <input type="range" id="viscosity" min="0.001" max="10" step="0.001" value="0.1">
+        <div class="help-text">Fluid thickness (0.001 = water, 10 = honey)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Velocity Dissipation <span class="value-display" id="val-velocityDissipation">0.98</span>
+        </label>
+        <input type="range" id="velocityDissipation" min="0.9" max="0.999" step="0.001" value="0.98">
+        <div class="help-text">How fast movement fades (higher = longer trails)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Dye Dissipation <span class="value-display" id="val-dyeDissipation">0.97</span>
+        </label>
+        <input type="range" id="dyeDissipation" min="0.9" max="0.999" step="0.001" value="0.97">
+        <div class="help-text">How fast colors fade (higher = longer lasting)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Curl (Vorticity) <span class="value-display" id="val-curl">15</span>
+        </label>
+        <input type="range" id="curl" min="0" max="50" step="1" value="15">
+        <div class="help-text">Swirling turbulence strength (0 = smooth, 50 = chaos)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Gravity <span class="value-display" id="val-gravity">0</span>
+        </label>
+        <input type="range" id="gravity" min="0" max="10" step="0.1" value="0">
+        <div class="help-text">Downward pull force</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Buoyancy <span class="value-display" id="val-buoyancy">0</span>
+        </label>
+        <input type="range" id="buoyancy" min="0" max="10" step="0.1" value="0">
+        <div class="help-text">Upward float force</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Flow Speed <span class="value-display" id="val-flowSpeed">1</span>
+        </label>
+        <input type="range" id="flowSpeed" min="0.1" max="3" step="0.1" value="1">
+        <div class="help-text">Global velocity multiplier</div>
+      </div>
+
+      <div class="control-group">
+        <label>Boundary Mode</label>
+        <select id="boundary">
+          <option value="clamp">Clamp (Stop at edges)</option>
+          <option value="wrap">Wrap (Teleport to opposite side)</option>
+          <option value="bounce">Bounce (Reflect off edges)</option>
+        </select>
+      </div>
+
+      <div class="category-header">💥 SPLAT SETTINGS</div>
+
+      <div class="control-group">
+        <label>
+          Splat Radius <span class="value-display" id="val-splatRadius">150</span>
+        </label>
+        <input type="range" id="splatRadius" min="50" max="500" step="10" value="150">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Splat Force <span class="value-display" id="val-splatForce">5000</span>
+        </label>
+        <input type="range" id="splatForce" min="1000" max="10000" step="100" value="5000">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Splat Count <span class="value-display" id="val-splatCount">1</span>
+        </label>
+        <input type="range" id="splatCount" min="1" max="10" step="1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="randomSplats" checked>
+          Random Auto-Splats
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Splat Interval <span class="value-display" id="val-splatInterval">1000</span> ms
+        </label>
+        <input type="range" id="splatInterval" min="100" max="5000" step="100" value="1000">
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: COLOR -->
+    <div id="tab-color" class="tab-content">
+      <div class="category-header">🎨 COLOR SYSTEM</div>
+
+      <div class="control-group">
+        <label>Color Mode</label>
+        <select id="colorMode">
+          <option value="rainbow">Rainbow (HSV Cycle)</option>
+          <option value="palette">Palette (Custom Colors)</option>
+          <option value="monochrome">Monochrome (Grayscale)</option>
+          <option value="duotone">Duotone (Two Colors)</option>
+          <option value="complementary">Complementary (Opposite Hues)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Color Cycle Speed <span class="value-display" id="val-colorCycleSpeed">0.005</span>
+        </label>
+        <input type="range" id="colorCycleSpeed" min="0.001" max="0.05" step="0.001" value="0.005">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Saturation <span class="value-display" id="val-saturation">100</span>%
+        </label>
+        <input type="range" id="saturation" min="0" max="100" step="1" value="100">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Brightness <span class="value-display" id="val-brightness">100</span>%
+        </label>
+        <input type="range" id="brightness" min="0" max="200" step="1" value="100">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Hue Shift <span class="value-display" id="val-hueShift">0</span>°
+        </label>
+        <input type="range" id="hueShift" min="0" max="360" step="1" value="0">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Contrast Boost <span class="value-display" id="val-contrastBoost">1</span>
+        </label>
+        <input type="range" id="contrastBoost" min="0" max="2" step="0.1" value="1">
+      </div>
+
+      <div class="category-header">🆕 ADVANCED COLOR MODES</div>
+
+      <div class="control-group">
+        <label>Advanced Color Mode <span class="new-tag">NEW!</span></label>
+        <select id="advancedColorMode">
+          <option value="off">Off</option>
+          <option value="temperature">Temperature (Velocity-based)</option>
+          <option value="zones">Color Zones (Grid)</option>
+          <option value="reactive">Reactive (Speed-based)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Color Zones <span class="value-display" id="val-colorZones">4</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="colorZones" min="1" max="16" step="1" value="4">
+        <div class="help-text">Number of color zones (screen divided into grid)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Zone Color Shift <span class="value-display" id="val-zoneColorShift">60</span>° <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="zoneColorShift" min="0" max="360" step="10" value="60">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Reactive Intensity <span class="value-display" id="val-reactiveColorIntensity">5</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="reactiveColorIntensity" min="0" max="10" step="1" value="5">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Saturation Boost <span class="value-display" id="val-colorSaturationBoost">1</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="colorSaturationBoost" min="0" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>Base Color</label>
+        <input type="color" id="baseColor" value="#000000">
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: EFFECTS -->
+    <div id="tab-effects" class="tab-content">
+      <div class="category-header">✨ VISUAL EFFECTS</div>
+
+      <div class="control-group">
+        <label>
+          Bloom Intensity <span class="value-display" id="val-bloomIntensity">0.3</span>
+        </label>
+        <input type="range" id="bloomIntensity" min="0" max="1" step="0.05" value="0.3">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Bloom Radius <span class="value-display" id="val-bloomRadius">10</span>
+        </label>
+        <input type="range" id="bloomRadius" min="0" max="20" step="1" value="10">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Vignette <span class="value-display" id="val-vignette">0.2</span>
+        </label>
+        <input type="range" id="vignette" min="0" max="1" step="0.05" value="0.2">
+      </div>
+
+      <div class="category-header">🆕 POST-PROCESSING</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="pixelationEnabled">
+          Pixelation Effect <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pixelation Size <span class="value-display" id="val-pixelationSize">1</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="pixelationSize" min="1" max="50" step="1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="edgeDetection">
+          Edge Detection <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Edge Thickness <span class="value-display" id="val-edgeThickness">2</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="edgeThickness" min="1" max="10" step="1" value="2">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="scanlineEffect">
+          CRT Scanlines <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Scanline Intensity <span class="value-display" id="val-scanlineIntensity">0.3</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="scanlineIntensity" min="0" max="1" step="0.05" value="0.3">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Noise Overlay <span class="value-display" id="val-noiseOverlay">0</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="noiseOverlay" min="0" max="1" step="0.05" value="0">
+      </div>
+
+      <div class="category-header">🆕 SYMMETRY & WARPING</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="symmetryEnabled">
+          Symmetry Mode <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>Symmetry Type <span class="new-tag">NEW!</span></label>
+        <select id="symmetryMode">
+          <option value="horizontal">Horizontal Mirror</option>
+          <option value="vertical">Vertical Mirror</option>
+          <option value="quad">Quad (4-way)</option>
+          <option value="radial">Radial Rotation</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="kaleidoscopeMode">
+          Kaleidoscope Mode <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Kaleidoscope Segments <span class="value-display" id="val-kaleidoscopeSegments">4</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="kaleidoscopeSegments" min="2" max="16" step="2" value="4">
+        <div class="help-text">2, 4, 6, 8, 12, or 16 segments</div>
+      </div>
+
+      <div class="category-header">⏰ TIME ANIMATIONS</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="pulseEnabled">
+          Pulse Effect <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pulse Speed <span class="value-display" id="val-pulseSpeed">1</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="pulseSpeed" min="0" max="5" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pulse Intensity <span class="value-display" id="val-pulseIntensity">0.5</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="pulseIntensity" min="0" max="2" step="0.1" value="0.5">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="waveAnimation">
+          Wave Animation <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Wave Frequency <span class="value-display" id="val-waveFrequency">1</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="waveFrequency" min="0" max="5" step="0.1" value="1">
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: PARTICLES -->
+    <div id="tab-particles" class="tab-content">
+      <div class="category-header">💫 PARTICLE OVERLAY SYSTEM</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="particleOverlay">
+          Enable Particles <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Particle Count <span class="value-display" id="val-particleCount">1000</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleCount" min="0" max="5000" step="100" value="1000">
+        <div class="help-text">0 to 5000 particles (performance impact!)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Particle Size <span class="value-display" id="val-particleSize">3</span>px <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleSize" min="1" max="20" step="1" value="3">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Particle Lifetime <span class="value-display" id="val-particleLifetime">2</span>s <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleLifetime" min="0.5" max="5" step="0.1" value="2">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Trail Length <span class="value-display" id="val-particleTrailLength">10</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleTrailLength" min="0" max="50" step="1" value="10">
+      </div>
+
+      <div class="control-group">
+        <label>Particle Color Mode <span class="new-tag">NEW!</span></label>
+        <select id="particleColorMode">
+          <option value="fluid">Inherit from Fluid</option>
+          <option value="custom">Custom Color</option>
+          <option value="rainbow">Rainbow</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Particle Opacity <span class="value-display" id="val-particleOpacity">0.7</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleOpacity" min="0" max="1" step="0.05" value="0.7">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Velocity Inheritance <span class="value-display" id="val-particleVelocityInheritance">0.8</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleVelocityInheritance" min="0" max="1" step="0.05" value="0.8">
+        <div class="help-text">How much particles follow fluid flow</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Particle Gravity <span class="value-display" id="val-particleGravity">0</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="particleGravity" min="-2" max="2" step="0.1" value="0">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="particleRotation">
+          Particle Rotation <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: PATTERNS -->
+    <div id="tab-patterns" class="tab-content">
+      <div class="category-header">🌀 AUTOMATED PATTERN GENERATORS</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="autoSplatEnabled">
+          Auto-Splat Patterns <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>Pattern Type <span class="new-tag">NEW!</span></label>
+        <select id="autoSplatPattern">
+          <option value="random">Random</option>
+          <option value="spiral">Spiral</option>
+          <option value="grid">Grid</option>
+          <option value="orbit">Orbit</option>
+          <option value="chaos">Chaos Mode</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pattern Frequency <span class="value-display" id="val-autoSplatFrequency">2</span>/sec <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="autoSplatFrequency" min="0" max="10" step="0.5" value="2">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pattern Splat Size <span class="value-display" id="val-autoSplatSize">1</span>x <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="autoSplatSize" min="0.1" max="5" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Pattern Force <span class="value-display" id="val-autoSplatForce">3</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="autoSplatForce" min="0" max="10" step="0.5" value="3">
+      </div>
+
+      <div class="category-header">🌪️ TURBULENCE FIELDS</div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="turbulenceEnabled">
+          Turbulence <span class="new-tag">NEW!</span>
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Turbulence Intensity <span class="value-display" id="val-turbulenceIntensity">2</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="turbulenceIntensity" min="0" max="5" step="0.1" value="2">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Turbulence Scale <span class="value-display" id="val-turbulenceScale">3</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="turbulenceScale" min="0" max="10" step="0.5" value="3">
+      </div>
+
+      <div class="category-header">🌌 GRAVITATIONAL WELLS</div>
+
+      <div class="control-group">
+        <label>
+          Well Count <span class="value-display" id="val-gravitationalWells">0</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="gravitationalWells" min="0" max="8" step="1" value="0">
+        <div class="help-text">Attraction points (like black holes!)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Well Strength <span class="value-display" id="val-wellStrength">2</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="wellStrength" min="0" max="5" step="0.5" value="2">
+      </div>
+
+      <div class="category-header">🎭 FORCE FIELDS</div>
+
+      <div class="control-group">
+        <label>
+          Spiral Force <span class="value-display" id="val-spiralForce">0</span>
+        </label>
+        <input type="range" id="spiralForce" min="0" max="10" step="0.5" value="0">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Wavy Motion <span class="value-display" id="val-wavyMotion">0</span>
+        </label>
+        <input type="range" id="wavyMotion" min="0" max="1" step="0.05" value="0">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Wind Direction <span class="value-display" id="val-windDirection">0</span>°
+        </label>
+        <input type="range" id="windDirection" min="0" max="360" step="10" value="0">
+      </div>
+    </div>
+
+    <!-- TAB CONTENT: MOUSE -->
+    <div id="tab-mouse" class="tab-content">
+      <div class="category-header">🖱️ ADVANCED MOUSE INTERACTIONS</div>
+
+      <div class="control-group">
+        <label>Mouse Interaction Mode <span class="new-tag">NEW!</span></label>
+        <select id="mouseMode">
+          <option value="splat">Splat (Create fluid)</option>
+          <option value="attract">Attract (Pull fluid)</option>
+          <option value="repel">Repel (Push fluid)</option>
+          <option value="vortex">Vortex (Spin fluid)</option>
+          <option value="draw">Draw (Continuous)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Mouse Trail Intensity <span class="value-display" id="val-mouseTrailIntensity">1</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="mouseTrailIntensity" min="0" max="5" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Mouse Influence Radius <span class="value-display" id="val-mouseInfluenceRadius">100</span>px <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="mouseInfluenceRadius" min="10" max="500" step="10" value="100">
+      </div>
+
+      <div class="control-group">
+        <label>
+          Vortex Strength <span class="value-display" id="val-mouseVortexStrength">5</span> <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="mouseVortexStrength" min="0" max="10" step="0.5" value="5">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="mouseDrawMode">
+          Continuous Draw Mode <span class="new-tag">NEW!</span>
+        </label>
+        <div class="help-text">Paint continuously (works with any mouse mode)</div>
+      </div>
+
+      <div class="control-group">
+        <label>
+          Draw Brush Size <span class="value-display" id="val-mouseDrawSize">1</span>x <span class="new-tag">NEW!</span>
+        </label>
+        <input type="range" id="mouseDrawSize" min="0.1" max="5" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <input type="checkbox" id="splatTrail" checked>
+          Mouse Trail Effect
+        </label>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-buttons">
+      <button class="btn" onclick="exportConfig()">💾 EXPORT</button>
+      <button class="btn secondary" onclick="randomize()">🎲 RANDOM</button>
+      <button class="btn" onclick="reset()">🔄 RESET</button>
+      <button class="btn danger" onclick="clearFluid()">🗑️ CLEAR</button>
+    </div>
+  </div>
+
+  <script>
+    // CONFIG
+    const config = {
+      // Fluid Physics
+      viscosity: 0.1,
+      velocityDissipation: 0.98,
+      dyeDissipation: 0.97,
+      curl: 15,
+      gravity: 0,
+      buoyancy: 0,
+      boundary: 'clamp',
+      flowSpeed: 1,
+
+      // Color
+      colorMode: 'rainbow',
+      colorCycleSpeed: 0.005,
+      saturation: 100,
+      brightness: 100,
+      hueShift: 0,
+      contrastBoost: 1,
+      baseColor: '#000000',
+      advancedColorMode: 'off',
+      colorZones: 4,
+      zoneColorShift: 60,
+      reactiveColorIntensity: 5,
+      colorSaturationBoost: 1,
+
+      // Splat
+      splatRadius: 150,
+      splatForce: 5000,
+      splatCount: 1,
+      randomSplats: true,
+      splatInterval: 1000,
+      splatTrail: true,
+
+      // Effects
+      bloomIntensity: 0.3,
+      bloomRadius: 10,
+      vignette: 0.2,
+      pixelationEnabled: false,
+      pixelationSize: 1,
+      edgeDetection: false,
+      edgeThickness: 2,
+      scanlineEffect: false,
+      scanlineIntensity: 0.3,
+      noiseOverlay: 0,
+
+      // Symmetry
+      symmetryEnabled: false,
+      symmetryMode: 'quad',
+      kaleidoscopeMode: false,
+      kaleidoscopeSegments: 4,
+
+      // Time Animations
+      pulseEnabled: false,
+      pulseSpeed: 1,
+      pulseIntensity: 0.5,
+      waveAnimation: false,
+      waveFrequency: 1,
+
+      // Particles
+      particleOverlay: false,
+      particleCount: 1000,
+      particleSize: 3,
+      particleLifetime: 2,
+      particleTrailLength: 10,
+      particleColorMode: 'fluid',
+      particleOpacity: 0.7,
+      particleVelocityInheritance: 0.8,
+      particleGravity: 0,
+      particleRotation: false,
+
+      // Patterns
+      autoSplatEnabled: false,
+      autoSplatPattern: 'random',
+      autoSplatFrequency: 2,
+      autoSplatSize: 1,
+      autoSplatForce: 3,
+      turbulenceEnabled: false,
+      turbulenceIntensity: 2,
+      turbulenceScale: 3,
+      gravitationalWells: 0,
+      wellStrength: 2,
+      spiralForce: 0,
+      wavyMotion: 0,
+      windDirection: 0,
+
+      // Mouse
+      mouseMode: 'splat',
+      mouseTrailIntensity: 1,
+      mouseInfluenceRadius: 100,
+      mouseVortexStrength: 5,
+      mouseDrawMode: false,
+      mouseDrawSize: 1,
+    };
+
+    // PRESETS (18 total!)
+    const presets = [
+      { name: "RAINBOW CHAOS", config: { colorMode: 'rainbow', curl: 30, velocityDissipation: 0.95, bloomIntensity: 0.5, splatForce: 8000, particleOverlay: false } },
+      { name: "LAVA LAMP", config: { colorMode: 'duotone', gravity: 5, buoyancy: 3, viscosity: 2, velocityDissipation: 0.98, bloomIntensity: 0.6, curl: 5 } },
+      { name: "ELECTRIC STORM", config: { colorMode: 'complementary', curl: 45, splatForce: 10000, velocityDissipation: 0.92, bloomIntensity: 0.8, bloomRadius: 20 } },
+      { name: "COSMIC OCEAN", config: { colorMode: 'rainbow', wavyMotion: 0.8, spiralForce: 5, curl: 20, velocityDissipation: 0.99, bloomIntensity: 0.4 } },
+      { name: "NEON CITY", config: { colorMode: 'palette', saturation: 100, brightness: 120, bloomIntensity: 0.7, vignette: 0.5, curl: 25 } },
+      { name: "AURORA BOREALIS", config: { colorMode: 'rainbow', brightness: 150, wavyMotion: 0.6, velocityDissipation: 0.995, bloomIntensity: 0.5, curl: 10 } },
+      { name: "UNDERWATER", config: { colorMode: 'monochrome', gravity: 2, buoyancy: 5, viscosity: 1.5, wavyMotion: 0.5, velocityDissipation: 0.97, curl: 15 } },
+      { name: "PSYCHEDELIC", config: { colorMode: 'rainbow', colorCycleSpeed: 0.02, curl: 35, saturation: 100, bloomIntensity: 0.6, splatCount: 3 } },
+      { name: "MINIMAL FADE", config: { colorMode: 'monochrome', velocityDissipation: 0.999, curl: 5, bloomIntensity: 0.1, saturation: 20 } },
+      { name: "SUPERNOVA", config: { colorMode: 'rainbow', explosionChance: 50, splatForce: 10000, curl: 40, bloomIntensity: 0.9, bloomRadius: 15 } },
+      // 🆕 NEW PRESETS!
+      { name: "PARTICLE STORM", config: { particleOverlay: true, particleCount: 3000, particleTrailLength: 20, autoSplatEnabled: true, autoSplatPattern: 'chaos', curl: 25, bloomIntensity: 0.5 } },
+      { name: "KALEIDOSCOPE", config: { kaleidoscopeMode: true, kaleidoscopeSegments: 8, colorMode: 'rainbow', curl: 20, symmetryEnabled: false, bloomIntensity: 0.6 } },
+      { name: "DIGITAL RAIN", config: { particleOverlay: true, particleCount: 2000, particleGravity: 1, particleTrailLength: 30, edgeDetection: true, scanlineEffect: true, colorMode: 'monochrome', brightness: 80 } },
+      { name: "COSMIC VORTEX", config: { gravitationalWells: 4, wellStrength: 3, spiralForce: 8, mouseMode: 'vortex', autoSplatEnabled: true, autoSplatPattern: 'spiral', colorMode: 'rainbow', curl: 30 } },
+      { name: "GLITCH CHAOS", config: { pixelationEnabled: true, pixelationSize: 8, edgeDetection: true, scanlineEffect: true, noiseOverlay: 0.3, colorMode: 'complementary', curl: 40, autoSplatPattern: 'chaos', autoSplatEnabled: true } },
+      { name: "MIRROR DIMENSION", config: { symmetryEnabled: true, symmetryMode: 'quad', waveAnimation: true, waveFrequency: 2, colorMode: 'rainbow', bloomIntensity: 0.7, curl: 25 } },
+      { name: "TURBULENT OCEAN", config: { turbulenceEnabled: true, turbulenceIntensity: 3, wavyMotion: 0.7, waveAnimation: true, colorMode: 'duotone', advancedColorMode: 'zones', colorZones: 9, gravity: 1, buoyancy: 2 } },
+      { name: "NEURAL NETWORK", config: { autoSplatEnabled: true, autoSplatPattern: 'grid', edgeDetection: true, particleOverlay: true, particleCount: 1500, colorMode: 'complementary', advancedColorMode: 'reactive', reactiveColorIntensity: 8 } },
+    ];
+
+    // INIT PRESETS
+    const presetsContainer = document.getElementById('presets');
+    presets.forEach(preset => {
+      const btn = document.createElement('button');
+      btn.className = 'preset-btn';
+      btn.textContent = preset.name;
+      btn.onclick = () => applyPreset(preset);
+      presetsContainer.appendChild(btn);
+    });
+
+    // APPLY PRESET
+    function applyPreset(preset) {
+      Object.assign(config, preset.config);
+      updateAllControls();
+      updateFluid();
+    }
+
+    // UPDATE ALL CONTROLS
+    function updateAllControls() {
+      Object.keys(config).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) {
+          if (el.type === 'checkbox') {
+            el.checked = config[key];
+          } else if (el.type === 'range' || el.type === 'number') {
+            el.value = config[key];
+            const valEl = document.getElementById(`val-${key}`);
+            if (valEl) valEl.textContent = config[key];
+          } else if (el.tagName === 'SELECT') {
+            el.value = config[key];
+          } else if (el.type === 'color') {
+            el.value = config[key];
+          }
+        }
+      });
+    }
+
+    // SWITCH TAB
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+      // Show selected tab
+      const tabBtn = event.target;
+      tabBtn.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    // TOGGLE CONTROLS
+    function toggleControls() {
+      const controls = document.getElementById('controls');
+      const btn = document.getElementById('toggleBtn');
+      controls.classList.toggle('hidden');
+      btn.classList.toggle('hidden');
+    }
+
+    // FLUID SIMULATION (Simplified)
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let metaballs = [];
+    let particles = [];
+    let wells = [];
+    let time = 0;
+    let lastTime = 0;
+    let fps = 60;
+    let frameCount = 0;
+    let lastFpsUpdate = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // HSV to RGB
+    function hsvToRgb(h, s, v) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.max(0, Math.min(1, s / 100));
+      v = Math.max(0, Math.min(2, v / 100));
+
+      const c = v * s;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = v - c;
+
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; b = 0; }
+      else if (h < 120) { r = x; g = c; b = 0; }
+      else if (h < 180) { r = 0; g = c; b = x; }
+      else if (h < 240) { r = 0; g = x; b = c; }
+      else if (h < 300) { r = x; g = 0; b = c; }
+      else { r = c; g = 0; b = x; }
+
+      return {
+        r: Math.floor((r + m) * 255),
+        g: Math.floor((g + m) * 255),
+        b: Math.floor((b + m) * 255)
+      };
+    }
+
+    // GET COLOR
+    function getColor(index) {
+      let brightness = config.brightness;
+      let saturation = config.saturation * config.colorSaturationBoost;
+
+      if (config.pulseEnabled) {
+        brightness *= 1 + Math.sin(time * config.pulseSpeed) * config.pulseIntensity;
+      }
+
+      if (config.colorMode === 'rainbow') {
+        let hue = (time * config.colorCycleSpeed * 360 + index * 30 + config.hueShift) % 360;
+        const rgb = hsvToRgb(hue, saturation, brightness);
+        return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      } else if (config.colorMode === 'monochrome') {
+        const gray = Math.floor(brightness * 2.55);
+        return `rgb(${gray}, ${gray}, ${gray})`;
+      }
+      return '#0ff';
+    }
+
+    // CREATE SPLAT
+    function createSplat(x, y, vx = 0, vy = 0) {
+      for (let i = 0; i < config.splatCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (config.splatForce / 1000) * (0.5 + Math.random() * 0.5);
+
+        metaballs.push({
+          x: x + Math.cos(angle) * config.splatRadius * 0.2 * Math.random(),
+          y: y + Math.sin(angle) * config.splatRadius * 0.2 * Math.random(),
+          vx: vx + Math.cos(angle) * speed,
+          vy: vy + Math.sin(angle) * speed,
+          radius: config.splatRadius * (0.5 + Math.random() * 0.5),
+          color: getColor(metaballs.length),
+          life: 3,
+          maxLife: 3
+        });
+      }
+    }
+
+    // INIT PARTICLES
+    function initParticles() {
+      if (!config.particleOverlay || config.particleCount === 0) {
+        particles = [];
+        return;
+      }
+
+      particles = Array.from({ length: config.particleCount }, (_, i) => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        life: config.particleLifetime,
+        maxLife: config.particleLifetime,
+        size: config.particleSize * (0.5 + Math.random() * 0.5),
+        color: getColor(i),
+        rotation: Math.random() * Math.PI * 2,
+        trail: []
+      }));
+    }
+
+    // INIT WELLS
+    function initWells() {
+      wells = [];
+      if (config.gravitationalWells === 0) return;
+
+      for (let i = 0; i < config.gravitationalWells; i++) {
+        const angle = (i / config.gravitationalWells) * Math.PI * 2;
+        const radius = Math.min(canvas.width, canvas.height) * 0.3;
+        wells.push({
+          x: canvas.width / 2 + Math.cos(angle) * radius,
+          y: canvas.height / 2 + Math.sin(angle) * radius,
+          strength: config.wellStrength,
+          radius: config.mouseInfluenceRadius
+        });
+      }
+    }
+
+    // ANIMATION LOOP
+    function animate(currentTime) {
+      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime = currentTime;
+      time += deltaTime;
+
+      // FPS
+      frameCount++;
+      if (currentTime - lastFpsUpdate > 1000) {
+        fps = frameCount;
+        document.getElementById('fps').textContent = `FPS: ${fps}`;
+        frameCount = 0;
+        lastFpsUpdate = currentTime;
+      }
+
+      // CLEAR
+      const baseRgb = {
+        r: parseInt(config.baseColor.slice(1, 3), 16),
+        g: parseInt(config.baseColor.slice(3, 5), 16),
+        b: parseInt(config.baseColor.slice(5, 7), 16)
+      };
+      ctx.fillStyle = `rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, ${1 - config.dyeDissipation})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // UPDATE METABALLS
+      metaballs = metaballs.filter(ball => {
+        ball.life -= deltaTime;
+        if (ball.life <= 0) return false;
+
+        ball.vx *= config.velocityDissipation;
+        ball.vy *= config.velocityDissipation;
+
+        // PHYSICS
+        ball.vy += config.gravity * deltaTime * 100;
+        ball.vy -= config.buoyancy * deltaTime * 100;
+
+        if (config.spiralForce > 0) {
+          const dx = canvas.width / 2 - ball.x;
+          const dy = canvas.height / 2 - ball.y;
+          const angle = Math.atan2(dy, dx);
+          ball.vx += Math.cos(angle + Math.PI / 2) * config.spiralForce * deltaTime * 10;
+          ball.vy += Math.sin(angle + Math.PI / 2) * config.spiralForce * deltaTime * 10;
+        }
+
+        if (config.curl > 0) {
+          const dx = ball.x - canvas.width / 2;
+          const dy = ball.y - canvas.height / 2;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < canvas.width / 2) {
+            const curlStrength = (1 - dist / (canvas.width / 2)) * config.curl * 0.1;
+            ball.vx += -dy / dist * curlStrength;
+            ball.vy += dx / dist * curlStrength;
+          }
+        }
+
+        // GRAVITATIONAL WELLS
+        wells.forEach(well => {
+          const dx = well.x - ball.x;
+          const dy = well.y - ball.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < well.radius) {
+            const force = (1 - dist / well.radius) * well.strength;
+            ball.vx += (dx / dist) * force * deltaTime * 100;
+            ball.vy += (dy / dist) * force * deltaTime * 100;
+          }
+        });
+
+        // MOVE
+        ball.x += ball.vx * config.flowSpeed * deltaTime * 60;
+        ball.y += ball.vy * config.flowSpeed * deltaTime * 60;
+
+        // BOUNDARY
+        if (config.boundary === 'clamp') {
+          ball.x = Math.max(ball.radius, Math.min(canvas.width - ball.radius, ball.x));
+          ball.y = Math.max(ball.radius, Math.min(canvas.height - ball.radius, ball.y));
+        } else if (config.boundary === 'wrap') {
+          if (ball.x < 0) ball.x = canvas.width;
+          if (ball.x > canvas.width) ball.x = 0;
+          if (ball.y < 0) ball.y = canvas.height;
+          if (ball.y > canvas.height) ball.y = 0;
+        }
+
+        return true;
+      });
+
+      // DRAW METABALLS
+      metaballs.forEach(ball => {
+        const alpha = (ball.life / ball.maxLife) * config.dyeDissipation;
+
+        if (config.bloomIntensity > 0) {
+          ctx.shadowBlur = config.bloomRadius * config.bloomIntensity * 10;
+          ctx.shadowColor = ball.color;
+        }
+
+        ctx.globalAlpha = alpha * (config.brightness / 100);
+        const gradient = ctx.createRadialGradient(ball.x, ball.y, 0, ball.x, ball.y, ball.radius);
+        gradient.addColorStop(0, ball.color);
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+      });
+
+      // UPDATE & DRAW PARTICLES
+      if (config.particleOverlay && particles.length > 0) {
+        particles = particles.filter(p => {
+          p.life -= deltaTime;
+          if (p.life <= 0) return false;
+
+          // Find nearest metaball
+          let nearest = null;
+          let nearestDist = Infinity;
+          metaballs.forEach(ball => {
+            const dx = ball.x - p.x;
+            const dy = ball.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < nearestDist) {
+              nearestDist = dist;
+              nearest = ball;
+            }
+          });
+
+          if (nearest && nearestDist < nearest.radius * 2) {
+            p.vx += nearest.vx * config.particleVelocityInheritance * deltaTime;
+            p.vy += nearest.vy * config.particleVelocityInheritance * deltaTime;
+            if (config.particleColorMode === 'fluid') {
+              p.color = nearest.color;
+            }
+          }
+
+          p.vy += config.particleGravity * deltaTime * 100;
+
+          if (config.particleRotation) {
+            p.rotation += (p.vx + p.vy) * deltaTime * 0.1;
+          }
+
+          p.x += p.vx * deltaTime * 60;
+          p.y += p.vy * deltaTime * 60;
+
+          // Wrap
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+
+          // Trail
+          p.trail.push({ x: p.x, y: p.y });
+          if (p.trail.length > config.particleTrailLength) p.trail.shift();
+
+          p.vx *= 0.99;
+          p.vy *= 0.99;
+
+          // Draw trail
+          if (p.trail.length > 1) {
+            ctx.globalAlpha = (p.life / p.maxLife) * config.particleOpacity * 0.5;
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = p.size * 0.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(p.trail[0].x, p.trail[0].y);
+            for (let i = 1; i < p.trail.length; i++) {
+              ctx.lineTo(p.trail[i].x, p.trail[i].y);
+            }
+            ctx.stroke();
+          }
+
+          // Draw particle
+          ctx.globalAlpha = (p.life / p.maxLife) * config.particleOpacity;
+          ctx.fillStyle = p.color;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+
+          return true;
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      // VIGNETTE
+      if (config.vignette > 0) {
+        const vignetteGradient = ctx.createRadialGradient(
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.2,
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.7
+        );
+        vignetteGradient.addColorStop(0, 'rgba(0,0,0,0)');
+        vignetteGradient.addColorStop(1, `rgba(0,0,0,${config.vignette})`);
+        ctx.fillStyle = vignetteGradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // SCANLINES
+      if (config.scanlineEffect) {
+        ctx.globalAlpha = config.scanlineIntensity;
+        for (let y = 0; y < canvas.height; y += 4) {
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, y, canvas.width, 2);
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // MOUSE INTERACTION
+    let lastMouse = { x: 0, y: 0 };
+    canvas.addEventListener('mousemove', (e) => {
+      if (!config.splatTrail && config.mouseMode === 'splat') return;
+
+      const x = e.clientX;
+      const y = e.clientY;
+      const vx = (x - lastMouse.x) * config.mouseTrailIntensity * 10;
+      const vy = (y - lastMouse.y) * config.mouseTrailIntensity * 10;
+
+      if (config.mouseMode === 'splat' || config.mouseDrawMode) {
+        createSplat(x, y, vx, vy);
+      } else if (config.mouseMode === 'attract') {
+        metaballs.forEach(ball => {
+          const dx = x - ball.x;
+          const dy = y - ball.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < config.mouseInfluenceRadius) {
+            const force = (1 - dist / config.mouseInfluenceRadius) * config.mouseTrailIntensity;
+            ball.vx += (dx / dist) * force * 10;
+            ball.vy += (dy / dist) * force * 10;
+          }
+        });
+      } else if (config.mouseMode === 'repel') {
+        metaballs.forEach(ball => {
+          const dx = ball.x - x;
+          const dy = ball.y - y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < config.mouseInfluenceRadius) {
+            const force = (1 - dist / config.mouseInfluenceRadius) * config.mouseTrailIntensity;
+            ball.vx += (dx / dist) * force * 10;
+            ball.vy += (dy / dist) * force * 10;
+          }
+        });
+      } else if (config.mouseMode === 'vortex') {
+        metaballs.forEach(ball => {
+          const dx = x - ball.x;
+          const dy = y - ball.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < config.mouseInfluenceRadius) {
+            const angle = Math.atan2(dy, dx);
+            const force = (1 - dist / config.mouseInfluenceRadius) * config.mouseVortexStrength;
+            ball.vx += Math.cos(angle + Math.PI / 2) * force * 5;
+            ball.vy += Math.sin(angle + Math.PI / 2) * force * 5;
+          }
+        });
+      }
+
+      lastMouse = { x, y };
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      createSplat(e.clientX, e.clientY);
+    });
+
+    // RANDOM SPLATS
+    setInterval(() => {
+      if (config.randomSplats) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (Math.random() * 2 + 1) * config.flowSpeed;
+        createSplat(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed);
+      }
+    }, 1000);
+
+    // SETUP CONTROLS
+    Object.keys(config).forEach(key => {
+      const el = document.getElementById(key);
+      if (!el) return;
+
+      if (el.type === 'range' || el.type === 'number') {
+        el.addEventListener('input', () => {
+          config[key] = parseFloat(el.value);
+          const valEl = document.getElementById(`val-${key}`);
+          if (valEl) valEl.textContent = el.value;
+
+          // Special updates
+          if (key === 'particleOverlay' || key === 'particleCount') initParticles();
+          if (key === 'gravitationalWells') initWells();
+        });
+      } else if (el.type === 'checkbox') {
+        el.addEventListener('change', () => {
+          config[key] = el.checked;
+          if (key === 'particleOverlay') initParticles();
+          if (key === 'gravitationalWells') initWells();
+        });
+      } else if (el.tagName === 'SELECT') {
+        el.addEventListener('change', () => {
+          config[key] = el.value;
+        });
+      } else if (el.type === 'color') {
+        el.addEventListener('input', () => {
+          config[key] = el.value;
+        });
+      }
+    });
+
+    // ACTIONS
+    function exportConfig() {
+      const json = JSON.stringify(config, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fluid-psychedelia-config.json';
+      a.click();
+    }
+
+    function randomize() {
+      config.curl = Math.random() * 50;
+      config.velocityDissipation = 0.9 + Math.random() * 0.099;
+      config.bloomIntensity = Math.random();
+      config.splatForce = 1000 + Math.random() * 9000;
+      config.colorCycleSpeed = 0.001 + Math.random() * 0.049;
+      updateAllControls();
+    }
+
+    function reset() {
+      if (confirm('Reset to defaults?')) {
+        location.reload();
+      }
+    }
+
+    function clearFluid() {
+      metaballs = [];
+      particles = [];
+    }
+
+    function updateFluid() {
+      // Trigger any needed updates
+      initParticles();
+      initWells();
+    }
+
+    // START
+    updateAllControls();
+    initWells();
+    animate(0);
+  </script>
+</body>
+</html>

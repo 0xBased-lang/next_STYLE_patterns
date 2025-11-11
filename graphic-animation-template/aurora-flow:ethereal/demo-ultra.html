@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aurora Flow: Ethereal - ULTRA Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+      color: #e0f2ff;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+    }
+
+    /* Controls Panel - Ethereal Theme */
+    .controls-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 340px;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(45, 27, 78, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(147, 197, 253, 0.2);
+      box-shadow: -10px 0 60px rgba(79, 70, 229, 0.4);
+      padding: 25px;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .controls-panel.hidden {
+      transform: translateX(100%);
+    }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+      background: rgba(147, 197, 253, 0.1);
+      border-radius: 4px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #93c5fd 0%, #818cf8 100%);
+      border-radius: 4px;
+    }
+
+    .controls-panel h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 50%, #fca5a5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 30px rgba(147, 197, 253, 0.5);
+    }
+
+    .subtitle {
+      color: #93c5fd;
+      font-size: 13px;
+      margin-bottom: 25px;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    /* Preset Buttons */
+    .presets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .preset-btn {
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.15) 0%, rgba(196, 181, 253, 0.15) 100%);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      border-radius: 10px;
+      color: #e0f2ff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-shadow: 0 0 10px rgba(147, 197, 253, 0.3);
+    }
+
+    .preset-btn:hover {
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(196, 181, 253, 0.25) 100%);
+      border-color: rgba(147, 197, 253, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(147, 197, 253, 0.3);
+    }
+
+    .preset-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Control Groups */
+    .control-group {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.08) 0%, rgba(196, 181, 253, 0.08) 100%);
+      border: 1px solid rgba(147, 197, 253, 0.2);
+      border-radius: 12px;
+    }
+
+    .control-group h3 {
+      font-size: 15px;
+      margin-bottom: 18px;
+      color: #93c5fd;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-group h3::before {
+      content: '';
+      width: 4px;
+      height: 16px;
+      background: linear-gradient(180deg, #93c5fd 0%, #c4b5fd 100%);
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
+    }
+
+    /* Individual Controls */
+    .control {
+      margin-bottom: 18px;
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #bfdbfe;
+    }
+
+    .control-value {
+      color: #93c5fd;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(147, 197, 253, 0.4);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: rgba(147, 197, 253, 0.2);
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(147, 197, 253, 0.6);
+      transition: all 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 25px rgba(147, 197, 253, 0.8);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 15px rgba(147, 197, 253, 0.6);
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: 2px solid rgba(147, 197, 253, 0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.2) 0%, rgba(196, 181, 253, 0.2) 100%);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      border-radius: 10px;
+      color: #e0f2ff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-shadow: 0 0 10px rgba(147, 197, 253, 0.3);
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.3) 0%, rgba(196, 181, 253, 0.3) 100%);
+      border-color: rgba(147, 197, 253, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(147, 197, 253, 0.4);
+    }
+
+    /* FPS Monitor - Ethereal Theme */
+    .fps-monitor {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(45, 27, 78, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      z-index: 999;
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fps-value {
+      color: #93c5fd;
+      text-shadow: 0 0 15px rgba(147, 197, 253, 0.6);
+    }
+
+    /* Toggle Button */
+    .toggle-controls {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.2) 0%, rgba(196, 181, 253, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s;
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.4);
+    }
+
+    .toggle-controls:hover {
+      background: linear-gradient(135deg, rgba(147, 197, 253, 0.3) 0%, rgba(196, 181, 253, 0.3) 100%);
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 12px 40px rgba(79, 70, 229, 0.5);
+    }
+
+    /* Info Banner */
+    .info-banner {
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      max-width: 400px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, rgba(26, 31, 58, 0.9) 0%, rgba(45, 27, 78, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      z-index: 998;
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .info-banner h4 {
+      color: #93c5fd;
+      margin-bottom: 8px;
+      font-size: 16px;
+      text-shadow: 0 0 15px rgba(147, 197, 253, 0.5);
+    }
+
+    .info-banner p {
+      color: #bfdbfe;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .controls-panel {
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+      }
+
+      .presets {
+        grid-template-columns: 1fr;
+      }
+
+      .info-banner {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <!-- FPS Monitor -->
+  <div class="fps-monitor">
+    <span>FPS:</span>
+    <span class="fps-value">60</span>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <h4>🌠 Aurora Flow: Ethereal</h4>
+    <p>Mesmerizing Northern Lights effects with flowing gradients. Move your mouse for interaction!</p>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel" id="controlsPanel">
+    <h1>🌠 Aurora Flow</h1>
+    <p class="subtitle">Ethereal Northern Lights Effects</p>
+
+    <!-- Presets -->
+    <div class="presets">
+      <button class="preset-btn" onclick="applyPreset('northern')">🌌 Northern Lights</button>
+      <button class="preset-btn" onclick="applyPreset('sunset')">🌅 Sunset Dreams</button>
+      <button class="preset-btn" onclick="applyPreset('ocean')">🌊 Ocean Depths</button>
+      <button class="preset-btn" onclick="applyPreset('forest')">🌲 Forest Spirit</button>
+      <button class="preset-btn" onclick="applyPreset('cosmic')">✨ Cosmic Flow</button>
+      <button class="preset-btn" onclick="applyPreset('fire')">🔥 Fire Aurora</button>
+      <button class="preset-btn" onclick="applyPreset('ice')">❄️ Ice Crystal</button>
+      <button class="preset-btn" onclick="applyPreset('rainbow')">🌈 Rainbow Flow</button>
+    </div>
+
+    <!-- Wave Parameters -->
+    <div class="control-group">
+      <h3>Wave Parameters</h3>
+
+      <div class="control">
+        <label>
+          <span>Wave Speed</span>
+          <span class="control-value" id="waveSpeedValue">0.5</span>
+        </label>
+        <input type="range" id="waveSpeed" min="0.1" max="2" step="0.1" value="0.5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Wave Amplitude</span>
+          <span class="control-value" id="amplitudeValue">50</span>
+        </label>
+        <input type="range" id="amplitude" min="20" max="150" step="5" value="50">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Wave Frequency</span>
+          <span class="control-value" id="frequencyValue">0.02</span>
+        </label>
+        <input type="range" id="frequency" min="0.005" max="0.05" step="0.005" value="0.02">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Layer Count</span>
+          <span class="control-value" id="layerCountValue">8</span>
+        </label>
+        <input type="range" id="layerCount" min="3" max="12" step="1" value="8">
+      </div>
+    </div>
+
+    <!-- Visual Effects -->
+    <div class="control-group">
+      <h3>Visual Effects</h3>
+
+      <div class="control">
+        <label>
+          <span>Glow Intensity</span>
+          <span class="control-value" id="glowValue">20</span>
+        </label>
+        <input type="range" id="glow" min="0" max="40" step="2" value="20">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Opacity</span>
+          <span class="control-value" id="opacityValue">0.6</span>
+        </label>
+        <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.6">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Shimmer Amount</span>
+          <span class="control-value" id="shimmerValue">0.3</span>
+        </label>
+        <input type="range" id="shimmer" min="0" max="1" step="0.1" value="0.3">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Blend Mode</span>
+          <span class="control-value" id="blendModeValue">screen</span>
+        </label>
+        <select id="blendMode" style="width: 100%; padding: 8px; background: rgba(147, 197, 253, 0.1); border: 1px solid rgba(147, 197, 253, 0.3); border-radius: 6px; color: #e0f2ff;">
+          <option value="screen">Screen</option>
+          <option value="lighter">Lighter</option>
+          <option value="overlay">Overlay</option>
+          <option value="normal">Normal</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Particles -->
+    <div class="control-group">
+      <h3>Particle Overlay</h3>
+
+      <div class="control">
+        <label>
+          <span>Particle Count</span>
+          <span class="control-value" id="particleCountValue">100</span>
+        </label>
+        <input type="range" id="particleCount" min="0" max="300" step="10" value="100">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Particle Size</span>
+          <span class="control-value" id="particleSizeValue">2</span>
+        </label>
+        <input type="range" id="particleSize" min="1" max="5" step="0.5" value="2">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Particle Speed</span>
+          <span class="control-value" id="particleSpeedValue">0.5</span>
+        </label>
+        <input type="range" id="particleSpeed" min="0.1" max="2" step="0.1" value="0.5">
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="control-group">
+      <h3>Color Palette</h3>
+
+      <div class="control">
+        <label><span>Color 1</span></label>
+        <input type="color" id="color1" value="#00ff88">
+      </div>
+
+      <div class="control">
+        <label><span>Color 2</span></label>
+        <input type="color" id="color2" value="#0080ff">
+      </div>
+
+      <div class="control">
+        <label><span>Color 3</span></label>
+        <input type="color" id="color3" value="#ff00ff">
+      </div>
+    </div>
+
+    <!-- Interaction -->
+    <div class="control-group">
+      <h3>Mouse Interaction</h3>
+
+      <div class="control">
+        <label>
+          <span>Interaction Strength</span>
+          <span class="control-value" id="interactionValue">5</span>
+        </label>
+        <input type="range" id="interaction" min="0" max="15" step="1" value="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Interaction Radius</span>
+          <span class="control-value" id="radiusValue">150</span>
+        </label>
+        <input type="range" id="radius" min="50" max="300" step="10" value="150">
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn" onclick="exportConfig()">📤 Export</button>
+      <button class="action-btn" onclick="resetToDefaults()">🔄 Reset</button>
+      <button class="action-btn" onclick="randomize()">🎲 Random</button>
+    </div>
+  </div>
+
+  <!-- Toggle Button -->
+  <div class="toggle-controls" onclick="toggleControls()">⚙️</div>
+
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    // Mouse tracking
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+
+    // Animation state
+    let animationId;
+    let time = 0;
+    let particles = [];
+
+    // Configuration
+    let config = {
+      waveSpeed: 0.5,
+      amplitude: 50,
+      frequency: 0.02,
+      layerCount: 8,
+      glow: 20,
+      opacity: 0.6,
+      shimmer: 0.3,
+      blendMode: 'screen',
+      particleCount: 100,
+      particleSize: 2,
+      particleSpeed: 0.5,
+      color1: '#00ff88',
+      color2: '#0080ff',
+      color3: '#ff00ff',
+      interaction: 5,
+      radius: 150
+    };
+
+    // Presets
+    const presets = {
+      northern: {
+        waveSpeed: 0.5,
+        amplitude: 50,
+        frequency: 0.02,
+        layerCount: 8,
+        glow: 20,
+        opacity: 0.6,
+        shimmer: 0.3,
+        blendMode: 'screen',
+        particleCount: 100,
+        particleSize: 2,
+        particleSpeed: 0.5,
+        color1: '#00ff88',
+        color2: '#0080ff',
+        color3: '#ff00ff',
+        interaction: 5,
+        radius: 150
+      },
+      sunset: {
+        waveSpeed: 0.3,
+        amplitude: 70,
+        frequency: 0.015,
+        layerCount: 10,
+        glow: 30,
+        opacity: 0.7,
+        shimmer: 0.5,
+        blendMode: 'screen',
+        particleCount: 150,
+        particleSize: 3,
+        particleSpeed: 0.3,
+        color1: '#ff6b35',
+        color2: '#f7931e',
+        color3: '#ffd700',
+        interaction: 8,
+        radius: 200
+      },
+      ocean: {
+        waveSpeed: 0.4,
+        amplitude: 60,
+        frequency: 0.025,
+        layerCount: 9,
+        glow: 25,
+        opacity: 0.65,
+        shimmer: 0.4,
+        blendMode: 'lighter',
+        particleCount: 120,
+        particleSize: 2.5,
+        particleSpeed: 0.4,
+        color1: '#0077be',
+        color2: '#00c2ff',
+        color3: '#4a90e2',
+        interaction: 6,
+        radius: 180
+      },
+      forest: {
+        waveSpeed: 0.6,
+        amplitude: 45,
+        frequency: 0.03,
+        layerCount: 7,
+        glow: 15,
+        opacity: 0.55,
+        shimmer: 0.2,
+        blendMode: 'screen',
+        particleCount: 80,
+        particleSize: 1.5,
+        particleSpeed: 0.6,
+        color1: '#32cd32',
+        color2: '#228b22',
+        color3: '#90ee90',
+        interaction: 4,
+        radius: 120
+      },
+      cosmic: {
+        waveSpeed: 0.7,
+        amplitude: 80,
+        frequency: 0.018,
+        layerCount: 11,
+        glow: 35,
+        opacity: 0.75,
+        shimmer: 0.6,
+        blendMode: 'lighter',
+        particleCount: 200,
+        particleSize: 3.5,
+        particleSpeed: 0.7,
+        color1: '#9d00ff',
+        color2: '#ff00ff',
+        color3: '#00ffff',
+        interaction: 10,
+        radius: 250
+      },
+      fire: {
+        waveSpeed: 0.8,
+        amplitude: 90,
+        frequency: 0.035,
+        layerCount: 9,
+        glow: 40,
+        opacity: 0.8,
+        shimmer: 0.7,
+        blendMode: 'screen',
+        particleCount: 180,
+        particleSize: 4,
+        particleSpeed: 0.8,
+        color1: '#ff4500',
+        color2: '#ff6347',
+        color3: '#ffd700',
+        interaction: 12,
+        radius: 220
+      },
+      ice: {
+        waveSpeed: 0.2,
+        amplitude: 35,
+        frequency: 0.01,
+        layerCount: 6,
+        glow: 10,
+        opacity: 0.5,
+        shimmer: 0.1,
+        blendMode: 'normal',
+        particleCount: 60,
+        particleSize: 1,
+        particleSpeed: 0.2,
+        color1: '#add8e6',
+        color2: '#87ceeb',
+        color3: '#e0f2ff',
+        interaction: 3,
+        radius: 100
+      },
+      rainbow: {
+        waveSpeed: 0.9,
+        amplitude: 100,
+        frequency: 0.04,
+        layerCount: 12,
+        glow: 30,
+        opacity: 0.7,
+        shimmer: 0.8,
+        blendMode: 'overlay',
+        particleCount: 250,
+        particleSize: 3,
+        particleSpeed: 0.9,
+        color1: '#ff0080',
+        color2: '#00ff00',
+        color3: '#0080ff',
+        interaction: 15,
+        radius: 300
+      }
+    };
+
+    // Particle class
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * config.particleSpeed;
+        this.vy = (Math.random() - 0.5) * config.particleSpeed;
+        this.size = Math.random() * config.particleSize + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+      }
+
+      update() {
+        this.x += this.vx * config.particleSpeed;
+        this.y += this.vy * config.particleSpeed;
+
+        // Mouse interaction
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < config.radius) {
+          const force = (config.radius - distance) / config.radius;
+          this.x -= (dx / distance) * force * config.interaction;
+          this.y -= (dy / distance) * force * config.interaction;
+        }
+
+        // Wrap around edges
+        if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Initialize particles
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < config.particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    // Helper to parse color
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+
+    // Draw aurora waves
+    function drawAurora() {
+      ctx.globalCompositeOperation = config.blendMode;
+
+      for (let layer = 0; layer < config.layerCount; layer++) {
+        const progress = layer / config.layerCount;
+
+        // Interpolate colors
+        let color;
+        if (progress < 0.5) {
+          const t = progress * 2;
+          const c1 = hexToRgb(config.color1);
+          const c2 = hexToRgb(config.color2);
+          color = {
+            r: Math.floor(c1.r + (c2.r - c1.r) * t),
+            g: Math.floor(c1.g + (c2.g - c1.g) * t),
+            b: Math.floor(c1.b + (c2.b - c1.b) * t)
+          };
+        } else {
+          const t = (progress - 0.5) * 2;
+          const c2 = hexToRgb(config.color2);
+          const c3 = hexToRgb(config.color3);
+          color = {
+            r: Math.floor(c2.r + (c3.r - c2.r) * t),
+            g: Math.floor(c2.g + (c3.g - c2.g) * t),
+            b: Math.floor(c2.b + (c3.b - c2.b) * t)
+          };
+        }
+
+        // Shimmer effect
+        const shimmerAmount = Math.sin(time * 2 + layer) * config.shimmer;
+        const layerOpacity = config.opacity * (0.5 + shimmerAmount * 0.5);
+
+        // Glow
+        if (config.glow > 0) {
+          ctx.shadowBlur = config.glow;
+          ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, ${layerOpacity})`;
+        }
+
+        // Draw wave
+        ctx.beginPath();
+        const yOffset = (height / 3) + (layer * (height / (config.layerCount + 2)));
+
+        for (let x = 0; x <= width; x += 5) {
+          const frequency = config.frequency;
+          const y = yOffset +
+            Math.sin(x * frequency + time * config.waveSpeed + layer) * config.amplitude +
+            Math.sin(x * frequency * 2 + time * config.waveSpeed * 1.5 + layer * 2) * (config.amplitude * 0.5);
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${layerOpacity})`;
+        ctx.fill();
+      }
+
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // Animation loop
+    function animate() {
+      // Clear
+      ctx.fillStyle = 'rgba(10, 14, 39, 0.1)';
+      ctx.fillRect(0, 0, width, height);
+
+      // Update time
+      time += 0.01;
+
+      // Draw aurora
+      drawAurora();
+
+      // Update and draw particles
+      ctx.globalCompositeOperation = 'lighter';
+      for (const particle of particles) {
+        particle.update();
+        particle.draw();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      // FPS
+      updateFPS();
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // FPS counter
+    let fps = 60;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+
+    function updateFPS() {
+      frameCount++;
+      const currentTime = performance.now();
+
+      if (currentTime >= lastFrameTime + 1000) {
+        fps = Math.round((frameCount * 1000) / (currentTime - lastFrameTime));
+        document.querySelector('.fps-value').textContent = fps;
+        document.querySelector('.fps-value').style.color =
+          fps >= 50 ? '#93c5fd' : fps >= 30 ? '#fbbf24' : '#f87171';
+        frameCount = 0;
+        lastFrameTime = currentTime;
+      }
+    }
+
+    // Apply preset
+    function applyPreset(presetName) {
+      const preset = presets[presetName];
+      if (!preset) return;
+
+      Object.assign(config, preset);
+      updateControlsFromConfig();
+      initParticles();
+    }
+
+    // Update controls from config
+    function updateControlsFromConfig() {
+      for (const key in config) {
+        const element = document.getElementById(key);
+        const valueElement = document.getElementById(key + 'Value');
+
+        if (element && element.type === 'range') {
+          element.value = config[key];
+          if (valueElement) {
+            valueElement.textContent = config[key];
+          }
+        } else if (element && element.type === 'color') {
+          element.value = config[key];
+        } else if (element && element.tagName === 'SELECT') {
+          element.value = config[key];
+          if (valueElement) {
+            valueElement.textContent = config[key];
+          }
+        }
+      }
+    }
+
+    // Export configuration
+    function exportConfig() {
+      const configStr = JSON.stringify(config, null, 2);
+      const blob = new Blob([configStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aurora-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Reset to defaults
+    function resetToDefaults() {
+      applyPreset('northern');
+    }
+
+    // Randomize
+    function randomize() {
+      config.waveSpeed = Math.random() * 1.9 + 0.1;
+      config.amplitude = Math.random() * 130 + 20;
+      config.frequency = Math.random() * 0.045 + 0.005;
+      config.layerCount = Math.floor(Math.random() * 9) + 3;
+      config.glow = Math.random() * 40;
+      config.opacity = Math.random() * 0.8 + 0.2;
+      config.shimmer = Math.random();
+      config.particleCount = Math.floor(Math.random() * 300);
+      config.particleSize = Math.random() * 4 + 1;
+      config.particleSpeed = Math.random() * 1.9 + 0.1;
+      config.interaction = Math.random() * 15;
+      config.radius = Math.random() * 250 + 50;
+
+      // Random colors
+      config.color1 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.color2 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.color3 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+      updateControlsFromConfig();
+      initParticles();
+    }
+
+    // Toggle controls
+    function toggleControls() {
+      document.getElementById('controlsPanel').classList.toggle('hidden');
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Range inputs
+      const rangeInputs = document.querySelectorAll('input[type="range"]');
+      rangeInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          const key = e.target.id;
+          const value = parseFloat(e.target.value);
+          config[key] = value;
+
+          const valueElement = document.getElementById(key + 'Value');
+          if (valueElement) {
+            valueElement.textContent = value;
+          }
+
+          if (key === 'particleCount') {
+            initParticles();
+          }
+        });
+      });
+
+      // Color inputs
+      const colorInputs = document.querySelectorAll('input[type="color"]');
+      colorInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          config[e.target.id] = e.target.value;
+        });
+      });
+
+      // Blend mode select
+      document.getElementById('blendMode').addEventListener('change', (e) => {
+        config.blendMode = e.target.value;
+        document.getElementById('blendModeValue').textContent = e.target.value;
+      });
+
+      // Mouse tracking
+      canvas.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Window resize
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initParticles();
+      });
+    }
+
+    // Initialize
+    function init() {
+      setupEventListeners();
+      updateControlsFromConfig();
+      initParticles();
+      animate();
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/*
+  Gifcurry
+  (C) 2018 David Lettier
+  lettier.com
+*/
+
+html, body {
+  background-color: #5d22da;
+  font-family: "Roboto", sans-serif;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+a, a:hover, a:visited {
+  color: white;
+  text-decoration: underline;
+}
+
+div > p:first-child {
+  margin-top: 20px;
+}
+
+.logo-text-align {
+  text-align: right !important;
+}
+
+.logo-margin-top {
+  margin-top: 50px;
+}
+
+.fi-border {
+  border-color: white;
+}
+
+.border-left-white {
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.center-text-vertical {
+  display: flex;
+  align-items: center;
+}
+
+.headline-padding-right {
+  padding-right: 38px;
+}
+
+.headline-padding-left {
+  padding-left: 38px;
+}
+
+.img-box-shadow {
+  box-shadow: 0px 10px 50px -5px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 769px) {
+  .non-mobile-padding-left {
+    padding-left: 0px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .logo {
+    margin: 0px;
+    padding: 0px;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-text-align {
+    text-align: center !important;
+  }
+
+  .mobile-logo-column-padding {
+    padding: 0px;
+  }
+
+  .headline-padding-left {
+    padding-left: 0.75em;
+    margin-left: 0.75rem
+  }
+
+  .mobile-img-margin-bottom {
+    margin-bottom: 1.5em;
+  }
+
+  .mobile-text-align-center {
+    text-align: center;
+  }
+}

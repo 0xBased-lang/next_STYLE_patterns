@@ -1,0 +1,66 @@
+{
+  "name": "psychedelic-ui-stack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-aesthetic component library supporting 4 distinct visual styles",
+  "keywords": [
+    "react",
+    "components",
+    "ui",
+    "design-system",
+    "animation",
+    "tailwind",
+    "nextjs",
+    "psychedelic",
+    "conspiracy",
+    "neon",
+    "crypto",
+    "web3"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/psychedelic-ui-stack.git"
+  },
+  "license": "MIT",
+  "author": "Your Name",
+  "workspaces": [
+    "packages/*",
+    "templates/*",
+    "demos/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
+    "type-check": "turbo type-check",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "clean": "turbo clean && rm -rf node_modules",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^20.11.19",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
+    "tsup": "^8.0.1",
+    "turbo": "^1.12.4",
+    "typescript": "^5.3.3"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

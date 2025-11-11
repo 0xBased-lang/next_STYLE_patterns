@@ -1,0 +1,104 @@
+# Loading Spinner Template
+# Creates customizable loading spinner animations for web
+
+name: "Loading Spinner Animation"
+description: "Generate React/Vue/JS loading spinner components using framer-motion"
+version: "1.0.0"
+category: "web-animation"
+
+# Pipeline: config → code generation → preview
+pipeline:
+  - tool: "motion"
+    config:
+      framework: "{{framework}}"
+      animation_type: "spinner"
+      style: "{{spinner_style}}"
+      colors: "{{colors}}"
+      size: "{{size}}"
+      speed: "{{speed}}"
+
+  - tool: "custom"
+    config:
+      generate_preview: true
+      export_formats: ["react", "vue", "vanilla-js"]
+
+assets:
+  optional:
+    - name: "custom_svg"
+      type: "image/svg+xml"
+      description: "Custom SVG for spinner"
+
+variables:
+  framework:
+    type: "string"
+    default: "react"
+    description: "Target framework (react/vue/vanilla)"
+
+  spinner_style:
+    type: "string"
+    default: "circular"
+    description: "Spinner style (circular/dots/pulse/bars)"
+
+  colors:
+    type: "array"
+    default: ["#3b82f6"]
+    description: "Color palette for spinner"
+
+  size:
+    type: "string"
+    default: "medium"
+    description: "Spinner size (small/medium/large/custom)"
+
+  speed:
+    type: "number"
+    default: 1.0
+    description: "Animation speed multiplier"
+
+presets:
+  circular:  # Classic circular spinner
+    motion:
+      animation_type: "circular"
+      duration: 1.0
+      easing: "linear"
+    style:
+      border_width: 4
+      size: 40
+
+  dots:  # Three dots animation
+    motion:
+      animation_type: "dots"
+      duration: 0.6
+      stagger: 0.2
+    style:
+      dot_size: 12
+      gap: 8
+
+  pulse:  # Pulsing circle
+    motion:
+      animation_type: "pulse"
+      duration: 1.5
+      easing: "easeInOut"
+    style:
+      scale_range: [1, 1.2]
+      opacity_range: [1, 0.7]
+
+  bars:  # Vertical bars
+    motion:
+      animation_type: "bars"
+      duration: 0.8
+      stagger: 0.1
+    style:
+      bar_count: 5
+      bar_height_range: [20, 40]
+
+metadata:
+  author: "gif-repos generator"
+  tags: [web, animation, loading, spinner, react, vue]
+  framework: ["motion", "framer-motion"]
+  output_type: "code"
+  use_cases:
+    - "Page loading indicators"
+    - "Data fetching feedback"
+    - "Form submissions"
+    - "File uploads"
+    - "API calls"

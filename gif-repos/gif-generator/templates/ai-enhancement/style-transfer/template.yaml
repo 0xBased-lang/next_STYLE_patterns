@@ -1,0 +1,247 @@
+# Style Transfer Template
+# Applies artistic styles to videos using neural style transfer
+
+name: "AI Style Transfer"
+description: "Transform videos into artistic masterpieces using neural style transfer (Van Gogh, Picasso, etc.)"
+version: "1.0.0"
+category: "ai-enhancement"
+
+# Pipeline: video → neural style transfer → smooth frames → optimize
+pipeline:
+  steps:
+    - tool: "neural-style-transfer"
+      operation: "apply_style"
+      input: "{{video_path}}"
+      output: "temp_styled.mp4"
+      params:
+        style_image: "{{style_path|styles/van_gogh_starry_night.jpg}}"
+        style_preset: "{{style_preset|starry-night}}"
+        content_weight: "{{content_weight|1.0}}"
+        style_weight: "{{style_weight|100.0}}"
+        model: "{{model|fast-neural-style}}"
+        resolution: "{{resolution|720p}}"
+
+    - tool: "ffmpeg"
+      operation: "smooth_frames"
+      input: "temp_styled.mp4"
+      output: "temp_smoothed.mp4"
+      params:
+        filters:
+          - name: "minterpolate"  # Smooth transitions
+            params:
+              fps: "{{fps|24}}"
+          - name: "unsharp"  # Enhance details
+            params:
+              luma_amount: 1.2
+
+    - tool: "gifcurry"
+      operation: "convert_to_gif"
+      input: "temp_smoothed.mp4"
+      output: "temp_styled.gif"
+      params:
+        width: "{{width|720}}"
+        height: "{{height|480}}"
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|5}}"
+        quality: 90
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_styled.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 20
+
+# Artistic style presets
+presets:
+  starry-night:
+    description: "Van Gogh's Starry Night style (swirling brushstrokes)"
+    style_preset: "van_gogh_starry_night"
+    style_weight: 100.0
+    content_weight: 1.0
+    model: "fast-neural-style"
+    resolution: "720p"
+    expected_size: "8-12MB"
+    processing_time: "3-5 minutes"
+
+  picasso:
+    description: "Cubist Picasso style (abstract geometric)"
+    style_preset: "picasso_geometric"
+    style_weight: 120.0
+    content_weight: 0.8
+    model: "artistic-style-transfer"
+    resolution: "720p"
+    expected_size: "7-11MB"
+    processing_time: "3-5 minutes"
+
+  ukiyo-e:
+    description: "Japanese woodblock print style (Hokusai waves)"
+    style_preset: "hokusai_great_wave"
+    style_weight: 90.0
+    content_weight: 1.2
+    model: "fast-neural-style"
+    resolution: "720p"
+    expected_size: "8-13MB"
+    processing_time: "3-5 minutes"
+
+  impressionist:
+    description: "Monet impressionist style (soft, dreamy)"
+    style_preset: "monet_impression_sunrise"
+    style_weight: 80.0
+    content_weight: 1.5
+    model: "artistic-style-transfer"
+    resolution: "720p"
+    expected_size: "7-10MB"
+    processing_time: "3-5 minutes"
+
+  comic-book:
+    description: "Comic book/graphic novel style (bold lines, halftone)"
+    style_preset: "comic_pop_art"
+    style_weight: 150.0
+    content_weight: 1.0
+    model: "cartoon-gan"
+    resolution: "720p"
+    expected_size: "6-9MB"
+    processing_time: "2-4 minutes"
+
+  watercolor:
+    description: "Watercolor painting style (soft, fluid)"
+    style_preset: "watercolor_painting"
+    style_weight: 70.0
+    content_weight: 1.8
+    model: "artistic-style-transfer"
+    resolution: "720p"
+    expected_size: "7-11MB"
+    processing_time: "3-5 minutes"
+
+# Variable definitions
+variables:
+  video_path:
+    type: "file"
+    required: true
+    description: "Source video file"
+
+  style_path:
+    type: "file"
+    required: false
+    description: "Custom style image (optional, uses preset if not provided)"
+
+  style_preset:
+    type: "string"
+    required: false
+    default: "starry-night"
+    description: "Pre-trained style model to use"
+
+  content_weight:
+    type: "float"
+    required: false
+    default: 1.0
+    description: "Content preservation strength (higher = more original content visible)"
+
+  style_weight:
+    type: "float"
+    required: false
+    default: 100.0
+    description: "Style application strength (higher = more artistic effect)"
+
+  model:
+    type: "string"
+    required: false
+    default: "fast-neural-style"
+    description: "Neural style transfer model"
+
+  duration:
+    type: "float"
+    required: false
+    default: 5
+    description: "Duration in seconds"
+
+# Output validation
+validation:
+  max_file_size_mb: 20
+  duration:
+    min: 2
+    max: 15
+  format: "GIF"
+
+# Model information
+models:
+  fast-neural-style:
+    description: "Fast style transfer (real-time capable)"
+    processing_speed: "Fast (30-60 FPS)"
+    quality: "Good"
+    pre_trained_styles: 10+
+
+  artistic-style-transfer:
+    description: "High quality artistic transfer (slower)"
+    processing_speed: "Slow (5-10 FPS)"
+    quality: "Excellent"
+    pre_trained_styles: 25+
+
+  cartoon-gan:
+    description: "Specialized for cartoon/comic styles"
+    processing_speed: "Medium (15-30 FPS)"
+    quality: "Very Good"
+    pre_trained_styles: "Comic, Anime, Cartoon"
+
+# Metadata
+tags:
+  - ai
+  - neural-network
+  - artistic
+  - style-transfer
+  - painting
+  - creative
+  - van-gogh
+  - picasso
+
+use_cases:
+  - "Artistic music videos"
+  - "Creative social media content"
+  - "Film artistic effects"
+  - "Product showcase with flair"
+  - "Event recap videos (weddings, parties)"
+  - "Travel videos with painting aesthetic"
+  - "Educational content (art history)"
+  - "Brand storytelling with artistic touch"
+
+style_recommendations:
+  portraits:
+    - "Impressionist (soft, flattering)"
+    - "Watercolor (dreamy, ethereal)"
+    - "Ukiyo-e (dramatic, striking)"
+
+  landscapes:
+    - "Starry Night (dramatic skies)"
+    - "Impressionist (natural, peaceful)"
+    - "Ukiyo-e (bold, graphic)"
+
+  action:
+    - "Comic Book (dynamic, energetic)"
+    - "Cubist (abstract, intense)"
+
+  products:
+    - "Comic Book (bold, eye-catching)"
+    - "Watercolor (elegant, soft)"
+
+best_practices:
+  - "Higher content weight for recognizable subjects"
+  - "Higher style weight for abstract artistic effect"
+  - "Test with short clips first (processing is slow)"
+  - "720p is sweet spot for quality vs. speed"
+  - "Smooth motion is important (use frame interpolation)"
+  - "Some styles work better with certain content"
+  - "Consider GPU acceleration for faster processing"
+
+hardware_requirements:
+  minimum:
+    gpu: "NVIDIA GTX 1050 or equivalent"
+    ram: "8GB"
+    processing_time: "5-10 minutes per video"
+
+  recommended:
+    gpu: "NVIDIA RTX 3060 or better"
+    ram: "16GB+"
+    processing_time: "1-3 minutes per video"

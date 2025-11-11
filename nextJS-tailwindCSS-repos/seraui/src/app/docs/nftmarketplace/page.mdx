@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React NFT Marketplace Component | Sera UI',
+    description: 'Modern NFT marketplace component with card layouts, bidding interfaces, and crypto-themed styling. Perfect for blockchain applications and digital asset platforms.',
+    keywords: [
+        'React NFT marketplace',
+        'NFT component',
+        'blockchain UI',
+        'crypto marketplace',
+        'digital assets',
+        'NFT card component',
+        'Tailwind CSS NFT',
+        'UI blockchain library',
+        'marketplace interface',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React NFT Marketplace Component | Sera UI',
+        description: 'Modern React NFT marketplace component with card layouts, bidding interfaces, and crypto-themed styling for blockchain applications.',
+        type: 'article',
+        url: '/docs/nftmarketplace',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'NFT Marketplace Component | Sera UI',
+        description: 'Modern React NFT marketplace component with card layouts, bidding interfaces, and crypto-themed styling for blockchain applications.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/nftmarketplace',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { HideTOC } from "@/components/site/hide-toc";
+import NftMarketplace from "./nftmarketplace"
+
+<HideTOC />
+
+# NFT Marketplace <AI dir="left"/>
+A fully responsive NFT marketplace component with a clean design.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<NftMarketplace />} componentName="NftMarketplace" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/nftmarketplace/nftmarketplace.tsx" />
+  </TabsContent>
+</Tabs>

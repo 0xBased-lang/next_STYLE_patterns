@@ -1,0 +1,77 @@
+export const metadata = {
+    title: 'React Moving Grid Component | Sera UI',
+    description: 'Animated moving grid background component with customizable patterns and motion effects. Perfect for dynamic backgrounds and visual enhancements.',
+    keywords: [
+        'React moving grid',
+        'animated grid background',
+        'moving pattern',
+        'dynamic grid',
+        'animated background',
+        'grid animation',
+        'Tailwind CSS moving grid',
+        'UI animated background',
+        'motion graphics',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Moving Grid Component | Sera UI',
+        description: 'Animated React moving grid background component with customizable patterns and motion effects for dynamic backgrounds.',
+        type: 'article',
+        url: '/docs/moving-grid',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Moving Grid Component | Sera UI',
+        description: 'Animated React moving grid background component with customizable patterns and motion effects for dynamic backgrounds.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/moving-grid',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { HideTOC } from "@/components/site/hide-toc";
+import GridBackgroundView from "./moving-grid"
+
+<HideTOC />
+
+
+
+# Smooth Moving Grid <AI dir="left"/>
+A dynamic background with mouse-aware parallax effect.
+
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+
+  {/* Preview tab renders the interactive CopyButtonView component */}
+  <TabsContent value="preview">
+    <ComponentRenderer component={<GridBackgroundView />} />
+  </TabsContent>
+
+  {/* Code tab displays the source code of the CopyButtonView component */}
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/moving-grid/moving-grid.tsx" />
+  </TabsContent>
+</Tabs>

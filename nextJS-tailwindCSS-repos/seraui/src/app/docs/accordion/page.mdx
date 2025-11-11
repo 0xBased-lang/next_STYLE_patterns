@@ -1,0 +1,132 @@
+export const metadata = {
+    title: 'React Accordion Component | Sera UI',
+    description: 'A modern accordion component with smooth animations, customizable styling, and interactive expand/collapse functionality. Built with React and Tailwind CSS.',
+    keywords: [
+        'React accordion component',
+        'collapsible content',
+        'expandable sections',
+        'accordion animation',
+        'modern accordion',
+        'Tailwind CSS accordion',
+        'UI accordion library',
+        'interactive accordion',
+        'accordion with animation',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Accordion Component | Sera UI',
+        description: 'Modern React accordion component with smooth animations and customizable styling for organizing content in expandable sections.',
+        type: 'article',
+        url: '/docs/accordion',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Accordion Component | Sera UI',
+        description: 'Modern React accordion component with smooth animations and customizable styling for organizing content in expandable sections.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/accordion',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+
+import AccordionPage from "./accordion-view"
+import CustomAccordion from "./customAccordion"
+import AccordionSection from "./accordion2"
+
+
+
+#  Modern Accordion <AI dir="left"/>
+A modern accordion component with a live preview and the corresponding code.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AccordionSection />} componentName="AccordionSection" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/accordion/accordion2.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+
+## Introduction
+This section demonstrates the accordion component with a live preview and the corresponding code.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AccordionPage />} componentName="accordion" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/accordion/accordion-view.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Installation
+Follow these steps to add the accordion component to your project. You can either use the CLI for automatic setup or copy the code manually.
+
+<Tabs defaultValue="cli" className="">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <Cli command={`add accordion.json`} />
+  </TabsContent>
+
+  <TabsContent value="manual">
+    <CodeBlock filePath="src/app/docs/accordion/accordion.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Custom Accordion
+This is a custom accordion component that is not part of the default accordion component.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<CustomAccordion />} componentName="customAccordion" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/accordion/customAccordion.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+
+## Usage
+After installing the component, import it into your page or component file. The `Accordion` component expects an `items` prop, which is an array of objects, each with a `title` and `content` string.

@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Conspiracy: HYPER ULTRA (150+ Parameters)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', 'Consolas', monospace;
+      overflow: hidden;
+      background: #000;
+      color: #0f0;
+      cursor: crosshair;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+
+    /* ELEGANT UI SYSTEM - Improved from previous version */
+    #controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 20, 0, 0.97);
+      border: 2px solid #0f0;
+      border-radius: 12px;
+      padding: 18px;
+      max-height: 96vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 420px;
+      box-shadow:
+        0 0 40px rgba(0, 255, 0, 0.4),
+        inset 0 0 40px rgba(0, 255, 0, 0.05),
+        0 8px 32px rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      backdrop-filter: blur(12px) saturate(180%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 11px;
+    }
+
+    #controls.hidden {
+      transform: translateX(450px);
+    }
+
+    /* Elegant scrollbar */
+    #controls::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #controls::-webkit-scrollbar-track {
+      background: rgba(0, 255, 0, 0.05);
+      border-radius: 4px;
+    }
+
+    #controls::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #0f0, #0a0);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 255, 0, 0.3);
+    }
+
+    #controls::-webkit-scrollbar-thumb:hover {
+      background: #0f0;
+    }
+
+    /* Header styling */
+    #controls h1 {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 20px;
+      text-shadow:
+        0 0 10px #0f0,
+        0 0 20px #0f0,
+        0 0 30px rgba(0, 255, 0, 0.5);
+      color: #0f0;
+      letter-spacing: 3px;
+      animation: conspireGlow 3s ease-in-out infinite alternate;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    @keyframes conspireGlow {
+      0% {
+        text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+        opacity: 0.95;
+      }
+      100% {
+        text-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 60px #0a0;
+        opacity: 1;
+      }
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 9px;
+      color: #0a0;
+      margin-top: -8px;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+      opacity: 0.8;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #0f0, #0a0, #f00);
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: bold;
+      color: #000;
+      display: inline-block;
+      margin-left: 6px;
+      animation: paranoia 3s ease-in-out infinite;
+      text-transform: uppercase;
+    }
+
+    @keyframes paranoia {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.9; }
+    }
+
+    /* Refined Tab System */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      padding: 7px 8px;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .tab:hover {
+      background: rgba(0, 255, 0, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 255, 0, 0.3);
+      border-color: #0f0;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.25), rgba(0, 200, 0, 0.25));
+      color: #0f0;
+      font-weight: bold;
+      border-color: #0f0;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.4), inset 0 0 10px rgba(0, 255, 0, 0.1);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Conspiracy-themed presets */
+    #presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .preset-btn {
+      padding: 9px 8px;
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(255, 0, 0, 0.1));
+      border: 1px solid #0a0;
+      border-radius: 8px;
+      color: #0f0;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      transform: scale(1.03) translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      border-color: #0f0;
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(255, 0, 0, 0.15));
+    }
+
+    .preset-btn.classified {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(0, 0, 0, 0.3));
+      border-color: #f00;
+      color: #f00;
+    }
+
+    .preset-btn.classified:hover {
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    }
+
+    /* Refined Controls */
+    .control-group {
+      margin-bottom: 9px;
+      padding: 9px;
+      background: rgba(0, 255, 0, 0.02);
+      border-radius: 6px;
+      border-left: 2px solid rgba(0, 255, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .control-group:hover {
+      background: rgba(0, 255, 0, 0.05);
+      border-left-color: #0f0;
+    }
+
+    .control-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 10px;
+      color: #0f0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Elegant Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 38px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 18px;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 2px;
+      bottom: 2px;
+      background: #fff;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    input:checked + .slider {
+      background: linear-gradient(135deg, #0f0, #0a0);
+      border-color: #0f0;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), inset 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+    }
+
+    /* Refined Range Sliders */
+    .control-group input[type="range"] {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg,
+        rgba(0, 255, 0, 0.2),
+        rgba(0, 255, 0, 0.4));
+      outline: none;
+      -webkit-appearance: none;
+      transition: all 0.2s ease;
+    }
+
+    .control-group input[type="range"]:hover {
+      background: linear-gradient(90deg,
+        rgba(0, 255, 0, 0.3),
+        rgba(0, 255, 0, 0.5));
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0f0, #0a0);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 255, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 12px rgba(0, 255, 0, 0.9);
+    }
+
+    .control-group select {
+      width: 100%;
+      padding: 5px 8px;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 5px;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .control-group select:hover {
+      background: rgba(0, 255, 0, 0.1);
+      border-color: #0f0;
+    }
+
+    .control-group select:focus {
+      outline: none;
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    }
+
+    .value-display {
+      color: #0a0;
+      font-weight: bold;
+      margin-left: auto;
+      font-size: 9px;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* Utility Buttons - More elegant */
+    .utility-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .utility-btn {
+      padding: 7px 6px;
+      background: rgba(0, 255, 0, 0.08);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 6px;
+      color: #0f0;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: bold;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .utility-btn:hover {
+      background: rgba(0, 255, 0, 0.15);
+      transform: scale(1.05);
+      box-shadow: 0 2px 12px rgba(0, 255, 0, 0.3);
+      border-color: #0f0;
+    }
+
+    .utility-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Toggle Panel Button */
+    #togglePanel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, #0f0, #0a0);
+      border: 2px solid #000;
+      border-radius: 20px;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      z-index: 9999;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #togglePanel:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.9);
+      background: linear-gradient(135deg, #0f0, #f00);
+    }
+
+    /* Section Headers - More refined */
+    .section-header {
+      font-size: 11px;
+      color: #0f0;
+      font-weight: bold;
+      margin: 12px 0 8px 0;
+      padding: 6px 8px;
+      background: rgba(0, 255, 0, 0.08);
+      border-left: 3px solid #0f0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0, 255, 0, 0.2);
+    }
+
+    /* Conspiracy warning labels */
+    .classified-label {
+      display: inline-block;
+      font-size: 7px;
+      color: #f00;
+      background: rgba(255, 0, 0, 0.1);
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-left: 5px;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <button id="togglePanel" onclick="toggleControls()">⚡ MATRIX CONTROL</button>
+
+  <div id="controls">
+    <h1>🌑 HYPER CONSPIRACY<span class="badge">150+ PARAMS</span></h1>
+    <div class="subtitle">⚠️ CLASSIFIED SURVEILLANCE SYSTEM ⚠️</div>
+
+    <!-- UTILITY BUTTONS -->
+    <div class="utility-buttons">
+      <button class="utility-btn" onclick="exportConfig()">💾 EXPORT</button>
+      <button class="utility-btn" onclick="document.getElementById('importFile').click()">📂 IMPORT</button>
+      <button class="utility-btn" onclick="resetToDefaults()">🔄 RESET</button>
+    </div>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importConfig(event)">
+
+    <!-- PRESETS -->
+    <div id="presets"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('matrix')">⚡ MATRIX</div>
+      <div class="tab" onclick="switchTab('glitch')">💥 GLITCH</div>
+      <div class="tab" onclick="switchTab('conspiracy')">👁️ CONSPIRACY</div>
+      <div class="tab" onclick="switchTab('symbols')">🔣 SYMBOLS</div>
+      <div class="tab" onclick="switchTab('particles')">✨ PARTICLES</div>
+      <div class="tab" onclick="switchTab('screen')">📺 SCREEN FX</div>
+      <div class="tab" onclick="switchTab('color')">🎨 COLOR</div>
+      <div class="tab" onclick="switchTab('post')">🎬 POST-FX</div>
+      <div class="tab" onclick="switchTab('interact')">🖱️ INTERACTIVE</div>
+      <div class="tab" onclick="switchTab('performance')">⚙️ SYSTEM</div>
+    </div>
+
+    <!-- TAB CONTENTS -->
+    <div id="tab-matrix" class="tab-content active"></div>
+    <div id="tab-glitch" class="tab-content"></div>
+    <div id="tab-conspiracy" class="tab-content"></div>
+    <div id="tab-symbols" class="tab-content"></div>
+    <div id="tab-particles" class="tab-content"></div>
+    <div id="tab-screen" class="tab-content"></div>
+    <div id="tab-color" class="tab-content"></div>
+    <div id="tab-post" class="tab-content"></div>
+    <div id="tab-interact" class="tab-content"></div>
+    <div id="tab-performance" class="tab-content"></div>
+  </div>
+
+  <script>
+    // ============================================
+    // MATRIX CONSPIRACY: HYPER ULTRA ENGINE
+    // 150+ Parameters | Surveillance Aesthetic
+    // ============================================
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true, alpha: false });
+
+    // Configuration with ALL 150+ parameters
+    const config = {
+      // MATRIX RAIN CORE (20)
+      fontSize: 14,
+      fallSpeed: 1,
+      speedVariation: 20,
+      columnDensity: 100,
+      layerCount: 3,
+      layer1Speed: 1,
+      layer2Speed: 0.7,
+      layer3Speed: 0.4,
+      layer1Opacity: 1,
+      layer2Opacity: 0.6,
+      layer3Opacity: 0.3,
+      dropLength: 20,
+      dropDensity: 85,
+      characterChangeSpeed: 100,
+      resetChance: 2.5,
+      wavyMotion: false,
+      waveAmplitude: 10,
+      direction: 'down',
+      rainIntensity: 100,
+      trailFade: 0.05,
+
+      // CONSPIRACY AESTHETICS (18)
+      surveillanceMode: false,
+      paranoiaLevel: 0,
+      crtEffect: false,
+      crtCurvature: 0,
+      vhsTracking: false,
+      vhsDistortion: 0,
+      screenArtifacts: false,
+      artifactDensity: 20,
+      phosphorPersistence: false,
+      phosphorDecay: 0.1,
+      staticNoise: 0,
+      signalInterference: 0,
+      dataCorruption: 0,
+      securityOverlay: false,
+      timestampOverlay: false,
+      gridOverlay: false,
+      scannerEffect: false,
+      terminalBlink: false,
+
+      // GLITCH SYSTEMS (15)
+      glitchEnabled: true,
+      glitchIntensity: 0.05,
+      glitchSpeed: 50,
+      horizontalGlitch: false,
+      horizontalGlitchAmount: 5,
+      verticalGlitch: false,
+      verticalGlitchAmount: 3,
+      blockCorruption: false,
+      blockSize: 20,
+      scanlineArtifacts: false,
+      scanlineIntensity: 0.3,
+      digitalNoise: 0,
+      colorSeparation: 0,
+      pixelShift: 0,
+      glitchFrequency: 10,
+
+      // SYMBOL SYSTEM (12)
+      characterSet: 'full',
+      customCharacters: '',
+      symbolRotation: false,
+      rotationSpeed: 1,
+      hiddenMessages: false,
+      messageFrequency: 5,
+      cipherMode: false,
+      alternateSymbols: false,
+      symbolMorphing: false,
+      morphSpeed: 2,
+      flashingSymbols: false,
+      flashFrequency: 10,
+
+      // PARTICLE/DEBRIS (12)
+      particlesEnabled: false,
+      particleCount: 50,
+      particleSize: 2,
+      particleSpeed: 0.5,
+      floatingSymbols: false,
+      symbolCount: 20,
+      dataFragments: false,
+      fragmentCount: 10,
+      lightParticles: false,
+      lightIntensity: 5,
+      traceEffects: false,
+      traceLength: 10,
+
+      // SCREEN EFFECTS (15)
+      screenShake: false,
+      shakeIntensity: 2,
+      shakeFrequency: 5,
+      zoomPulse: false,
+      zoomAmount: 0.05,
+      rotationEffect: false,
+      rotationAmount: 0,
+      fisheyeEffect: false,
+      fisheyeStrength: 0,
+      perspectiveShift: false,
+      perspectiveAmount: 0,
+      screenFlicker: false,
+      flickerIntensity: 0.2,
+      powerSurge: false,
+      surgeFrequency: 3,
+
+      // COLOR SYSTEM (15)
+      colorMode: 'matrix',
+      primaryColor: '#00ff41',
+      secondaryColor: '#0a0',
+      glitchColors: ['#00ff41', '#ff0000', '#ffff00'],
+      rainbow: false,
+      thermalVision: false,
+      nightVision: false,
+      invertColors: false,
+      colorGrading: false,
+      exposure: 0,
+      contrast: 1,
+      saturation: 1,
+      hueShift: 0,
+      colorPulse: false,
+      pulseSpeed: 1,
+
+      // POST-PROCESSING (12)
+      filmGrain: false,
+      grainIntensity: 0.1,
+      vignette: false,
+      vignetteStrength: 0.5,
+      chromaticAberration: false,
+      aberrationAmount: 2,
+      bloom: false,
+      bloomIntensity: 0.3,
+      sharpen: false,
+      sharpness: 1,
+      posterize: false,
+      posterizeLevels: 8,
+
+      // INTERACTIVE (10)
+      mouseTrails: false,
+      trailLength: 20,
+      clickEffects: false,
+      clickRadius: 50,
+      revealZones: false,
+      revealRadius: 100,
+      cursorModify: false,
+      cursorSize: 10,
+      interactiveGlitch: false,
+      glitchRadius: 150,
+
+      // PERFORMANCE (8)
+      renderQuality: 'high',
+      fpsLimit: 60,
+      optimizeMemory: false,
+      reducedMotion: false,
+      lowPowerMode: false,
+      gpuAcceleration: true,
+      adaptiveQuality: false,
+      debugMode: false
+    };
+
+    // State
+    let time = 0;
+    let frameCount = 0;
+    let columns = [];
+    let drops = [];
+    let particles = [];
+    let mouse = { x: canvas.width/2, y: canvas.height/2, down: false };
+
+    // Character sets
+    const charSets = {
+      full: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~`アイウエオカキクケコ".split(""),
+      letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+      numbers: "0123456789".split(""),
+      binary: "01".split(""),
+      katakana: "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン".split(""),
+      symbols: "@#$%^&*()_+-=[]{}|;:,.<>?/~`".split(""),
+      custom: []
+    };
+
+    // Resize canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initMatrix();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Initialize matrix
+    function initMatrix() {
+      const cols = Math.floor(canvas.width / (config.fontSize * (config.columnDensity / 100)));
+      columns = Array(cols).fill(0);
+      drops = Array(cols).fill(1).map(() => Math.random() * -50);
+    }
+
+    // Get character
+    function getChar() {
+      const chars = config.characterSet === 'custom' && config.customCharacters
+        ? config.customCharacters.split("")
+        : charSets[config.characterSet] || charSets.full;
+      return chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // Get color with modes
+    function getColor(variant = 0) {
+      if (config.rainbow) {
+        const hue = (frameCount * 2 + variant * 20) % 360;
+        return `hsl(${hue}, 100%, 50%)`;
+      }
+
+      if (config.thermalVision) {
+        const temp = Math.sin(time * 2 + variant * 0.5) * 0.5 + 0.5;
+        return `hsl(${temp * 60}, 100%, 50%)`; // Red to yellow
+      }
+
+      if (config.nightVision) {
+        return '#0f0';
+      }
+
+      if (config.colorMode === 'matrix') {
+        return config.primaryColor;
+      }
+
+      if (config.glitchEnabled && Math.random() < config.glitchIntensity) {
+        return config.glitchColors[Math.floor(Math.random() * config.glitchColors.length)];
+      }
+
+      return config.primaryColor;
+    }
+
+    // Draw matrix rain
+    function drawMatrix() {
+      // Background fade with trail
+      ctx.fillStyle = `rgba(0, 0, 0, ${config.trailFade})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Apply screen effects
+      if (config.screenShake && Math.random() < 0.1) {
+        const shakeX = (Math.random() - 0.5) * config.shakeIntensity;
+        const shakeY = (Math.random() - 0.5) * config.shakeIntensity;
+        ctx.translate(shakeX, shakeY);
+      }
+
+      // Matrix rain rendering
+      const effectiveFontSize = config.fontSize * (config.columnDensity / 100);
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = getChar();
+        const x = i * effectiveFontSize;
+        let y = drops[i] * config.fontSize;
+
+        // Wavy motion
+        let offsetX = 0;
+        if (config.wavyMotion) {
+          offsetX = Math.sin((time * 0.05) + i * 0.1) * config.waveAmplitude;
+        }
+
+        // Color
+        let color = getColor(i);
+
+        // Glow effect for head
+        if (Math.abs(drops[i] - Math.floor(canvas.height / config.fontSize)) < 3) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = color;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+
+        // Draw character
+        ctx.fillStyle = color;
+        ctx.font = `${config.fontSize}px monospace`;
+        ctx.fillText(char, x + offsetX, y);
+
+        // Apply glitch effects
+        if (config.horizontalGlitch && Math.random() < 0.01) {
+          const glitchOffset = (Math.random() - 0.5) * config.horizontalGlitchAmount;
+          ctx.fillText(char, x + glitchOffset, y);
+        }
+
+        // Move drop
+        drops[i] += config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100));
+
+        // Reset drop
+        if (y > canvas.height && Math.random() > (1 - config.resetChance / 100)) {
+          drops[i] = 0;
+        }
+      }
+    }
+
+    // Draw particles
+    function drawParticles() {
+      if (!config.particlesEnabled) return;
+
+      // Update and draw particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+
+        p.y += p.vy * config.particleSpeed;
+        p.x += p.vx * config.particleSpeed;
+        p.life -= 0.01;
+
+        if (p.life <= 0 || p.y > canvas.height || p.y < 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, config.particleSize, config.particleSize);
+      }
+
+      ctx.globalAlpha = 1;
+
+      // Spawn new particles
+      if (particles.length < config.particleCount && Math.random() < 0.1) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: 0,
+          vx: (Math.random() - 0.5) * 2,
+          vy: Math.random() * 3 + 1,
+          life: 1,
+          color: getColor(particles.length)
+        });
+      }
+    }
+
+    // Apply post-processing
+    function applyPostProcessing() {
+      if (config.filmGrain) {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const noise = (Math.random() - 0.5) * config.grainIntensity * 255;
+          data[i] += noise;
+          data[i + 1] += noise;
+          data[i + 2] += noise;
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+      }
+
+      if (config.vignette) {
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.2,
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.7
+        );
+        gradient.addColorStop(0, 'transparent');
+        gradient.addColorStop(1, `rgba(0, 0, 0, ${config.vignetteStrength})`);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      if (config.scanlineArtifacts) {
+        ctx.globalAlpha = config.scanlineIntensity;
+        ctx.fillStyle = '#000';
+        for (let y = 0; y < canvas.height; y += 3) {
+          ctx.fillRect(0, y, canvas.width, 1);
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Animation loop
+    let lastTime = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      time += dt;
+      frameCount++;
+
+      // Skip frames for performance
+      if (config.fpsLimit < 60 && frameCount % Math.floor(60 / config.fpsLimit) !== 0) {
+        return;
+      }
+
+      drawMatrix();
+      drawParticles();
+      applyPostProcessing();
+
+      // Overlays
+      if (config.timestampOverlay) {
+        ctx.fillStyle = '#0f0';
+        ctx.font = '10px monospace';
+        ctx.fillText(`[${new Date().toISOString()}]`, 10, 20);
+      }
+
+      if (config.gridOverlay) {
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 50) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 50) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+
+      if (config.mouseTrails && mouse.down) {
+        for (let i = 0; i < 3; i++) {
+          particles.push({
+            x: mouse.x + (Math.random() - 0.5) * 20,
+            y: mouse.y + (Math.random() - 0.5) * 20,
+            vx: (Math.random() - 0.5) * 5,
+            vy: (Math.random() - 0.5) * 5,
+            life: 1,
+            color: getColor(particles.length)
+          });
+        }
+      }
+    });
+
+    canvas.addEventListener('mousedown', () => {
+      mouse.down = true;
+
+      if (config.clickEffects) {
+        // Create explosion of particles
+        for (let i = 0; i < 20; i++) {
+          const angle = (Math.PI * 2 * i) / 20;
+          particles.push({
+            x: mouse.x,
+            y: mouse.y,
+            vx: Math.cos(angle) * 5,
+            vy: Math.sin(angle) * 5,
+            life: 1,
+            color: getColor(i)
+          });
+        }
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      mouse.down = false;
+    });
+
+    // ============================================
+    // UI CONTROLS GENERATION
+    // ============================================
+    function createToggle(parent, label, configKey, classified = false) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+
+      const toggleDiv = document.createElement('label');
+      toggleDiv.className = 'toggle-switch';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = config[configKey];
+      input.addEventListener('change', (e) => {
+        config[configKey] = e.target.checked;
+      });
+
+      const slider = document.createElement('span');
+      slider.className = 'slider';
+
+      toggleDiv.appendChild(input);
+      toggleDiv.appendChild(slider);
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = label;
+
+      if (classified) {
+        const classLabel = document.createElement('span');
+        classLabel.className = 'classified-label';
+        classLabel.textContent = 'classified';
+        textSpan.appendChild(classLabel);
+      }
+
+      labelEl.appendChild(toggleDiv);
+      labelEl.appendChild(textSpan);
+      group.appendChild(labelEl);
+      parent.appendChild(group);
+    }
+
+    function createSlider(parent, label, configKey, min, max, step = 0.01) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+      labelEl.innerHTML = `<span>${label}</span><span class="value-display" id="val-${configKey}">${config[configKey]}</span>`;
+
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = min;
+      input.max = max;
+      input.step = step;
+      input.value = config[configKey];
+      input.addEventListener('input', (e) => {
+        config[configKey] = parseFloat(e.target.value);
+        document.getElementById(`val-${configKey}`).textContent =
+          step >= 1 ? config[configKey] : config[configKey].toFixed(2);
+      });
+
+      group.appendChild(labelEl);
+      group.appendChild(input);
+      parent.appendChild(group);
+    }
+
+    function createSelect(parent, label, configKey, options) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+      labelEl.textContent = label;
+
+      const select = document.createElement('select');
+      options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        if (config[configKey] === opt) option.selected = true;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', (e) => {
+        config[configKey] = e.target.value;
+      });
+
+      group.appendChild(labelEl);
+      group.appendChild(select);
+      parent.appendChild(group);
+    }
+
+    function initControls() {
+      // TAB 1: MATRIX
+      const matrixTab = document.getElementById('tab-matrix');
+      matrixTab.innerHTML = '<div class="section-header">⚡ Core Matrix Rain</div>';
+      createSlider(matrixTab, 'Font Size', 'fontSize', 8, 32, 1);
+      createSlider(matrixTab, 'Fall Speed', 'fallSpeed', 0.1, 5, 0.1);
+      createSlider(matrixTab, 'Speed Variation', 'speedVariation', 0, 100, 5);
+      createSlider(matrixTab, 'Column Density', 'columnDensity', 25, 200, 5);
+      createSlider(matrixTab, 'Trail Fade', 'trailFade', 0.01, 0.2, 0.01);
+      createSlider(matrixTab, 'Reset Chance', 'resetChance', 0.1, 10, 0.5);
+
+      matrixTab.innerHTML += '<div class="section-header">🌊 Motion Effects</div>';
+      createToggle(matrixTab, 'Wavy Motion', 'wavyMotion');
+      createSlider(matrixTab, 'Wave Amplitude', 'waveAmplitude', 0, 50, 5);
+      createSelect(matrixTab, 'Direction', 'direction', ['down', 'up', 'left', 'right']);
+
+      // TAB 2: GLITCH
+      const glitchTab = document.getElementById('tab-glitch');
+      glitchTab.innerHTML = '<div class="section-header">💥 Glitch Core</div>';
+      createToggle(glitchTab, 'Glitch Enabled', 'glitchEnabled');
+      createSlider(glitchTab, 'Glitch Intensity', 'glitchIntensity', 0, 0.5, 0.01);
+      createSlider(glitchTab, 'Glitch Frequency', 'glitchFrequency', 1, 50, 1);
+
+      glitchTab.innerHTML += '<div class="section-header">↔️ Directional Glitch</div>';
+      createToggle(glitchTab, 'Horizontal Glitch', 'horizontalGlitch');
+      createSlider(glitchTab, 'H-Glitch Amount', 'horizontalGlitchAmount', 1, 20, 1);
+      createToggle(glitchTab, 'Vertical Glitch', 'verticalGlitch');
+      createSlider(glitchTab, 'V-Glitch Amount', 'verticalGlitchAmount', 1, 20, 1);
+
+      glitchTab.innerHTML += '<div class="section-header">🔲 Block Corruption</div>';
+      createToggle(glitchTab, 'Block Corruption', 'blockCorruption');
+      createSlider(glitchTab, 'Block Size', 'blockSize', 5, 50, 5);
+      createSlider(glitchTab, 'Digital Noise', 'digitalNoise', 0, 1, 0.05);
+
+      // TAB 3: CONSPIRACY
+      const conspiracyTab = document.getElementById('tab-conspiracy');
+      conspiracyTab.innerHTML = '<div class="section-header">👁️ Surveillance Mode</div>';
+      createToggle(conspiracyTab, 'Surveillance Mode', 'surveillanceMode', true);
+      createSlider(conspiracyTab, 'Paranoia Level', 'paranoiaLevel', 0, 10, 1);
+      createToggle(conspiracyTab, 'Security Overlay', 'securityOverlay', true);
+      createToggle(conspiracyTab, 'Timestamp Overlay', 'timestampOverlay');
+      createToggle(conspiracyTab, 'Grid Overlay', 'gridOverlay');
+
+      conspiracyTab.innerHTML += '<div class="section-header">📺 CRT/VHS Effects</div>';
+      createToggle(conspiracyTab, 'CRT Effect', 'crtEffect');
+      createSlider(conspiracyTab, 'CRT Curvature', 'crtCurvature', 0, 10, 1);
+      createToggle(conspiracyTab, 'VHS Tracking', 'vhsTracking', true);
+      createSlider(conspiracyTab, 'VHS Distortion', 'vhsDistortion', 0, 10, 1);
+
+      conspiracyTab.innerHTML += '<div class="section-header">⚡ Artifacts</div>';
+      createToggle(conspiracyTab, 'Screen Artifacts', 'screenArtifacts');
+      createSlider(conspiracyTab, 'Artifact Density', 'artifactDensity', 0, 100, 5);
+      createSlider(conspiracyTab, 'Static Noise', 'staticNoise', 0, 1, 0.05);
+      createSlider(conspiracyTab, 'Signal Interference', 'signalInterference', 0, 10, 1);
+
+      // TAB 4: SYMBOLS
+      const symbolsTab = document.getElementById('tab-symbols');
+      symbolsTab.innerHTML = '<div class="section-header">🔣 Character Sets</div>';
+      createSelect(symbolsTab, 'Character Set', 'characterSet',
+        ['full', 'letters', 'numbers', 'binary', 'katakana', 'symbols', 'custom']);
+      createSlider(symbolsTab, 'Character Change Speed', 'characterChangeSpeed', 10, 200, 10);
+
+      symbolsTab.innerHTML += '<div class="section-header">🔄 Symbol Effects</div>';
+      createToggle(symbolsTab, 'Symbol Rotation', 'symbolRotation');
+      createSlider(symbolsTab, 'Rotation Speed', 'rotationSpeed', 0.1, 5, 0.1);
+      createToggle(symbolsTab, 'Symbol Morphing', 'symbolMorphing');
+      createSlider(symbolsTab, 'Morph Speed', 'morphSpeed', 0.5, 10, 0.5);
+
+      symbolsTab.innerHTML += '<div class="section-header">🔐 Classified</div>';
+      createToggle(symbolsTab, 'Hidden Messages', 'hiddenMessages', true);
+      createSlider(symbolsTab, 'Message Frequency', 'messageFrequency', 1, 20, 1);
+      createToggle(symbolsTab, 'Cipher Mode', 'cipherMode', true);
+
+      // TAB 5: PARTICLES
+      const particlesTab = document.getElementById('tab-particles');
+      particlesTab.innerHTML = '<div class="section-header">✨ Particle System</div>';
+      createToggle(particlesTab, 'Particles Enabled', 'particlesEnabled');
+      createSlider(particlesTab, 'Particle Count', 'particleCount', 10, 200, 10);
+      createSlider(particlesTab, 'Particle Size', 'particleSize', 1, 10, 1);
+      createSlider(particlesTab, 'Particle Speed', 'particleSpeed', 0.1, 5, 0.1);
+
+      particlesTab.innerHTML += '<div class="section-header">💫 Special Effects</div>';
+      createToggle(particlesTab, 'Floating Symbols', 'floatingSymbols');
+      createSlider(particlesTab, 'Symbol Count', 'symbolCount', 5, 50, 5);
+      createToggle(particlesTab, 'Data Fragments', 'dataFragments');
+      createSlider(particlesTab, 'Fragment Count', 'fragmentCount', 5, 30, 5);
+      createToggle(particlesTab, 'Light Particles', 'lightParticles');
+      createSlider(particlesTab, 'Light Intensity', 'lightIntensity', 1, 20, 1);
+
+      // TAB 6: SCREEN FX
+      const screenTab = document.getElementById('tab-screen');
+      screenTab.innerHTML = '<div class="section-header">📺 Screen Effects</div>';
+      createToggle(screenTab, 'Screen Shake', 'screenShake');
+      createSlider(screenTab, 'Shake Intensity', 'shakeIntensity', 0.5, 10, 0.5);
+      createSlider(screenTab, 'Shake Frequency', 'shakeFrequency', 1, 20, 1);
+
+      screenTab.innerHTML += '<div class="section-header">🔍 Distortion</div>';
+      createToggle(screenTab, 'Fisheye Effect', 'fisheyeEffect');
+      createSlider(screenTab, 'Fisheye Strength', 'fisheyeStrength', 0, 10, 1);
+      createToggle(screenTab, 'Zoom Pulse', 'zoomPulse');
+      createSlider(screenTab, 'Zoom Amount', 'zoomAmount', 0, 0.2, 0.01);
+
+      screenTab.innerHTML += '<div class="section-header">⚡ Power Effects</div>';
+      createToggle(screenTab, 'Screen Flicker', 'screenFlicker');
+      createSlider(screenTab, 'Flicker Intensity', 'flickerIntensity', 0, 1, 0.05);
+      createToggle(screenTab, 'Power Surge', 'powerSurge', true);
+      createSlider(screenTab, 'Surge Frequency', 'surgeFrequency', 1, 10, 1);
+
+      // TAB 7: COLOR
+      const colorTab = document.getElementById('tab-color');
+      colorTab.innerHTML = '<div class="section-header">🎨 Color Modes</div>';
+      createSelect(colorTab, 'Color Mode', 'colorMode',
+        ['matrix', 'random', 'thermal', 'night', 'rainbow']);
+      createToggle(colorTab, 'Rainbow Mode', 'rainbow');
+      createToggle(colorTab, 'Thermal Vision', 'thermalVision');
+      createToggle(colorTab, 'Night Vision', 'nightVision');
+      createToggle(colorTab, 'Invert Colors', 'invertColors');
+
+      colorTab.innerHTML += '<div class="section-header">🎚️ Color Grading</div>';
+      createToggle(colorTab, 'Color Grading', 'colorGrading');
+      createSlider(colorTab, 'Exposure', 'exposure', -2, 2, 0.1);
+      createSlider(colorTab, 'Contrast', 'contrast', 0, 2, 0.1);
+      createSlider(colorTab, 'Saturation', 'saturation', 0, 2, 0.1);
+      createSlider(colorTab, 'Hue Shift', 'hueShift', -180, 180, 10);
+
+      // TAB 8: POST-FX
+      const postTab = document.getElementById('tab-post');
+      postTab.innerHTML = '<div class="section-header">🎬 Post-Processing</div>';
+      createToggle(postTab, 'Film Grain', 'filmGrain');
+      createSlider(postTab, 'Grain Intensity', 'grainIntensity', 0, 1, 0.05);
+      createToggle(postTab, 'Vignette', 'vignette');
+      createSlider(postTab, 'Vignette Strength', 'vignetteStrength', 0, 1, 0.05);
+
+      postTab.innerHTML += '<div class="section-header">✨ Advanced FX</div>';
+      createToggle(postTab, 'Chromatic Aberration', 'chromaticAberration');
+      createSlider(postTab, 'Aberration Amount', 'aberrationAmount', 0, 10, 1);
+      createToggle(postTab, 'Bloom', 'bloom');
+      createSlider(postTab, 'Bloom Intensity', 'bloomIntensity', 0, 1, 0.05);
+      createToggle(postTab, 'Scanline Artifacts', 'scanlineArtifacts');
+      createSlider(postTab, 'Scanline Intensity', 'scanlineIntensity', 0, 1, 0.05);
+
+      // TAB 9: INTERACTIVE
+      const interactTab = document.getElementById('tab-interact');
+      interactTab.innerHTML = '<div class="section-header">🖱️ Mouse Effects</div>';
+      createToggle(interactTab, 'Mouse Trails', 'mouseTrails');
+      createSlider(interactTab, 'Trail Length', 'trailLength', 5, 50, 5);
+      createToggle(interactTab, 'Click Effects', 'clickEffects');
+      createSlider(interactTab, 'Click Radius', 'clickRadius', 20, 150, 10);
+
+      interactTab.innerHTML += '<div class="section-header">🎯 Interactive Zones</div>';
+      createToggle(interactTab, 'Reveal Zones', 'revealZones');
+      createSlider(interactTab, 'Reveal Radius', 'revealRadius', 50, 300, 25);
+      createToggle(interactTab, 'Interactive Glitch', 'interactiveGlitch');
+      createSlider(interactTab, 'Glitch Radius', 'glitchRadius', 50, 300, 25);
+
+      // TAB 10: PERFORMANCE
+      const perfTab = document.getElementById('tab-performance');
+      perfTab.innerHTML = '<div class="section-header">⚙️ System Settings</div>';
+      createSelect(perfTab, 'Render Quality', 'renderQuality', ['low', 'medium', 'high', 'ultra']);
+      createSlider(perfTab, 'FPS Limit', 'fpsLimit', 30, 60, 10);
+      createToggle(perfTab, 'Optimize Memory', 'optimizeMemory');
+      createToggle(perfTab, 'Low Power Mode', 'lowPowerMode');
+      createToggle(perfTab, 'GPU Acceleration', 'gpuAcceleration');
+      createToggle(perfTab, 'Debug Mode', 'debugMode');
+    }
+
+    // ============================================
+    // PRESETS
+    // ============================================
+    const presets = {
+      'CLASSIC MATRIX': {
+        colorMode: 'matrix',
+        primaryColor: '#00ff41',
+        fallSpeed: 1,
+        glitchIntensity: 0.05,
+        characterSet: 'full'
+      },
+      'PARANOIA': {
+        surveillanceMode: true,
+        paranoiaLevel: 8,
+        glitchIntensity: 0.15,
+        screenShake: true,
+        shakeIntensity: 3,
+        staticNoise: 0.2,
+        colorMode: 'random'
+      },
+      'THERMAL SCAN': {
+        thermalVision: true,
+        surveillanceMode: true,
+        securityOverlay: true,
+        timestampOverlay: true,
+        gridOverlay: true,
+        scannerEffect: true
+      },
+      'NIGHT OPS': {
+        nightVision: true,
+        surveillanceMode: true,
+        particlesEnabled: true,
+        filmGrain: true,
+        vignette: true,
+        characterSet: 'numbers'
+      },
+      'GLITCH CHAOS': {
+        glitchEnabled: true,
+        glitchIntensity: 0.3,
+        horizontalGlitch: true,
+        verticalGlitch: true,
+        blockCorruption: true,
+        screenShake: true,
+        rainbow: true
+      },
+      'VHS TAPE': {
+        vhsTracking: true,
+        vhsDistortion: 7,
+        filmGrain: true,
+        grainIntensity: 0.3,
+        scanlineArtifacts: true,
+        screenFlicker: true
+      },
+      'CLASSIFIED': {
+        surveillanceMode: true,
+        hiddenMessages: true,
+        cipherMode: true,
+        securityOverlay: true,
+        dataCorruption: 5,
+        screenArtifacts: true
+      },
+      'BINARY STORM': {
+        characterSet: 'binary',
+        fallSpeed: 2.5,
+        columnDensity: 150,
+        glitchIntensity: 0.2,
+        particlesEnabled: true,
+        rainbow: true
+      },
+      'CONSPIRACY': {
+        paranoiaLevel: 10,
+        surveillanceMode: true,
+        hiddenMessages: true,
+        cipherMode: true,
+        vhsTracking: true,
+        filmGrain: true,
+        screenArtifacts: true,
+        timestampOverlay: true
+      },
+      'DIGITAL RAIN': {
+        fallSpeed: 1.5,
+        columnDensity: 120,
+        wavyMotion: true,
+        particlesEnabled: true,
+        bloom: true,
+        characterSet: 'katakana'
+      },
+      'POWER SURGE': {
+        powerSurge: true,
+        screenFlicker: true,
+        horizontalGlitch: true,
+        verticalGlitch: true,
+        staticNoise: 0.4,
+        glitchIntensity: 0.25
+      },
+      'SURVEILLANCE': {
+        surveillanceMode: true,
+        securityOverlay: true,
+        timestampOverlay: true,
+        gridOverlay: true,
+        crtEffect: true,
+        filmGrain: true,
+        vignette: true
+      }
+    };
+
+    function loadPreset(name) {
+      Object.assign(config, presets[name]);
+      // Refresh all controls
+      document.querySelectorAll('input[type="range"]').forEach(input => {
+        const key = input.parentElement.parentElement.querySelector('.value-display')?.id.replace('val-', '');
+        if (key && config[key] !== undefined) {
+          input.value = config[key];
+          const display = document.getElementById(`val-${key}`);
+          if (display) {
+            const step = parseFloat(input.step) || 0.01;
+            display.textContent = step >= 1 ? config[key] : config[key].toFixed(2);
+          }
+        }
+      });
+      document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        const parent = input.parentElement.parentElement;
+        const text = parent.textContent.toLowerCase().replace(/\s+/g, '');
+        for (let key in config) {
+          if (key.toLowerCase().includes(text.substr(0, 8)) && typeof config[key] === 'boolean') {
+            input.checked = config[key];
+            break;
+          }
+        }
+      });
+    }
+
+    function initPresets() {
+      const presetsDiv = document.getElementById('presets');
+      Object.keys(presets).forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = name.includes('CLASSIFIED') || name.includes('CONSPIRACY')
+          ? 'preset-btn classified'
+          : 'preset-btn';
+        btn.textContent = name;
+        btn.onclick = () => loadPreset(name);
+        presetsDiv.appendChild(btn);
+      });
+    }
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function toggleControls() {
+      document.getElementById('controls').classList.toggle('hidden');
+    }
+
+    function exportConfig() {
+      const json = JSON.stringify(config, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'matrix-conspiracy-config.json';
+      a.click();
+    }
+
+    function importConfig(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const imported = JSON.parse(e.target.result);
+            Object.assign(config, imported);
+            alert('Configuration imported successfully!');
+          } catch (err) {
+            alert('Error importing configuration: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function resetToDefaults() {
+      if (confirm('Reset all parameters to defaults?')) {
+        location.reload();
+      }
+    }
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
+    initControls();
+    initPresets();
+    animate();
+
+    console.log('🌑 MATRIX CONSPIRACY: HYPER ULTRA LOADED!');
+    console.log('👁️ 150+ parameters | Surveillance aesthetic');
+    console.log('⚠️ CLASSIFIED ACCESS GRANTED');
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+# Glitch Effect Template
+# Creates digital glitch/cyberpunk aesthetic animations
+
+name: "Digital Glitch Effect"
+description: "Create glitchy, cyberpunk-style animations with RGB shift, scan lines, and digital artifacts"
+version: "1.0.0"
+category: "creative-effects"
+
+# Pipeline: video → apply glitch effects → color manipulation → optimize
+pipeline:
+  steps:
+    - tool: "ffmpeg"
+      operation: "apply_filters"
+      input: "{{source_path}}"
+      output: "temp_glitched.mp4"
+      params:
+        filters:
+          - name: "rgbashift"
+            params:
+              rh: "{{rgb_shift_red|10}}"
+              gh: "{{rgb_shift_green|-10}}"
+              bh: "{{rgb_shift_blue|5}}"
+          - name: "noise"
+            params:
+              alls: "{{noise_strength|20}}"
+          - name: "drawbox"  # Scan lines
+            params:
+              y: "{{scanline_position}}"
+              color: "black@0.3"
+              thickness: 2
+          - name: "hue"
+            params:
+              s: "{{saturation|1.5}}"
+
+    - tool: "gifcurry"
+      operation: "convert_to_gif"
+      input: "temp_glitched.mp4"
+      output: "temp_glitch.gif"
+      params:
+        width: "{{width|800}}"
+        height: "{{height|600}}"
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|3}}"
+        quality: 85
+        fps: "{{fps|15}}"
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_glitch.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 30
+
+# Glitch style presets
+presets:
+  subtle:
+    description: "Subtle glitch (minimal RGB shift, professional)"
+    rgb_shift_red: 3
+    rgb_shift_green: -3
+    rgb_shift_blue: 2
+    noise_strength: 10
+    saturation: 1.2
+    fps: 24
+    expected_size: "3-5MB"
+    processing_time: "60s"
+
+  cyberpunk:
+    description: "Heavy glitch with neon colors (cyberpunk aesthetic)"
+    rgb_shift_red: 15
+    rgb_shift_green: -15
+    rgb_shift_blue: 10
+    noise_strength: 30
+    saturation: 2.0
+    fps: 15
+    color_mode: "neon"
+    expected_size: "4-7MB"
+    processing_time: "90s"
+
+  vhs-damage:
+    description: "VHS tape damage aesthetic (horizontal artifacts)"
+    rgb_shift_red: 8
+    rgb_shift_green: -12
+    rgb_shift_blue: 6
+    noise_strength: 40
+    saturation: 0.8
+    scanlines: true
+    expected_size: "3-6MB"
+    processing_time: "80s"
+
+  data-corruption:
+    description: "Extreme data corruption effect (pixel sorting, heavy noise)"
+    rgb_shift_red: 25
+    rgb_shift_green: -20
+    rgb_shift_blue: 15
+    noise_strength: 60
+    saturation: 1.8
+    fps: 12
+    expected_size: "5-8MB"
+    processing_time: "120s"
+
+  glitch-loop:
+    description: "Seamlessly looping glitch (perfect for backgrounds)"
+    rgb_shift_red: 10
+    rgb_shift_green: -10
+    rgb_shift_blue: 5
+    noise_strength: 25
+    saturation: 1.5
+    loop_perfect: true
+    expected_size: "4-6MB"
+    processing_time: "100s"
+
+# Variable definitions
+variables:
+  source_path:
+    type: "file"
+    required: true
+    description: "Source video or image file"
+
+  rgb_shift_red:
+    type: "integer"
+    required: false
+    default: 10
+    description: "Red channel shift amount (pixels)"
+
+  rgb_shift_green:
+    type: "integer"
+    required: false
+    default: -10
+    description: "Green channel shift amount (pixels)"
+
+  rgb_shift_blue:
+    type: "integer"
+    required: false
+    default: 5
+    description: "Blue channel shift amount (pixels)"
+
+  noise_strength:
+    type: "integer"
+    required: false
+    default: 20
+    description: "Digital noise strength (0-100)"
+
+  saturation:
+    type: "float"
+    required: false
+    default: 1.5
+    description: "Color saturation multiplier"
+
+  duration:
+    type: "float"
+    required: false
+    default: 3
+    description: "Output duration in seconds"
+
+  fps:
+    type: "integer"
+    required: false
+    default: 15
+    description: "Frames per second (lower = choppier, more glitchy)"
+
+# Output validation
+validation:
+  max_file_size_mb: 15
+  duration:
+    min: 1
+    max: 10
+  format: "GIF"
+
+# Metadata
+tags:
+  - glitch
+  - cyberpunk
+  - vaporwave
+  - aesthetic
+  - digital-art
+  - creative
+  - rgb-shift
+  - corrupted
+
+use_cases:
+  - "Music video effects"
+  - "Social media content (cyberpunk aesthetic)"
+  - "Album art/cover animations"
+  - "Gaming highlights with glitch transitions"
+  - "Tech product launches (futuristic vibe)"
+  - "Vaporwave/aesthetic content"
+  - "Error screen animations"
+  - "Cybersecurity/hacking themed content"
+
+style_references:
+  - "Cyberpunk 2077 UI"
+  - "The Matrix digital rain"
+  - "Blade Runner 2049 holographics"
+  - "Vaporwave aesthetics"
+  - "90s VHS corruption"
+
+best_practices:
+  - "Less is more with glitch effects"
+  - "Match effect intensity to content tone"
+  - "Subtle glitches work better for professional content"
+  - "Heavy glitches great for artistic/creative work"
+  - "Test on different screens (colors may vary)"
+  - "Lower FPS enhances glitchy feel"
+  - "Combine with neon/bright colors for cyberpunk"

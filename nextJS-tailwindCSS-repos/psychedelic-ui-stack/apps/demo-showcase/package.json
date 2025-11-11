@@ -1,0 +1,29 @@
+{
+  "name": "@psychedelic-ui/demo-showcase",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@psychedelic-ui/core-components": "workspace:*",
+    "@psychedelic-ui/conspiracy-establishment": "workspace:*",
+    "@psychedelic-ui/organic-harmony": "workspace:*",
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "framer-motion": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.3"
+  }
+}

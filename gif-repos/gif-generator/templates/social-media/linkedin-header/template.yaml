@@ -1,0 +1,98 @@
+# LinkedIn Article Header Template
+# Creates wide header GIF for LinkedIn articles and posts
+
+name: "LinkedIn Article Header"
+description: "Wide animated header GIF for LinkedIn articles, posts, and company pages"
+version: "1.0.0"
+category: "social-media"
+
+# Pipeline: video → wide crop → professional overlay → optimize
+pipeline:
+  - tool: "gifcurry"
+    config:
+      start_time: 0
+      end_time: 6  # LinkedIn optimal: 3-6 seconds
+      width: 1200
+      height: 627  # LinkedIn recommended aspect ratio
+      fps: 12      # Professional, not too fast
+      quality: 100
+      text_overlay:
+        text: "{{headline}}"
+        position: "top"
+        font: "Helvetica-Bold"
+        font_size: 64
+        fill_color: [255, 255, 255, 255]
+        outline_color: [0, 47, 108, 255]  # LinkedIn blue
+        outline_size: 3
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 128
+      lossy: 70
+
+assets:
+  required:
+    - name: "video"
+      type: "video/*"
+      description: "Header video content"
+
+  optional:
+    - name: "company_logo"
+      type: "image/*"
+      description: "Company logo for branding"
+
+variables:
+  headline:
+    type: "string"
+    default: "Professional Insight"
+    description: "Article headline or key message"
+
+presets:
+  article:  # For long-form articles
+    gifcurry:
+      width: 1200
+      height: 627
+      fps: 12
+      end_time: 6
+    gifsicle:
+      colors: 128
+      lossy: 70
+
+  post:  # For regular posts
+    gifcurry:
+      width: 1200
+      height: 675
+      fps: 15
+      end_time: 4
+    gifsicle:
+      colors: 128
+      lossy: 80
+
+  banner:  # Company page banner
+    gifcurry:
+      width: 1536
+      height: 768
+      fps: 10
+      end_time: 8
+    gifsicle:
+      colors: 256
+      lossy: 60
+
+validation:
+  max_duration: 10
+  max_size_mb: 5   # LinkedIn's limit
+  min_width: 800
+  max_width: 2000
+  required_format: "gif"
+
+metadata:
+  author: "gif-repos generator"
+  tags: [social-media, linkedin, professional, business, header]
+  platform: "linkedin"
+  use_cases:
+    - "Article headers"
+    - "Company updates"
+    - "Thought leadership"
+    - "Professional announcements"
+    - "Event promotions"

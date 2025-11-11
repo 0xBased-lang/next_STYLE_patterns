@@ -1,0 +1,337 @@
+# 360 Product View Template
+# Creates rotating 360-degree product showcase GIFs for e-commerce
+
+name: "360° Product Showcase"
+description: "Create smooth 360-degree rotating product views for e-commerce listings"
+version: "1.0.0"
+category: "ecommerce"
+
+# Pipeline: video/images → stitch frames → smooth rotation → optimize
+pipeline:
+  steps:
+    - tool: "ffmpeg"
+      operation: "prepare_360_video"
+      input: "{{source_path}}"
+      output: "temp_360.mp4"
+      params:
+        filters:
+          - name: "crop"  # Remove background/padding
+            params:
+              width: "{{crop_width|auto}}"
+              height: "{{crop_height|auto}}"
+              x: "center"
+              y: "center"
+          - name: "scale"
+            params:
+              width: "{{width|800}}"
+              height: "{{height|800}}"
+          - name: "minterpolate"  # Smooth frame interpolation
+            params:
+              fps: "{{fps|30}}"
+              mode: "blend"
+
+    - tool: "gifcurry"
+      operation: "convert_to_gif"
+      input: "temp_360.mp4"
+      output: "temp_product.gif"
+      params:
+        width: "{{width|800}}"
+        height: "{{height|800}}"
+        duration: "{{duration|4}}"
+        quality: 90
+        loop: 0  # Infinite loop
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_product.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 20
+
+# E-commerce platform presets
+presets:
+  shopify:
+    description: "Shopify product listing (800×800, clean)"
+    width: 800
+    height: 800
+    duration: 4
+    fps: 30
+    rotation_speed: "medium"
+    expected_size: "3-6MB"
+    processing_time: "50s"
+
+  amazon:
+    description: "Amazon listing (1000×1000, high quality)"
+    width: 1000
+    height: 1000
+    duration: 5
+    fps: 30
+    rotation_speed: "slow"
+    expected_size: "5-10MB"
+    processing_time: "75s"
+
+  etsy:
+    description: "Etsy product showcase (794×794, artistic)"
+    width: 794
+    height: 794
+    duration: 4
+    fps: 24
+    rotation_speed: "medium"
+    expected_size: "3-7MB"
+    processing_time: "60s"
+
+  instagram-shop:
+    description: "Instagram Shopping (1080×1080, mobile-optimized)"
+    width: 1080
+    height: 1080
+    duration: 3
+    fps: 30
+    rotation_speed: "fast"
+    expected_size: "4-8MB"
+    processing_time: "65s"
+
+  quick-preview:
+    description: "Quick product preview (500×500, lightweight)"
+    width: 500
+    height: 500
+    duration: 3
+    fps: 20
+    rotation_speed: "fast"
+    expected_size: "1-3MB"
+    processing_time: "35s"
+
+# Variable definitions
+variables:
+  source_path:
+    type: "file"
+    required: true
+    description: "360-degree video or image sequence"
+
+  width:
+    type: "integer"
+    required: false
+    default: 800
+    description: "Output width in pixels (square recommended)"
+
+  height:
+    type: "integer"
+    required: false
+    default: 800
+    description: "Output height in pixels"
+
+  duration:
+    type: "float"
+    required: false
+    default: 4
+    description: "Rotation duration in seconds"
+
+  fps:
+    type: "integer"
+    required: false
+    default: 30
+    description: "Frames per second (higher = smoother)"
+
+  rotation_speed:
+    type: "string"
+    required: false
+    default: "medium"
+    options: ["slow", "medium", "fast"]
+    description: "Rotation speed"
+
+  crop_width:
+    type: "string"
+    required: false
+    default: "auto"
+    description: "Crop width (auto-detect product)"
+
+  crop_height:
+    type: "string"
+    required: false
+    default: "auto"
+    description: "Crop height (auto-detect product)"
+
+# Output validation
+validation:
+  max_file_size_mb: 15
+  required_dimensions:
+    aspect_ratio: "1:1"
+  duration:
+    min: 2
+    max: 10
+  format: "GIF"
+
+# E-commerce platform requirements
+platforms:
+  shopify:
+    max_size: "20MB"
+    recommended_dimensions: "800×800 or 1024×1024"
+    aspect_ratio: "1:1 (square)"
+    formats: "GIF, MP4, JPG"
+
+  amazon:
+    max_size: "10MB"
+    recommended_dimensions: "1000×1000 or 1500×1500"
+    aspect_ratio: "1:1 (square preferred)"
+    formats: "GIF, JPG"
+
+  etsy:
+    max_size: "10MB"
+    recommended_dimensions: "794×794"
+    aspect_ratio: "1:1 (square)"
+    formats: "GIF, JPG, PNG"
+
+  ebay:
+    max_size: "12MB"
+    recommended_dimensions: "1600×1600"
+    aspect_ratio: "1:1 (square)"
+    formats: "GIF, JPG"
+
+# Metadata
+tags:
+  - ecommerce
+  - product
+  - 360-view
+  - rotating
+  - showcase
+  - shopify
+  - amazon
+  - product-photography
+
+use_cases:
+  - "E-commerce product listings (primary image)"
+  - "Product detail pages (interactive view)"
+  - "Social media product promotion"
+  - "Email marketing (product highlights)"
+  - "Online catalogs"
+  - "Wholesale/B2B presentations"
+  - "Mobile shopping apps"
+  - "Virtual showrooms"
+
+product_types:
+  shoes:
+    notes: "Show all angles, especially sole and side"
+    duration: "4-5s"
+    rotation: "slow-medium"
+
+  jewelry:
+    notes: "Highlight details, sparkle"
+    duration: "3-4s"
+    rotation: "slow"
+
+  electronics:
+    notes: "Show all ports, buttons, features"
+    duration: "5-6s"
+    rotation: "medium"
+
+  furniture:
+    notes: "Show scale, dimensions, all sides"
+    duration: "5-7s"
+    rotation: "medium-slow"
+
+  apparel:
+    notes: "Front, back, side views clearly"
+    duration: "4-5s"
+    rotation: "medium"
+
+  toys:
+    notes: "Show playability, features"
+    duration: "3-4s"
+    rotation: "medium-fast"
+
+best_practices:
+  photography:
+    - "Use turntable or rotate camera around product"
+    - "Consistent lighting (no shadows that move)"
+    - "Clean, simple background (white or transparent)"
+    - "Product centered in frame"
+    - "Shoot at least 24-36 frames for smooth rotation"
+
+  technical:
+    - "Square aspect ratio (1:1) works best"
+    - "30 FPS for smooth, professional look"
+    - "4-6 seconds optimal duration"
+    - "Infinite loop (seamless rotation)"
+    - "Optimize for fast loading"
+
+  e-commerce:
+    - "Make main product image (not secondary)"
+    - "Show all important angles"
+    - "Match brand aesthetic"
+    - "Test on mobile (most traffic)"
+    - "Consistent style across catalog"
+
+# Shooting guide
+shooting_setup:
+  equipment:
+    essential:
+      - "Smartphone or camera"
+      - "Turntable (manual or motorized)"
+      - "Good lighting (softbox or window)"
+      - "Tripod (keep camera steady)"
+
+    professional:
+      - "DSLR camera"
+      - "Motorized turntable"
+      - "Three-point lighting"
+      - "Remote trigger"
+
+  process:
+    - "Set up turntable and lighting"
+    - "Place product on turntable (centered)"
+    - "Set camera at product height"
+    - "Rotate product 360°, capture frames"
+    - "24-36 evenly spaced shots minimum"
+    - "Process in software or use template"
+
+rotation_quality:
+  poor:
+    frames: "8-12"
+    result: "Choppy, unprofessional"
+
+  acceptable:
+    frames: "16-24"
+    result: "Decent, budget-friendly"
+
+  professional:
+    frames: "24-36"
+    result: "Smooth, high-end look"
+
+  premium:
+    frames: "36-72"
+    result: "Ultra-smooth, luxury brand quality"
+
+common_issues:
+  jerky_rotation:
+    problem: "Rotation looks choppy"
+    solution: "Shoot more frames (36+) or use frame interpolation"
+
+  moving_shadows:
+    problem: "Shadows rotate with product"
+    solution: "Use 360° even lighting or lightbox"
+
+  product_off_center:
+    problem: "Product wobbles during rotation"
+    solution: "Center product precisely on turntable"
+
+  file_too_large:
+    problem: "GIF exceeds platform limits"
+    solution: "Reduce resolution, lower FPS, or shorten duration"
+
+  background_not_clean:
+    problem: "Distracting background"
+    solution: "Use white seamless backdrop or remove background with AI"
+
+conversion_tools:
+  from_images:
+    input: "24-36 JPEG images"
+    command: "Use image sequence input"
+
+  from_video:
+    input: "360° rotation video"
+    command: "Extract frames, process"
+
+  from_3d_model:
+    input: "3D model file (OBJ, FBX)"
+    command: "Render 360° rotation, export frames"

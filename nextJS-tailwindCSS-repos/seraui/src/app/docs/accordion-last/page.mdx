@@ -1,0 +1,104 @@
+export const metadata = {
+    title: 'React Accordion Last Component | Sera UI',
+    description: 'Advanced accordion component with enhanced styling and last-item specific behaviors. Perfect for FAQ sections and content organization with special last-item handling.',
+    keywords: [
+        'React accordion last',
+        'advanced accordion',
+        'FAQ accordion',
+        'accordion with styling',
+        'last item accordion',
+        'enhanced accordion',
+        'Tailwind CSS accordion',
+        'UI accordion library',
+        'accordion component',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Accordion Last Component | Sera UI',
+        description: 'Advanced React accordion component with enhanced styling and last-item specific behaviors for better content organization.',
+        type: 'article',
+        url: '/docs/accordion-last',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Accordion Last Component | Sera UI',
+        description: 'Advanced React accordion component with enhanced styling and last-item specific behaviors for better content organization.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/accordion-last',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import AccordionLast from "./accordion-last.tsx"
+
+
+
+# Accordion Last <AI dir="left"/>
+A minimalistic accordion component with last item styling designed with React and Tailwind CSS.
+
+## Preview
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AccordionLast />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/accordion-last/accordion-last.tsx" />
+  </TabsContent>
+</Tabs>
+
+## 🚀 Installation
+You can add this component to your project using the CLI or by manually copying the code.
+
+<Tabs defaultValue="cli" className="">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <Cli command={`add accordion-last.json`} />
+  </TabsContent>
+
+  <TabsContent value="manual">
+    <CodeBlock filePath="src/app/docs/accordion-last/accordion-last.tsx" />
+  </TabsContent>
+</Tabs>
+
+## 🛠️ Usage
+
+After installation, import and use the accordion component in your React application:
+
+```tsx
+import AccordionLast from './accordion-last';
+
+function App() {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <AccordionLast />
+    </div>
+  );
+}
+```

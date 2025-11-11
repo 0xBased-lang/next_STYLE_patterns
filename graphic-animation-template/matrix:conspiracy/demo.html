@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FallingGlitch Demo - Matrix Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: black;
+            color: #00ff41;
+            overflow: hidden;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+            z-index: 10;
+            max-width: 300px;
+        }
+
+        .controls h2 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #00ff41;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #00cc33;
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 5px;
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+        }
+
+        .control-group input[type="range"] {
+            cursor: pointer;
+        }
+
+        .preset-btn {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 8px 12px;
+            margin: 5px 5px 5px 0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 255, 65, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+            z-index: 10;
+            font-size: 12px;
+        }
+
+        .info h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            z-index: 11;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(0, 255, 65, 0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                top: 60px;
+                right: 10px;
+                max-width: 250px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <button class="toggle-btn" onclick="toggleControls()">⚙️ CONTROLS</button>
+
+    <div class="controls" id="controls">
+        <h2>🌑 MATRIX CONTROLS</h2>
+
+        <div class="control-group">
+            <label>PRESET THEMES:</label>
+            <button class="preset-btn" onclick="applyPreset('matrix')">Matrix</button>
+            <button class="preset-btn" onclick="applyPreset('cyberpunk')">Cyberpunk</button>
+            <button class="preset-btn" onclick="applyPreset('conspiracy')">Conspiracy</button>
+            <button class="preset-btn" onclick="applyPreset('fire')">Fire</button>
+            <button class="preset-btn" onclick="applyPreset('ice')">Ice</button>
+        </div>
+
+        <div class="control-group">
+            <label for="animationMode">ANIMATION MODE:</label>
+            <select id="animationMode" oninput="updateMode(this.value)">
+                <option value="falling" selected>Falling (classic rain)</option>
+                <option value="static">Static (transform in place)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="fallSpeed">FALL SPEED: <span id="speedValue">1.0</span>x</label>
+            <input type="range" id="fallSpeed" min="0.5" max="3" step="0.1" value="1" oninput="updateSpeed(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="glitchIntensity">GLITCH INTENSITY: <span id="glitchValue">5</span>%</label>
+            <input type="range" id="glitchIntensity" min="1" max="30" step="1" value="5" oninput="updateGlitch(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="fontSize">FONT SIZE: <span id="fontValue">14</span>px</label>
+            <input type="range" id="fontSize" min="10" max="24" step="2" value="14" oninput="updateFont(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="density">DENSITY: <span id="densityValue">70</span>%</label>
+            <input type="range" id="density" min="1" max="100" step="1" value="70" oninput="updateDensity(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="saturation">SATURATION: <span id="saturationValue">100</span>%</label>
+            <input type="range" id="saturation" min="0" max="200" step="5" value="100" oninput="updateSaturation(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="blur">BLUR: <span id="blurValue">0</span> px</label>
+            <input type="range" id="blur" min="0" max="8" step="1" value="0" oninput="updateBlur(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="staticUpdateRate">STATIC UPDATE RATE: <span id="staticRateValue">8</span> Hz</label>
+            <input type="range" id="staticUpdateRate" min="1" max="30" step="1" value="8" oninput="updateStaticRate(this.value)">
+        </div>
+
+        <div class="control-group">
+            <label for="staticChange">STATIC CHANGE: <span id="staticChangeValue">10</span>%/tick</label>
+            <input type="range" id="staticChange" min="1" max="100" step="1" value="10" oninput="updateStaticChange(this.value)">
+        </div>
+
+        
+    </div>
+
+    <div class="info">
+        <h1>🌑 FALLING GLITCH DEMO</h1>
+        <p>Matrix-style animated background</p>
+        <p style="margin-top: 10px; opacity: 0.7;">
+            Use controls to customize<br>
+            Press ⚙️ to toggle menu
+        </p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Configuration
+        let config = {
+            fontSize: 14,
+            fallSpeed: 1,
+            glitchIntensity: 0.05,
+            glitchColors: ['#00ff41', '#06b6d4', '#9333ea', '#f59e0b'],
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+            animationMode: 'falling',
+            staticUpdateRate: 8, // Hz
+            staticChangePercent: 10, // % of cells changed each tick
+            densityPercent: 70, // % filled (columns in falling, cells in static)
+            saturationPercent: 100, // canvas filter saturate
+            blurPx: 0 // canvas filter blur
+        };
+
+        // Characters
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~`アイウエオカキクケコ'.split('');
+
+        // Canvas setup
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        }
+
+        let drops = [];
+        let colors = [];
+        let gridChars = [];
+        let gridColors = [];
+        let columns = 0;
+        let rows = 0;
+        let lastGridUpdate = 0;
+        let prevTs = 0;
+        let staticAccumulatorMs = 0;
+        let forceFullRedraw = false;
+        let activeColumns = [];
+        let gridMask = [];
+
+        // Safe no-op filter applier to avoid runtime errors when adjusting sliders
+        function applyCanvasFilter() {
+            // Drawing paths set filters per-frame; keep this as a no-op to prevent crashes
+        }
+
+        
+
+        function init() {
+            columns = Math.floor(canvas.width / config.fontSize);
+            rows = Math.floor(canvas.height / config.fontSize);
+
+            if (config.animationMode === 'falling') {
+                drops = Array(columns).fill(1);
+                colors = Array(columns).fill(0).map(() =>
+                    config.glitchColors[Math.floor(Math.random() * config.glitchColors.length)]
+                );
+                const colProb = Math.min(1, Math.max(0, config.densityPercent / 100));
+                activeColumns = Array(columns).fill(false).map(() => Math.random() < colProb);
+                // Ensure at least one column is active
+                if (!activeColumns.some(Boolean) && columns > 0) {
+                    activeColumns[Math.floor(Math.random() * columns)] = true;
+                }
+                applyCanvasFilter();
+            } else {
+                // Initialize static grid with random chars and colors
+                gridChars = Array.from({ length: rows }, () =>
+                    Array.from({ length: columns }, () => chars[Math.floor(Math.random() * chars.length)])
+                );
+                gridColors = Array.from({ length: rows }, () =>
+                    Array.from({ length: columns }, () =>
+                        config.glitchColors[Math.floor(Math.random() * config.glitchColors.length)]
+                    )
+                );
+                const cellProb = Math.min(1, Math.max(0, config.densityPercent / 100));
+                gridMask = Array.from({ length: rows }, () =>
+                    Array.from({ length: columns }, () => Math.random() < cellProb)
+                );
+                // Ensure at least one cell is active
+                if (rows > 0 && columns > 0) {
+                    let any = false;
+                    outer: for (let r = 0; r < rows; r++) {
+                        for (let c = 0; c < columns; c++) { if (gridMask[r][c]) { any = true; break outer; } }
+                    }
+                    if (!any) {
+                        gridMask[Math.floor(Math.random() * rows)][Math.floor(Math.random() * columns)] = true;
+                    }
+                }
+                lastGridUpdate = 0;
+                prevTs = 0;
+                staticAccumulatorMs = 0;
+                forceFullRedraw = true;
+                applyCanvasFilter();
+            }
+        }
+
+        // Animation
+        function draw(ts) {
+            ts = ts || 0;
+            const delta = prevTs ? (ts - prevTs) : 16.67; // approx 60fps on first frame
+            prevTs = ts;
+
+            if (config.animationMode === 'falling') {
+                // Clear background each frame for falling mode
+                ctx.filter = 'none';
+                ctx.fillStyle = config.backgroundColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = `${config.fontSize}px monospace`;
+                for (let i = 0; i < drops.length; i++) {
+                    if (!activeColumns[i]) continue;
+                    const char = chars[Math.floor(Math.random() * chars.length)];
+                    const x = i * config.fontSize;
+                    const y = drops[i] * config.fontSize;
+
+                    if (Math.random() < config.glitchIntensity) {
+                        colors[i] = config.glitchColors[Math.floor(Math.random() * config.glitchColors.length)];
+                    }
+
+                    ctx.fillStyle = colors[i];
+                    ctx.font = `${config.fontSize}px monospace`;
+                    ctx.fillText(char, x, y);
+
+                    if (y > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+
+                    drops[i] += config.fallSpeed;
+                }
+            } else {
+                // STATIC MODE
+                // Full redraw path (initialization or visual filter/density changes)
+                if (forceFullRedraw) {
+                    // Clear entire canvas to black once
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // Draw whole grid
+                    ctx.font = `${config.fontSize}px monospace`;
+                    const hasMaskFull = Array.isArray(gridMask) && gridMask.length === rows && rows > 0 && Array.isArray(gridMask[0]) && gridMask[0].length === columns;
+                    for (let r = 0; r < rows; r++) {
+                        for (let c = 0; c < columns; c++) {
+                            if (hasMaskFull && !gridMask[r][c]) continue;
+                            ctx.fillStyle = gridColors[r][c];
+                            const x = c * config.fontSize;
+                            const y = (r + 1) * config.fontSize;
+                            ctx.fillText(gridChars[r][c], x, y);
+                        }
+                    }
+                    forceFullRedraw = false;
+                }
+
+                // Update grid at configured rate (and redraw only changed cells)
+                const baseRate = Math.max(1, Number.isFinite(config.staticUpdateRate) ? config.staticUpdateRate : 8);
+                const densityFactor = Math.min(1, Math.max(0, config.densityPercent / 100));
+                const blurFactor = Math.min(1.5, Math.max(0, config.blurPx / 4));
+                const satFactor = Math.max(0, (config.saturationPercent - 100) / 100);
+                const loadFactor = 1 + densityFactor * 1.5 + blurFactor * 0.8 + satFactor * 0.5;
+                const interval = (1000 / baseRate) * loadFactor;
+                staticAccumulatorMs += delta;
+                let changedCells = null;
+                // Cap ticks per frame to prevent long catch-up loops
+                let processedTicks = 0;
+                const maxTicksPerFrame = 2;
+                while (staticAccumulatorMs >= interval && processedTicks < maxTicksPerFrame) {
+                    const changeProb = Math.min(1, Math.max(0, config.staticChangePercent / 100));
+                    const hasMask = Array.isArray(gridMask) && gridMask.length === rows && rows > 0 && Array.isArray(gridMask[0]) && gridMask[0].length === columns;
+                    if (changedCells === null) changedCells = [];
+                    const totalCells = rows * columns;
+                    const maxChangesPerTick = Math.min(1500, Math.max(100, Math.floor(totalCells * (0.03 + densityFactor * 0.05))));
+                    let changesSoFar = 0;
+                    let stop = false;
+                    for (let r = 0; r < rows && !stop; r++) {
+                        for (let c = 0; c < columns; c++) {
+                            if (hasMask && !gridMask[r][c]) continue;
+                            let cellChanged = false;
+                            if (Math.random() < changeProb) {
+                                gridChars[r][c] = chars[Math.floor(Math.random() * chars.length)];
+                                cellChanged = true;
+                            }
+                            if (Math.random() < config.glitchIntensity) {
+                                gridColors[r][c] = config.glitchColors[Math.floor(Math.random() * config.glitchColors.length)];
+                                cellChanged = true;
+                            }
+                            if (cellChanged) {
+                                changedCells.push([r, c]);
+                                changesSoFar++;
+                                if (changesSoFar >= maxChangesPerTick) { stop = true; break; }
+                            }
+                        }
+                    }
+                    staticAccumulatorMs -= interval;
+                    lastGridUpdate = ts;
+                    processedTicks++;
+                }
+                // Prevent runaway accumulator
+                if (staticAccumulatorMs > interval * maxTicksPerFrame) {
+                    staticAccumulatorMs = interval * (maxTicksPerFrame - 1);
+                }
+
+                // Draw only changed cells (or fallback to full masked redraw if too many)
+                if (changedCells && changedCells.length) {
+                    const totalCells = rows * columns;
+                    const tooManyChanges = totalCells > 0 && changedCells.length > totalCells * 0.25;
+                    if (tooManyChanges) {
+                        // Fallback: masked full redraw once
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.font = `${config.fontSize}px monospace`;
+                        const hasMask = Array.isArray(gridMask) && gridMask.length === rows && rows > 0 && Array.isArray(gridMask[0]) && gridMask[0].length === columns;
+                        for (let r = 0; r < rows; r++) {
+                            for (let c = 0; c < columns; c++) {
+                                if (hasMask && !gridMask[r][c]) continue;
+                                ctx.fillStyle = gridColors[r][c];
+                                const x = c * config.fontSize;
+                                const y = (r + 1) * config.fontSize;
+                                ctx.fillText(gridChars[r][c], x, y);
+                            }
+                        }
+                    } else {
+                    // Clear changed cells in one pass (no filter)
+                    ctx.fillStyle = '#000';
+                    for (let i = 0; i < changedCells.length; i++) {
+                        const r = changedCells[i][0];
+                        const c = changedCells[i][1];
+                        const x = c * config.fontSize;
+                        const y = (r + 1) * config.fontSize;
+                        ctx.fillRect(x, y - config.fontSize, config.fontSize, config.fontSize);
+                    }
+                    // Draw changed cells in one pass
+                    ctx.font = `${config.fontSize}px monospace`;
+                    for (let i = 0; i < changedCells.length; i++) {
+                        const r = changedCells[i][0];
+                        const c = changedCells[i][1];
+                        const x = c * config.fontSize;
+                        const y = (r + 1) * config.fontSize;
+                        ctx.fillStyle = gridColors[r][c];
+                        ctx.fillText(gridChars[r][c], x, y);
+                    }
+                    }
+                }
+            }
+
+            requestAnimationFrame((t) => draw(t));
+        }
+
+        // Presets
+        const presets = {
+            matrix: {
+                glitchColors: ['#00ff41', '#00cc33', '#00aa22'],
+                fallSpeed: 1,
+                glitchIntensity: 0.05,
+                fontSize: 14
+            },
+            cyberpunk: {
+                glitchColors: ['#ff00ff', '#00ffff', '#ffff00', '#ff0080'],
+                fallSpeed: 1.5,
+                glitchIntensity: 0.1,
+                fontSize: 16
+            },
+            conspiracy: {
+                glitchColors: ['#00ff41', '#10b981', '#34d399', '#06b6d4', '#22d3ee', '#3b82f6', '#9333ea', '#a855f7', '#eab308', '#f59e0b'],
+                fallSpeed: 1.2,
+                glitchIntensity: 0.08,
+                fontSize: 14
+            },
+            fire: {
+                glitchColors: ['#ff0000', '#ff6600', '#ff9900', '#ffcc00'],
+                fallSpeed: 1.5,
+                glitchIntensity: 0.12,
+                fontSize: 16
+            },
+            ice: {
+                glitchColors: ['#00ffff', '#0099ff', '#66ccff', '#99ddff'],
+                fallSpeed: 0.8,
+                glitchIntensity: 0.04,
+                fontSize: 14
+            }
+        };
+
+        function applyPreset(name) {
+            const preset = presets[name];
+            config = { ...config, ...preset };
+
+            // Update UI
+            document.getElementById('fallSpeed').value = preset.fallSpeed;
+            document.getElementById('glitchIntensity').value = preset.glitchIntensity * 100;
+            document.getElementById('fontSize').value = preset.fontSize;
+
+            updateSpeed(preset.fallSpeed);
+            updateGlitch(preset.glitchIntensity * 100);
+            updateFont(preset.fontSize);
+
+            init();
+        }
+
+        function updateSpeed(value) {
+            config.fallSpeed = parseFloat(value);
+            document.getElementById('speedValue').textContent = value;
+        }
+
+        function updateGlitch(value) {
+            config.glitchIntensity = parseFloat(value) / 100;
+            document.getElementById('glitchValue').textContent = value;
+        }
+
+        function updateFont(value) {
+            config.fontSize = parseInt(value);
+            document.getElementById('fontValue').textContent = value;
+            resizeCanvas();
+        }
+
+        
+
+        function updateMode(value) {
+            config.animationMode = value;
+            // Enable/disable static controls visually (optional behavior kept simple)
+            init();
+        }
+
+        function updateStaticRate(value) {
+            config.staticUpdateRate = parseInt(value);
+            document.getElementById('staticRateValue').textContent = value;
+        }
+
+        function updateStaticChange(value) {
+            config.staticChangePercent = parseInt(value);
+            document.getElementById('staticChangeValue').textContent = value;
+        }
+
+        function updateDensity(value) {
+            config.densityPercent = parseInt(value);
+            document.getElementById('densityValue').textContent = value;
+            if (config.animationMode === 'falling') {
+                const colProb = Math.min(1, Math.max(0, config.densityPercent / 100));
+                activeColumns = Array(columns).fill(false).map(() => Math.random() < colProb);
+            } else {
+                const cellProb = Math.min(1, Math.max(0, config.densityPercent / 100));
+                gridMask = Array.from({ length: rows }, () =>
+                    Array.from({ length: columns }, () => Math.random() < cellProb)
+                );
+                forceFullRedraw = true;
+            }
+        }
+
+        function updateSaturation(value) {
+            config.saturationPercent = parseInt(value);
+            document.getElementById('saturationValue').textContent = value;
+            applyCanvasFilter();
+            if (config.animationMode === 'static') forceFullRedraw = true;
+        }
+
+        function updateBlur(value) {
+            config.blurPx = parseInt(value);
+            document.getElementById('blurValue').textContent = value;
+            applyCanvasFilter();
+            if (config.animationMode === 'static') forceFullRedraw = true;
+        }
+
+        function toggleControls() {
+            const controls = document.getElementById('controls');
+            controls.classList.toggle('hidden');
+        }
+
+        // Initialize
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        requestAnimationFrame((t) => draw(t));
+
+        // Auto-hide controls on mobile
+        if (window.innerWidth < 768) {
+            setTimeout(() => {
+                document.getElementById('controls').classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

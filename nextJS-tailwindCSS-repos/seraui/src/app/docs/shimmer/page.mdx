@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React Shimmer Component | Sera UI',
+    description: 'Animated shimmer loading effect component with customizable colors and directions. Perfect for skeleton loaders and loading states.',
+    keywords: [
+        'React shimmer component',
+        'shimmer effect',
+        'loading shimmer',
+        'skeleton loader',
+        'shimmer animation',
+        'loading animation',
+        'Tailwind CSS shimmer',
+        'UI shimmer library',
+        'loading effect',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Shimmer Component | Sera UI',
+        description: 'Animated React shimmer loading effect component with customizable colors and directions for skeleton loaders.',
+        type: 'article',
+        url: '/docs/shimmer',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Shimmer Component | Sera UI',
+        description: 'Animated React shimmer loading effect component with customizable colors and directions for skeleton loaders.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/shimmer',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import ShimmerButton from "./shimmer"
+
+
+
+# Shimmer Button <AI dir="left"/>
+A modern, responsive, and user-friendly shimmer button with a focus on security and ease of use. Features a sleek design with a green color scheme and smooth animations.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<ShimmerButton />}/>
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/shimmer/shimmer.tsx" />
+  </TabsContent>
+</Tabs>

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychedelic UI - Phase 2 Components (Tooltip, Modal, Dropdown)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00FF41, #0ff, #f0f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #0ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00FF41;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00FF41, #0ff, #f0f, #FFD93D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #999;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00FF41;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #999;
+        }
+
+        .section {
+            margin-bottom: 6rem;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: #999;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Tooltip Styles */
+        .tooltip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tooltip-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: help;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tooltip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 65, 0.2);
+        }
+
+        .tooltip-card.conspiracy {
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .tooltip-card.neon {
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .tooltip-card.organic {
+            border: 1px solid rgba(255, 217, 61, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tooltip-card.experimental {
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .tooltip-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-card.conspiracy .tooltip-text {
+            color: #00FF41;
+        }
+
+        .tooltip-card.neon .tooltip-text {
+            color: #0ff;
+        }
+
+        .tooltip-card.organic .tooltip-text {
+            color: #FFD93D;
+        }
+
+        .tooltip-card.experimental .tooltip-text {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tooltip-hint {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        /* Tooltip popup */
+        .tooltip-popup {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        .tooltip-card:hover .tooltip-popup {
+            opacity: 1;
+        }
+
+        .tooltip-popup.conspiracy {
+            background: rgba(0, 0, 0, 0.95);
+            color: #00FF41;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+
+        .tooltip-popup.neon {
+            background: rgba(0, 0, 0, 0.95);
+            color: #0ff;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .tooltip-popup.organic {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tooltip-popup.experimental {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(236, 72, 153, 0.95));
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal-triggers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .modal-trigger-btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-trigger-btn.conspiracy {
+            background: rgba(0, 255, 65, 0.1);
+            color: #00FF41;
+            border: 2px solid #00FF41;
+        }
+
+        .modal-trigger-btn.conspiracy:hover {
+            background: rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .modal-trigger-btn.neon {
+            background: rgba(0, 255, 255, 0.1);
+            color: #0ff;
+            border: 2px solid #0ff;
+        }
+
+        .modal-trigger-btn.neon:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .modal-trigger-btn.organic {
+            background: #FFD93D;
+            color: #000;
+            border: 2px solid #FFD93D;
+        }
+
+        .modal-trigger-btn.organic:hover {
+            background: #FFC107;
+            box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+        }
+
+        .modal-trigger-btn.experimental {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .modal-trigger-btn.experimental:hover {
+            box-shadow: 0 0 24px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -48%) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Modal Content */
+        .modal-content {
+            position: relative;
+            max-width: 500px;
+            width: 90%;
+            padding: 2rem;
+            border-radius: 12px;
+            animation: slideIn 0.2s;
+        }
+
+        .modal-content.conspiracy {
+            background: #000;
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+        }
+
+        .modal-content.neon {
+            background: #0a0a0a;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .modal-content.organic {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-content.experimental {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(236, 72, 153, 0.95));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-content.conspiracy .modal-title {
+            color: #00FF41;
+        }
+
+        .modal-content.neon .modal-title {
+            color: #0ff;
+        }
+
+        .modal-content.organic .modal-title {
+            color: #333;
+        }
+
+        .modal-content.experimental .modal-title {
+            color: white;
+        }
+
+        .modal-description {
+            font-size: 0.95rem;
+        }
+
+        .modal-content.conspiracy .modal-description {
+            color: rgba(0, 255, 65, 0.7);
+        }
+
+        .modal-content.neon .modal-description {
+            color: rgba(0, 255, 255, 0.7);
+        }
+
+        .modal-content.organic .modal-description {
+            color: #666;
+        }
+
+        .modal-content.experimental .modal-description {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-content.conspiracy .modal-body {
+            color: rgba(0, 255, 65, 0.9);
+        }
+
+        .modal-content.neon .modal-body {
+            color: rgba(0, 255, 255, 0.9);
+        }
+
+        .modal-content.organic .modal-body {
+            color: #555;
+        }
+
+        .modal-content.experimental .modal-body {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .modal-content.conspiracy .modal-close {
+            color: #00FF41;
+        }
+
+        .modal-content.neon .modal-close {
+            color: #0ff;
+        }
+
+        .modal-content.organic .modal-close {
+            color: #666;
+        }
+
+        .modal-content.experimental .modal-close {
+            color: white;
+        }
+
+        .modal-btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: #00FF41;
+            color: #000;
+        }
+
+        .modal-btn.primary:hover {
+            background: #00DD35;
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Dropdown Styles */
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-trigger {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 2px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .dropdown-trigger.conspiracy {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: rgba(0, 255, 65, 0.3);
+            color: #00FF41;
+        }
+
+        .dropdown-trigger.conspiracy:hover {
+            background: rgba(0, 255, 65, 0.2);
+            border-color: #00FF41;
+        }
+
+        .dropdown-trigger.neon {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.3);
+            color: #0ff;
+        }
+
+        .dropdown-trigger.neon:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: #0ff;
+        }
+
+        .dropdown-trigger.organic {
+            background: white;
+            border-color: #e0e0e0;
+            color: #333;
+        }
+
+        .dropdown-trigger.organic:hover {
+            background: #f5f5f5;
+            border-color: #ccc;
+        }
+
+        .dropdown-trigger.experimental {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+            border-color: rgba(168, 85, 247, 0.5);
+            color: white;
+        }
+
+        .dropdown-trigger.experimental:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3));
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            border-radius: 8px;
+            padding: 0.5rem;
+            display: none;
+            z-index: 100;
+            animation: slideDown 0.2s;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu.conspiracy {
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .dropdown-menu.neon {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .dropdown-menu.organic {
+            background: white;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .dropdown-menu.experimental {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(236, 72, 153, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 24px rgba(168, 85, 247, 0.3);
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropdown-menu.conspiracy .dropdown-item {
+            color: rgba(0, 255, 65, 0.9);
+        }
+
+        .dropdown-menu.conspiracy .dropdown-item:hover {
+            background: rgba(0, 255, 65, 0.1);
+            color: #00FF41;
+        }
+
+        .dropdown-menu.neon .dropdown-item {
+            color: rgba(0, 255, 255, 0.9);
+        }
+
+        .dropdown-menu.neon .dropdown-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #0ff;
+        }
+
+        .dropdown-menu.organic .dropdown-item {
+            color: #555;
+        }
+
+        .dropdown-menu.organic .dropdown-item:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .dropdown-menu.experimental .dropdown-item {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .dropdown-menu.experimental .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-separator {
+            height: 1px;
+            margin: 0.5rem 0;
+        }
+
+        .dropdown-menu.conspiracy .dropdown-separator {
+            background: rgba(0, 255, 65, 0.2);
+        }
+
+        .dropdown-menu.neon .dropdown-separator {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .dropdown-menu.organic .dropdown-separator {
+            background: #e0e0e0;
+        }
+
+        .dropdown-menu.experimental .dropdown-separator {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="nav">
+        <div class="nav-inner">
+            <h1>⚡ Psychedelic UI Stack - Phase 2</h1>
+            <div class="nav-links">
+                <a href="#tooltips">Tooltips</a>
+                <a href="#modals">Modals</a>
+                <a href="#dropdowns">Dropdowns</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2>Phase 2: Essential UI Components</h2>
+            <p>Experience Tooltip, Modal, and Dropdown components with all 4 aesthetic styles. Fully accessible with keyboard navigation and ARIA labels.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">18</div>
+                <div class="stat-label">Total Components</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">61.69 KB</div>
+                <div class="stat-label">Total Bundle Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Aesthetic Styles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">TypeScript Coverage</div>
+            </div>
+        </div>
+
+        <!-- Tooltips Section -->
+        <section id="tooltips" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tooltip Component</h2>
+                <p class="section-description">Hover over the cards to see tooltips in each aesthetic style</p>
+            </div>
+            <div class="tooltip-grid">
+                <div class="tooltip-card conspiracy">
+                    <div class="tooltip-text">Conspiracy</div>
+                    <div class="tooltip-hint">Hover for Matrix-style tooltip</div>
+                    <div class="tooltip-popup conspiracy">Classified Information</div>
+                </div>
+                <div class="tooltip-card neon">
+                    <div class="tooltip-text">Neon Crypto</div>
+                    <div class="tooltip-hint">Hover for cyberpunk tooltip</div>
+                    <div class="tooltip-popup neon">Blockchain Verified</div>
+                </div>
+                <div class="tooltip-card organic">
+                    <div class="tooltip-text">Organic Harmony</div>
+                    <div class="tooltip-hint">Hover for friendly tooltip</div>
+                    <div class="tooltip-popup organic">Happy & Natural</div>
+                </div>
+                <div class="tooltip-card experimental">
+                    <div class="tooltip-text">Experimental</div>
+                    <div class="tooltip-hint">Hover for psychedelic tooltip</div>
+                    <div class="tooltip-popup experimental">Trippy Experience</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals Section -->
+        <section id="modals" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Modal/Dialog Component</h2>
+                <p class="section-description">Click the buttons to open modals in each aesthetic style</p>
+            </div>
+            <div class="modal-triggers">
+                <button class="modal-trigger-btn conspiracy" onclick="openModal('conspiracy')">
+                    Open Conspiracy Modal
+                </button>
+                <button class="modal-trigger-btn neon" onclick="openModal('neon')">
+                    Open Neon Crypto Modal
+                </button>
+                <button class="modal-trigger-btn organic" onclick="openModal('organic')">
+                    Open Organic Modal
+                </button>
+                <button class="modal-trigger-btn experimental" onclick="openModal('experimental')">
+                    Open Experimental Modal
+                </button>
+            </div>
+        </section>
+
+        <!-- Dropdowns Section -->
+        <section id="dropdowns" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Dropdown Menu Component</h2>
+                <p class="section-description">Click the triggers to open dropdown menus in each aesthetic style</p>
+            </div>
+            <div class="dropdown-grid">
+                <div class="dropdown-container">
+                    <button class="dropdown-trigger conspiracy" onclick="toggleDropdown('conspiracy')">
+                        <span>Conspiracy Menu</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu conspiracy" id="dropdown-conspiracy">
+                        <div class="dropdown-item">Classified Data</div>
+                        <div class="dropdown-item">Encrypted Files</div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item">Top Secret</div>
+                        <div class="dropdown-item">Redacted Info</div>
+                    </div>
+                </div>
+
+                <div class="dropdown-container">
+                    <button class="dropdown-trigger neon" onclick="toggleDropdown('neon')">
+                        <span>Neon Crypto Menu</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu neon" id="dropdown-neon">
+                        <div class="dropdown-item">NFT Collection</div>
+                        <div class="dropdown-item">Wallet</div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item">Marketplace</div>
+                        <div class="dropdown-item">Activity</div>
+                    </div>
+                </div>
+
+                <div class="dropdown-container">
+                    <button class="dropdown-trigger organic" onclick="toggleDropdown('organic')">
+                        <span>Organic Menu</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu organic" id="dropdown-organic">
+                        <div class="dropdown-item">Products</div>
+                        <div class="dropdown-item">Categories</div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item">Cart</div>
+                        <div class="dropdown-item">Account</div>
+                    </div>
+                </div>
+
+                <div class="dropdown-container">
+                    <button class="dropdown-trigger experimental" onclick="toggleDropdown('experimental')">
+                        <span>Experimental Menu</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="dropdown-menu experimental" id="dropdown-experimental">
+                        <div class="dropdown-item">Cosmic Mode</div>
+                        <div class="dropdown-item">Psychedelic Effects</div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item">Rainbow Colors</div>
+                        <div class="dropdown-item">Trippy Animations</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Overlays -->
+    <div class="modal-overlay" id="modal-conspiracy" onclick="closeModal('conspiracy')">
+        <div class="modal-content conspiracy" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal('conspiracy')">×</button>
+            <div class="modal-header">
+                <div class="modal-title">Classified Information</div>
+                <div class="modal-description">This modal contains sensitive data</div>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to the Conspiracy Establishment aesthetic. This modal demonstrates the Matrix-inspired styling with green accents and sharp edges. Perfect for Scientist Market and data-heavy applications.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('conspiracy')">Cancel</button>
+                <button class="modal-btn primary">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-neon" onclick="closeModal('neon')">
+        <div class="modal-content neon" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal('neon')">×</button>
+            <div class="modal-header">
+                <div class="modal-title">Neon Crypto Portal</div>
+                <div class="modal-description">Blockchain-verified interface</div>
+            </div>
+            <div class="modal-body">
+                <p>Experience the Neon Crypto aesthetic with cyberpunk vibes and cyan accents. Perfect for KEKTECH NFT marketplace and blockchain applications. Immerse yourself in the future of digital assets.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('neon')">Cancel</button>
+                <button class="modal-btn primary">Connect Wallet</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-organic" onclick="closeModal('organic')">
+        <div class="modal-content organic" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal('organic')">×</button>
+            <div class="modal-header">
+                <div class="modal-title">Organic Harmony</div>
+                <div class="modal-description">Friendly and natural interface</div>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to Organic Harmony! This aesthetic features warm colors, soft edges, and gentle animations. Perfect for Happy Market and user-friendly applications. Feel the natural, uplifting vibes.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('organic')">Cancel</button>
+                <button class="modal-btn primary">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-experimental" onclick="closeModal('experimental')">
+        <div class="modal-content experimental" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal('experimental')">×</button>
+            <div class="modal-header">
+                <div class="modal-title">Experimental Portal</div>
+                <div class="modal-description">Full psychedelic experience</div>
+            </div>
+            <div class="modal-body">
+                <p>Enter the Experimental realm with bold gradients, vibrant colors, and trippy animations. This aesthetic pushes boundaries and creates unforgettable experiences. Are you ready for the journey?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('experimental')">Cancel</button>
+                <button class="modal-btn primary">Let's Go!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function openModal(variant) {
+            const modal = document.getElementById('modal-' + variant);
+            modal.classList.add('active');
+        }
+
+        function closeModal(variant) {
+            const modal = document.getElementById('modal-' + variant);
+            modal.classList.remove('active');
+        }
+
+        // Dropdown functions
+        function toggleDropdown(variant) {
+            const dropdown = document.getElementById('dropdown-' + variant);
+            const allDropdowns = document.querySelectorAll('.dropdown-menu');
+
+            // Close all other dropdowns
+            allDropdowns.forEach(d => {
+                if (d !== dropdown) {
+                    d.classList.remove('active');
+                }
+            });
+
+            // Toggle current dropdown
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown-container')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => {
+                    d.classList.remove('active');
+                });
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => {
+                    m.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

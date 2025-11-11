@@ -1,0 +1,214 @@
+# Meme Generator Template
+# Creates viral meme GIFs with captions for social media
+
+name: "Meme GIF Generator"
+description: "Create viral meme GIFs with top/bottom captions for social media sharing"
+version: "1.0.0"
+category: "social-media"
+
+# Pipeline: video → crop/trim → add captions → optimize
+pipeline:
+  steps:
+    - tool: "gifcurry"
+      operation: "create_gif"
+      input: "{{video_path}}"
+      output: "temp_meme.gif"
+      params:
+        width: "{{width|500}}"
+        height: "{{height|500}}"
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|3}}"
+        quality: 85
+        text_overlay:
+          enabled: true
+          top_text:
+            text: "{{top_caption|}}"
+            font_size: 48
+            font_family: "Impact"
+            color: "white"
+            stroke_color: "black"
+            stroke_width: 2
+            position: "top"
+          bottom_text:
+            text: "{{bottom_caption|}}"
+            font_size: 48
+            font_family: "Impact"
+            color: "white"
+            stroke_color: "black"
+            stroke_width: 2
+            position: "bottom"
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_meme.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 20
+
+# Presets for different meme styles
+presets:
+  classic:
+    description: "Classic meme format (square, Impact font, top/bottom text)"
+    width: 500
+    height: 500
+    duration: 3
+    font: "Impact"
+    expected_size: "2-4MB"
+    processing_time: "40s"
+
+  reaction:
+    description: "Reaction GIF (no text, optimized for quick sharing)"
+    width: 480
+    height: 270
+    duration: 2
+    show_text: false
+    expected_size: "1-2MB"
+    processing_time: "30s"
+
+  viral:
+    description: "Optimized for viral sharing (lightweight, punchy)"
+    width: 400
+    height: 400
+    duration: 2.5
+    expected_size: "1-3MB"
+    processing_time: "35s"
+
+  hd:
+    description: "High quality for desktop/large screens"
+    width: 720
+    height: 720
+    duration: 4
+    quality: 95
+    expected_size: "5-8MB"
+    processing_time: "90s"
+
+  story:
+    description: "Vertical format for Instagram/Snapchat stories"
+    width: 1080
+    height: 1920
+    duration: 3
+    expected_size: "4-6MB"
+    processing_time: "70s"
+
+# Variable definitions
+variables:
+  video_path:
+    type: "file"
+    required: true
+    description: "Source video file or existing GIF"
+
+  top_caption:
+    type: "string"
+    required: false
+    default: ""
+    description: "Top caption text (classic meme style)"
+
+  bottom_caption:
+    type: "string"
+    required: false
+    default: ""
+    description: "Bottom caption text (classic meme style)"
+
+  start_time:
+    type: "float"
+    required: false
+    default: 0
+    description: "Start time in seconds"
+
+  duration:
+    type: "float"
+    required: false
+    default: 3
+    description: "Duration in seconds (keep it punchy!)"
+
+  width:
+    type: "integer"
+    required: false
+    default: 500
+    description: "Output width in pixels"
+
+  height:
+    type: "integer"
+    required: false
+    default: 500
+    description: "Output height in pixels"
+
+  show_text:
+    type: "boolean"
+    required: false
+    default: true
+    description: "Show caption overlays"
+
+# Output validation
+validation:
+  max_file_size_mb: 10
+  duration:
+    min: 1
+    max: 10
+  format: "GIF"
+
+# Platform optimization
+platforms:
+  twitter:
+    max_size: "5MB"
+    recommended_dimensions: "500×500"
+    notes: "Square or landscape works best"
+
+  reddit:
+    max_size: "100MB"
+    recommended_dimensions: "720×720"
+    notes: "Higher quality accepted, loops automatically"
+
+  instagram:
+    max_size: "15MB"
+    recommended_dimensions: "1080×1080"
+    notes: "Square or vertical for stories"
+
+  facebook:
+    max_size: "8MB"
+    recommended_dimensions: "600×600"
+    notes: "Auto-plays in feed"
+
+  discord:
+    max_size: "8MB"
+    recommended_dimensions: "500×500"
+    notes: "Embeds inline in chat"
+
+# Metadata
+tags:
+  - meme
+  - viral
+  - reaction
+  - funny
+  - social-media
+  - twitter
+  - reddit
+  - caption
+
+use_cases:
+  - "Reaction GIFs for conversations"
+  - "Viral meme creation for social media"
+  - "Community content for Reddit/Discord"
+  - "Marketing memes for brand engagement"
+  - "Political/news commentary memes"
+  - "Gaming highlight reels with captions"
+  - "Pet/animal memes"
+
+meme_templates:
+  - "Distracted Boyfriend"
+  - "Drake Hotline Bling"
+  - "Two Buttons"
+  - "Woman Yelling at Cat"
+  - "Bernie Sanders (I am once again asking)"
+  - "Custom formats with top/bottom text"
+
+best_practices:
+  - "Keep text short and punchy"
+  - "High contrast for readability"
+  - "2-4 seconds for optimal virality"
+  - "Square format for maximum compatibility"
+  - "Test on mobile devices"
+  - "Avoid copyrighted content"
+  - "Timing is everything for reaction GIFs"

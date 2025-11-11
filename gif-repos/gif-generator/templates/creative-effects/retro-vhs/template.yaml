@@ -1,0 +1,232 @@
+# Retro VHS Effect Template
+# Creates nostalgic 80s/90s VHS tape aesthetic
+
+name: "Retro VHS Effect"
+description: "Add nostalgic VHS tape aesthetics with scan lines, color bleeding, and tracking errors"
+version: "1.0.0"
+category: "creative-effects"
+
+# Pipeline: video → VHS effects → color grading → add noise → optimize
+pipeline:
+  steps:
+    - tool: "ffmpeg"
+      operation: "apply_vhs_filters"
+      input: "{{source_path}}"
+      output: "temp_vhs.mp4"
+      params:
+        filters:
+          - name: "colorchannelmixer"  # VHS color bleeding
+            params:
+              rr: 1.2
+              gg: 0.9
+              bb: 0.8
+          - name: "curves"  # Adjust contrast
+            params:
+              vintage: true
+          - name: "noise"  # VHS tape noise
+            params:
+              alls: "{{noise_level|30}}"
+              allf: "t"
+          - name: "drawbox"  # Scan lines
+            params:
+              color: "black@0.2"
+              thickness: 1
+          - name: "vignette"  # Edge darkening
+            params:
+              angle: "PI/4"
+
+    - tool: "gifcurry"
+      operation: "convert_to_gif"
+      input: "temp_vhs.mp4"
+      output: "temp_vhs.gif"
+      params:
+        width: "{{width|640}}"
+        height: "{{height|480}}"
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|5}}"
+        quality: 75
+        fps: "{{fps|24}}"
+        text_overlay:
+          enabled: "{{show_timestamp|false}}"
+          text: "{{timestamp|REC 09/15/1987}}"
+          font_size: 24
+          font_family: "VCR OSD Mono"
+          color: "white"
+          position: "bottom-right"
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_vhs.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 2
+        colors: 256
+        lossy: 20
+
+# VHS era presets
+presets:
+  1980s:
+    description: "Early VHS (heavy tracking errors, washed colors)"
+    width: 640
+    height: 480
+    noise_level: 40
+    fps: 24
+    color_saturation: 0.7
+    show_timestamp: true
+    timestamp: "REC 12/25/1985"
+    expected_size: "4-7MB"
+    processing_time: "90s"
+
+  1990s:
+    description: "90s VHS (better quality, nostalgic feel)"
+    width: 640
+    height: 480
+    noise_level: 25
+    fps: 29.97
+    color_saturation: 0.85
+    show_timestamp: true
+    timestamp: "REC 06/15/1995"
+    expected_size: "3-6MB"
+    processing_time: "75s"
+
+  home-movie:
+    description: "Home movie aesthetic (camcorder, family videos)"
+    width: 720
+    height: 480
+    noise_level: 30
+    fps: 29.97
+    show_timestamp: true
+    timestamp: "REC {{current_date}}"
+    vignette: true
+    expected_size: "4-8MB"
+    processing_time: "85s"
+
+  tracking-error:
+    description: "Bad tracking (heavy distortion, damaged tape)"
+    width: 640
+    height: 480
+    noise_level: 60
+    fps: 24
+    tracking_issues: true
+    color_bleeding: "heavy"
+    expected_size: "5-9MB"
+    processing_time: "110s"
+
+  commercial:
+    description: "80s TV commercial style (bright, saturated)"
+    width: 640
+    height: 480
+    noise_level: 20
+    fps: 29.97
+    color_saturation: 1.3
+    show_timestamp: false
+    expected_size: "3-6MB"
+    processing_time: "70s"
+
+# Variable definitions
+variables:
+  source_path:
+    type: "file"
+    required: true
+    description: "Source video or image file"
+
+  noise_level:
+    type: "integer"
+    required: false
+    default: 30
+    description: "VHS tape noise level (0-100)"
+
+  show_timestamp:
+    type: "boolean"
+    required: false
+    default: false
+    description: "Show VHS camera timestamp overlay"
+
+  timestamp:
+    type: "string"
+    required: false
+    default: "REC 09/15/1987"
+    description: "Timestamp text (if enabled)"
+
+  width:
+    type: "integer"
+    required: false
+    default: 640
+    description: "Output width (640 or 720 for authenticity)"
+
+  height:
+    type: "integer"
+    required: false
+    default: 480
+    description: "Output height (480 for 4:3 aspect ratio)"
+
+  fps:
+    type: "float"
+    required: false
+    default: 24
+    description: "Frame rate (24 or 29.97 for VHS)"
+
+  duration:
+    type: "float"
+    required: false
+    default: 5
+    description: "Duration in seconds"
+
+# Output validation
+validation:
+  max_file_size_mb: 15
+  duration:
+    min: 2
+    max: 30
+  format: "GIF"
+
+# Metadata
+tags:
+  - vhs
+  - retro
+  - vintage
+  - 80s
+  - 90s
+  - nostalgia
+  - analog
+  - camcorder
+
+use_cases:
+  - "Nostalgic social media content"
+  - "Music videos (synthwave, vaporwave)"
+  - "Throwback marketing campaigns"
+  - "Retro gaming content"
+  - "Family video recreation"
+  - "Artistic film projects"
+  - "Vintage product demos"
+  - "Meme templates (VHS aesthetic)"
+
+aesthetic_references:
+  - "Stranger Things opening"
+  - "80s home videos"
+  - "VHS rental tapes"
+  - "Camcorder recordings"
+  - "TV commercials (1980s-1990s)"
+  - "Vaporwave album art"
+
+technical_details:
+  authentic_vhs_specs:
+    resolution: "640×480 or 720×480"
+    aspect_ratio: "4:3"
+    frame_rate: "24 fps or 29.97 fps (NTSC)"
+    color_space: "YUV420"
+    artifacts:
+      - "Horizontal scan lines"
+      - "Color bleeding/fringing"
+      - "Tracking errors"
+      - "Magnetic tape noise"
+      - "Edge vignetting"
+
+best_practices:
+  - "Use 4:3 aspect ratio for authenticity"
+  - "Lower resolution enhances VHS feel"
+  - "Add timestamp for camcorder aesthetic"
+  - "Subtle is better than over-processed"
+  - "Match era details (80s vs 90s quality)"
+  - "Consider audio (add VHS hum if possible)"
+  - "Test with nostalgic content (home movies, sports)"

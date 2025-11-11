@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React Falling Glitch Component | Sera UI',
+    description: 'Dynamic falling glitch text effect component with customizable animations and distortion effects. Perfect for creating dramatic and cyberpunk-style text displays.',
+    keywords: [
+        'React falling glitch',
+        'glitch text effect',
+        'falling text animation',
+        'cyberpunk text',
+        'glitch animation',
+        'distortion effect',
+        'Tailwind CSS glitch',
+        'UI glitch effects',
+        'animated text',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Falling Glitch Component | Sera UI',
+        description: 'Dynamic React falling glitch text effect component with customizable animations and distortion effects.',
+        type: 'article',
+        url: '/docs/falling-glitch',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Falling Glitch Component | Sera UI',
+        description: 'Dynamic React falling glitch text effect component with customizable animations and distortion effects.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/falling-glitch',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+    Tabs,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import FallingGlitchAn from "./falling-glitch"
+
+
+
+# Falling Glitch <AI dir="left"/>
+A falling glitch animation component for React.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<FallingGlitchAn />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/falling-glitch/falling-glitch.tsx" />
+  </TabsContent>
+</Tabs>

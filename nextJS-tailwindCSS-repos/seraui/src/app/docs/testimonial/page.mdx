@@ -1,0 +1,93 @@
+export const metadata = {
+    title: 'React Testimonial Component | Sera UI',
+    description: 'Beautiful testimonial components with customer reviews, ratings, and profile images. Perfect for showcasing social proof and building trust.',
+    keywords: [
+        'React testimonial component',
+        'customer testimonials',
+        'review component',
+        'social proof',
+        'testimonial cards',
+        'customer feedback',
+        'Tailwind CSS testimonial',
+        'UI testimonial library',
+        'testimonial slider',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Testimonial Component | Sera UI',
+        description: 'Beautiful React testimonial components with customer reviews, ratings, and profile images for showcasing social proof.',
+        type: 'article',
+        url: '/docs/testimonial',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Testimonial Component | Sera UI',
+        description: 'Beautiful React testimonial components with customer reviews, ratings, and profile images for showcasing social proof.',
+        images: ["/og-image.png"],
+    },
+    alternates: {
+        canonical: '/docs/testimonial',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { HideTOC } from "@/components/site/hide-toc";
+import Testimonial from "./testimonial";
+import Testimonial2 from "./testimonial2";
+
+<HideTOC />
+
+
+# Testimonial <AI dir="left"/>
+
+A testimonial component that displays a list of testimonials with avatars and names.
+
+## Preview
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Testimonial />} componentName="testimonial" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/testimonial/testimonial.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+
+
+## Testimonial Modern
+A testimonial component that displays a list of testimonials with avatars and names. This is a modern version of the testimonial component.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Testimonial2 />} componentName="testimonial2" />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/testimonial/testimonial2.tsx" />
+  </TabsContent>
+</Tabs>

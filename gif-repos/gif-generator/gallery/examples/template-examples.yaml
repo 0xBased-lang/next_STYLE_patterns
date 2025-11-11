@@ -1,0 +1,276 @@
+# Template Example Specifications
+# Defines example outputs for each template with expected characteristics
+
+examples:
+  # SOCIAL MEDIA TEMPLATES
+
+  twitter-demo:
+    template: "social-media/twitter-demo"
+    examples:
+      - name: "product-launch"
+        input:
+          video: "demo-videos/product-launch.mp4"
+          duration: 10s
+        preset: "balanced"
+        variables:
+          product_name: "New Feature"
+        expected_output:
+          format: "GIF"
+          resolution: "600×400"
+          file_size: "2.3 MB"
+          duration: "5.0s"
+          fps: 15
+          colors: 128
+          frames: 75
+        metrics:
+          generation_time: "12s"
+          compression_ratio: "58%"
+          quality_score: 8.5/10
+        use_case: "Product announcement tweet"
+
+      - name: "tutorial-snippet"
+        input:
+          video: "demo-videos/tutorial.mp4"
+        preset: "quick"
+        variables:
+          product_name: "How To Guide"
+        expected_output:
+          file_size: "1.1 MB"
+          duration: "5.0s"
+        metrics:
+          generation_time: "8s"
+          compression_ratio: "72%"
+
+  instagram-square:
+    template: "social-media/instagram-square"
+    examples:
+      - name: "behind-the-scenes"
+        input:
+          video: "demo-videos/bts.mp4"
+        preset: "post"
+        variables:
+          caption: "BTS Magic"
+        expected_output:
+          format: "GIF"
+          resolution: "640×640"
+          file_size: "4.8 MB"
+          duration: "8.0s"
+          fps: 24
+          colors: 256
+        metrics:
+          generation_time: "18s"
+          compression_ratio: "45%"
+          quality_score: 9.0/10
+
+  slack-emoji:
+    template: "social-media/slack-emoji"
+    examples:
+      - name: "celebration"
+        input:
+          video: "demo-videos/celebration.mp4"
+        preset: "normal"
+        variables:
+          emoji_name: "party"
+        expected_output:
+          format: "GIF"
+          resolution: "128×128"
+          file_size: "95 KB"
+          duration: "2.0s"
+          fps: 10
+          colors: 32
+        metrics:
+          generation_time: "3s"
+          compression_ratio: "85%"
+          quality_score: 7.5/10
+        use_case: "Team reactions in Slack"
+
+      - name: "thumbs-up"
+        preset: "tiny"
+        expected_output:
+          file_size: "48 KB"
+          resolution: "64×64"
+
+  youtube-thumbnail:
+    template: "social-media/youtube-thumbnail"
+    examples:
+      - name: "tutorial-preview"
+        input:
+          video: "demo-videos/coding-tutorial.mp4"
+        preset: "tutorial"
+        variables:
+          title_text: "Learn This!"
+        expected_output:
+          format: "GIF"
+          resolution: "1280×720"
+          file_size: "1.8 MB"
+          duration: "4.0s"
+          fps: 12
+        metrics:
+          generation_time: "15s"
+          click_through_improvement: "+35%"
+
+  tiktok-vertical:
+    template: "social-media/tiktok-vertical"
+    examples:
+      - name: "product-demo"
+        input:
+          video: "demo-videos/product-showcase.mp4"
+        preset: "product"
+        variables:
+          hook_text: "You need this!"
+        expected_output:
+          format: "MP4"
+          resolution: "1080×1920"
+          file_size: "12.5 MB"
+          duration: "15.0s"
+          fps: 30
+          bitrate: "6 Mbps"
+        metrics:
+          generation_time: "25s"
+          mobile_optimized: true
+
+  # AI ANIMATION TEMPLATES
+
+  talking-head:
+    template: "portrait-animation/talking-head"
+    examples:
+      - name: "business-presentation"
+        input:
+          portrait: "photos/ceo-headshot.jpg"
+          driving_video: "motion/presentation-talking.mp4"
+          audio: "audio/presentation-speech.mp3"
+        preset: "professional"
+        expected_output:
+          format: "MP4"
+          resolution: "1920×1080"
+          file_size: "18.2 MB"
+          duration: "45.0s"
+          fps: 30
+          codec: "h264"
+        metrics:
+          generation_time: "320s"  # 5min 20s
+          gpu_required: true
+          quality_score: 9.5/10
+          face_detection_confidence: 0.95
+        use_case: "AI-generated video presenter"
+
+  expression-transfer:
+    template: "portrait-animation/expression-transfer"
+    examples:
+      - name: "emotion-demo"
+        input:
+          source_image: "photos/neutral-portrait.jpg"
+          expression_video: "motion/happy-expressions.mp4"
+        preset: "normal"
+        expected_output:
+          format: "MP4"
+          resolution: "512×512"
+          file_size: "8.5 MB"
+          duration: "10.0s"
+        metrics:
+          generation_time: "180s"  # 3min
+          gpu_required: true
+          expression_accuracy: 0.88
+
+  hand-drawn:
+    template: "character-animation/hand-drawn"
+    examples:
+      - name: "kids-drawing"
+        input:
+          drawing: "art/child-drawing.jpg"
+          motion: "bvh/dance-01.bvh"
+        preset: "dance"
+        expected_output:
+          format: "MP4"
+          resolution: "1280×720"
+          file_size: "6.3 MB"
+          duration: "5.0s"
+        metrics:
+          generation_time: "120s"  # 2min
+          pose_detection_accuracy: 0.92
+
+  # CREATIVE EFFECTS
+
+  logo-animation:
+    template: "creative-effects/logo-animation"
+    examples:
+      - name: "brand-reveal"
+        input:
+          logo: "logos/company-logo.png"
+        preset: "dynamic"
+        variables:
+          animation_style: "fade_scale"
+          background_color: "white"
+        expected_output:
+          format: "GIF"
+          resolution: "800×600"
+          file_size: "1.2 MB"
+          duration: "3.0s"
+          preserve_transparency: true
+        metrics:
+          generation_time: "8s"
+          loop_seamless: true
+
+  cinemagraph:
+    template: "creative-effects/cinemagraph"
+    examples:
+      - name: "flowing-water"
+        input:
+          video: "artistic/waterfall.mp4"
+        preset: "water"
+        variables:
+          motion_region: "center"
+          loop_duration: 5
+        expected_output:
+          format: "GIF"
+          resolution: "1080×1350"
+          file_size: "8.7 MB"
+          duration: "5.0s"
+          seamless_loop: true
+        metrics:
+          generation_time: "45s"
+          artistic_quality: 9.5/10
+
+  # WEB ANIMATION
+
+  loading-spinner:
+    template: "web-animation/loading-spinner"
+    examples:
+      - name: "circular-spinner"
+        preset: "circular"
+        variables:
+          framework: "react"
+          colors: ["#3b82f6"]
+          size: "medium"
+        expected_output:
+          format: "CODE"
+          framework: "React + framer-motion"
+          file_size: "2.5 KB"
+          lines_of_code: 45
+        metrics:
+          generation_time: "<1s"
+          bundle_size_impact: "+5KB"
+          fps: 60
+
+  # TECHNICAL DOCS
+
+  terminal-demo:
+    template: "technical-docs/terminal-demo"
+    examples:
+      - name: "installation-guide"
+        input:
+          recording: "recordings/npm-install.cast"
+        preset: "tutorial"
+        variables:
+          theme: "monokai"
+          speed: 1.0
+        expected_output:
+          format: "GIF"
+          resolution: "800×600"
+          file_size: "2.1 MB"
+          duration: "12.0s"
+          fps: 12
+          colors: 256
+        metrics:
+          generation_time: "10s"
+          text_readability: 9/10

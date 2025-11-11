@@ -1,0 +1,137 @@
+export const metadata = {
+    title: 'React Pricing Component | Sera UI',
+    description: 'Modern pricing table components with multiple layouts, feature comparisons, and call-to-action buttons. Perfect for SaaS applications and subscription services.',
+    keywords: [
+        'React pricing component',
+        'pricing table',
+        'subscription pricing',
+        'pricing plans',
+        'SaaS pricing',
+        'pricing cards',
+        'Tailwind CSS pricing',
+        'UI pricing library',
+        'pricing comparison',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Pricing Component | Sera UI',
+        description: 'Modern React pricing table components with multiple layouts, feature comparisons, and call-to-action buttons for SaaS applications.',
+        type: 'article',
+        url: '/docs/pricing',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Pricing Component | Sera UI',
+        description: 'Modern React pricing table components with multiple layouts, feature comparisons, and call-to-action buttons for SaaS applications.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/pricing',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { VitePressTable } from "@/components/ui/vitepress-table";
+import { HideTOC } from "@/components/site/hide-toc";
+import PricingSection from "./pricing";
+import Pricing2 from "./pricing2";
+import SimplePricing from "./pricing3";
+import Pricing4 from "./pricing4";
+
+<HideTOC />
+
+
+
+# Pricing Section Component <AI dir="left"/>
+
+A sleek and responsive pricing section built for modern websites. This component is ideal for showcasing plans, pricing tiers, or service packages in a clean and user-friendly layout.
+
+
+## Basic Pricing Section
+
+<Tabs defaultValue="preview" className="mt-6">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="preview">
+    <ComponentRenderer component={<PricingSection />} componentName="pricing" />
+  </TabsContent>
+
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/pricing/pricing.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Pricing with Tabs
+A pricing section with tabs to switch between monthly and yearly plans.
+
+<Tabs defaultValue="preview" className="mt-6">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Pricing2 />} componentName="pricing2" />
+  </TabsContent>
+
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/pricing/pricing2.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Performant Pricing Section
+Perfect for large numbers of plans or complex pricing structures.
+
+<Tabs defaultValue="preview" className="mt-6">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="preview">
+    <ComponentRenderer component={<SimplePricing />} componentName="SimplePricing" />
+  </TabsContent>
+
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/pricing/pricing3.tsx" />
+  </TabsContent>
+</Tabs>
+
+## Colorfull Pricing Section
+A pricing section with a color gradient and a blur effect.
+
+<Tabs defaultValue="preview" className="mt-6">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Pricing4 />} />
+  </TabsContent>
+
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/pricing/pricing4.tsx" />
+  </TabsContent>
+</Tabs>

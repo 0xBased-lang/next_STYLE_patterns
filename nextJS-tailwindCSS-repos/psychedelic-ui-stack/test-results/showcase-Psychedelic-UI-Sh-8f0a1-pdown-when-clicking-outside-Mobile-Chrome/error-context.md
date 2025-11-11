@@ -1,0 +1,81 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]: Conspiracy
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "Psychedelic UI" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Interactive Component Showcase
+      - paragraph [ref=e9]: ✅ Working Theme Switcher | Click themes below to see components change in real-time!
+      - generic [ref=e10]:
+        - generic [ref=e11]: 23 Components
+        - generic [ref=e12]: 4 Aesthetic Variants
+        - generic [ref=e13]: 88.80 KB Bundle
+        - generic [ref=e14]: 100% Accessible
+    - generic [ref=e16]:
+      - heading "Choose Your Aesthetic (Click to Apply!)" [level=2] [ref=e17]
+      - generic [ref=e18]:
+        - button "🕵️ Conspiracy Matrix-style hacker" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 🕵️ Conspiracy
+          - generic [ref=e21]: Matrix-style hacker
+        - button "⚡ Neon Crypto Cyberpunk vibes" [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: ⚡ Neon Crypto
+          - generic [ref=e24]: Cyberpunk vibes
+        - button "🌿 Organic Clean & natural" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: 🌿 Organic
+          - generic [ref=e27]: Clean & natural
+        - button "🎨 Experimental Psychedelic art" [ref=e28] [cursor=pointer]:
+          - generic [ref=e29]: 🎨 Experimental
+          - generic [ref=e30]: Psychedelic art
+    - generic [ref=e31]:
+      - heading "Component Gallery (Watch Them Change!)" [level=2] [ref=e32]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - heading "Themed Card 1" [level=3] [ref=e35]
+          - paragraph [ref=e36]: This card changes with the theme!
+          - button "Themed Button" [ref=e37] [cursor=pointer]
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - heading "Progress" [level=3] [ref=e40]
+            - generic [ref=e41]: Active
+          - paragraph [ref=e44]: 75% Complete
+        - generic [ref=e45]:
+          - heading "Circular Progress" [level=3] [ref=e46]
+          - generic [ref=e48]:
+            - img [ref=e49]
+            - generic [ref=e52]: 87%
+          - paragraph [ref=e53]: AI Confidence
+      - generic [ref=e54]:
+        - heading "Modal / Dialog Component" [level=3] [ref=e55]
+        - button "Open Modal" [ref=e56] [cursor=pointer]
+      - generic [ref=e57]:
+        - heading "Dropdown Menu Component" [level=3] [ref=e58]
+        - generic [ref=e59]:
+          - button "Dr. Smith" [active] [ref=e60] [cursor=pointer]:
+            - generic [ref=e62]: Dr. Smith
+            - img [ref=e63]
+          - generic [ref=e65]:
+            - generic [ref=e67]: My Account
+            - generic [ref=e68]:
+              - button "Profile Settings" [ref=e69] [cursor=pointer]
+              - button "Preferences" [ref=e70] [cursor=pointer]
+              - button "Theme" [ref=e71] [cursor=pointer]
+            - button "Log out" [ref=e73] [cursor=pointer]
+      - generic [ref=e74]:
+        - heading "Tooltip Component" [level=3] [ref=e75]
+        - generic [ref=e76]:
+          - generic [ref=e77]:
+            - button "Hover me" [ref=e78] [cursor=pointer]
+            - generic: This is a tooltip
+          - generic [ref=e79]:
+            - button "Info button" [ref=e80] [cursor=pointer]
+            - generic: AI-powered prediction analysis
+      - generic [ref=e81]:
+        - heading "✅ Theme System Status" [level=3] [ref=e82]
+        - generic [ref=e83]:
+          - generic [ref=e86]: Theme switcher fully functional
+          - generic [ref=e89]: Components update in real-time
+          - generic [ref=e92]: Smooth transitions enabled
+          - generic [ref=e95]: Ready for Playwright testing
+```

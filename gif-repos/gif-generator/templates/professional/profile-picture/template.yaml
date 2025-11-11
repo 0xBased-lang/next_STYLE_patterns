@@ -1,0 +1,275 @@
+# Profile Picture Animator Template
+# Creates animated profile pictures for social media, professional networks
+
+name: "Animated Profile Picture"
+description: "Create eye-catching animated profile pictures for LinkedIn, Twitter, Discord, etc."
+version: "1.0.0"
+category: "professional"
+
+# Pipeline: photo → crop to circle/square → add effects → optimize
+pipeline:
+  steps:
+    - tool: "ffmpeg"
+      operation: "prepare_image"
+      input: "{{photo_path}}"
+      output: "temp_prepared.png"
+      params:
+        filters:
+          - name: "crop"
+            params:
+              aspect: "{{aspect_ratio|1:1}}"
+              position: "center"
+          - name: "scale"
+            params:
+              width: "{{size}}"
+              height: "{{size}}"
+
+    - tool: "gifcurry"
+      operation: "create_animation"
+      input: "temp_prepared.png"
+      output: "temp_animated.gif"
+      params:
+        animation_type: "{{animation_type|subtle-zoom}}"
+        duration: "{{duration|3}}"
+        fps: 24
+        effects:
+          border:
+            enabled: "{{show_border|false}}"
+            color: "{{border_color|#4A90E2}}"
+            width: "{{border_width|10}}"
+          overlay:
+            enabled: "{{show_overlay|false}}"
+            type: "{{overlay_type|none}}"
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_animated.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 15
+        loop: 0
+
+# Platform-specific presets
+presets:
+  linkedin:
+    description: "Professional LinkedIn profile picture (400×400, subtle)"
+    size: 400
+    aspect_ratio: "1:1"
+    animation_type: "subtle-zoom"
+    duration: 3
+    show_border: true
+    border_color: "#0077B5"  # LinkedIn blue
+    border_width: 8
+    expected_size: "200-400KB"
+    processing_time: "20s"
+
+  twitter:
+    description: "Twitter/X profile picture (400×400, dynamic)"
+    size: 400
+    aspect_ratio: "1:1"
+    animation_type: "subtle-bounce"
+    duration: 2.5
+    show_border: false
+    expected_size: "150-350KB"
+    processing_time: "18s"
+
+  discord:
+    description: "Discord profile picture (128×128, playful)"
+    size: 128
+    aspect_ratio: "1:1"
+    animation_type: "rotate"
+    duration: 2
+    show_border: true
+    border_color: "#5865F2"  # Discord purple
+    expected_size: "50-150KB"
+    processing_time: "15s"
+
+  github:
+    description: "GitHub profile picture (460×460, minimal)"
+    size: 460
+    aspect_ratio: "1:1"
+    animation_type: "fade-in"
+    duration: 2
+    show_border: true
+    border_color: "#24292e"  # GitHub dark
+    expected_size: "200-400KB"
+    processing_time: "22s"
+
+  slack:
+    description: "Slack profile picture (500×500, friendly)"
+    size: 500
+    aspect_ratio: "1:1"
+    animation_type: "subtle-zoom"
+    duration: 2.5
+    show_border: false
+    expected_size: "250-500KB"
+    processing_time: "25s"
+
+# Variable definitions
+variables:
+  photo_path:
+    type: "file"
+    required: true
+    description: "Source photo (headshot or portrait)"
+
+  size:
+    type: "integer"
+    required: false
+    default: 400
+    description: "Output size in pixels (square)"
+
+  aspect_ratio:
+    type: "string"
+    required: false
+    default: "1:1"
+    description: "Aspect ratio (1:1 for square, 4:5 for portrait)"
+
+  animation_type:
+    type: "string"
+    required: false
+    default: "subtle-zoom"
+    options: ["subtle-zoom", "subtle-bounce", "fade-in", "rotate", "pulse", "none"]
+    description: "Animation effect"
+
+  duration:
+    type: "float"
+    required: false
+    default: 3
+    description: "Animation duration in seconds"
+
+  show_border:
+    type: "boolean"
+    required: false
+    default: false
+    description: "Add border frame"
+
+  border_color:
+    type: "string"
+    required: false
+    default: "#4A90E2"
+    description: "Border color (hex code)"
+
+  border_width:
+    type: "integer"
+    required: false
+    default: 10
+    description: "Border width in pixels"
+
+# Output validation
+validation:
+  max_file_size_mb: 1
+  required_dimensions:
+    aspect_ratio: "1:1"
+  duration:
+    min: 1
+    max: 5
+  format: "GIF"
+
+# Platform requirements
+platforms:
+  linkedin:
+    size: "400×400"
+    max_size: "8MB"
+    format: "GIF, JPG, PNG"
+    notes: "Keep professional and subtle"
+
+  twitter:
+    size: "400×400"
+    max_size: "5MB"
+    format: "GIF, JPG, PNG"
+    notes: "Circular crop displayed"
+
+  discord:
+    size: "128×128"
+    max_size: "256KB"
+    format: "GIF, PNG"
+    notes: "Small file size critical"
+
+  github:
+    size: "460×460"
+    max_size: "1MB"
+    format: "GIF, JPG, PNG"
+    notes: "Round display"
+
+  slack:
+    size: "500×500"
+    max_size: "2MB"
+    format: "GIF, JPG, PNG"
+    notes: "Visible in sidebar and messages"
+
+# Metadata
+tags:
+  - profile-picture
+  - avatar
+  - social-media
+  - professional
+  - linkedin
+  - twitter
+  - discord
+  - animated
+
+use_cases:
+  - "Professional networking (LinkedIn)"
+  - "Social media presence (Twitter, Instagram)"
+  - "Gaming/community profiles (Discord, Reddit)"
+  - "Developer profiles (GitHub, Stack Overflow)"
+  - "Team communication (Slack, Teams)"
+  - "Portfolio websites"
+  - "Email signatures"
+  - "Business cards (digital)"
+
+animation_styles:
+  subtle-zoom:
+    description: "Gentle zoom in/out"
+    vibe: "Professional, engaging"
+    best_for: "LinkedIn, professional networks"
+
+  subtle-bounce:
+    description: "Light bounce effect"
+    vibe: "Friendly, approachable"
+    best_for: "Twitter, casual social media"
+
+  fade-in:
+    description: "Elegant fade-in appearance"
+    vibe: "Sophisticated, minimal"
+    best_for: "GitHub, portfolios"
+
+  rotate:
+    description: "Slow rotation"
+    vibe: "Playful, dynamic"
+    best_for: "Discord, gaming communities"
+
+  pulse:
+    description: "Gentle pulsing glow"
+    vibe: "Modern, tech-savvy"
+    best_for: "Tech platforms, startups"
+
+best_practices:
+  photo_tips:
+    - "Use high-quality headshot"
+    - "Good lighting and sharp focus"
+    - "Solid or simple background"
+    - "Face should be centered"
+    - "Shoulders and up for best results"
+
+  animation_tips:
+    - "Keep subtle for professional contexts"
+    - "2-3 seconds is ideal duration"
+    - "Infinite loop (0) for continuous playback"
+    - "Match platform culture (LinkedIn vs Discord)"
+    - "Test on mobile and desktop"
+
+  file_size_tips:
+    - "Optimize aggressively for Discord/Slack"
+    - "Higher quality OK for LinkedIn/GitHub"
+    - "Use lossless compression first"
+    - "Reduce colors if needed for size"
+
+common_mistakes:
+  - "Animation too fast/distracting (keep subtle)"
+  - "File too large (optimize for platform limits)"
+  - "Low quality source photo (start with high-res)"
+  - "Busy background (use simple or blur)"
+  - "Face not centered (crop properly)"

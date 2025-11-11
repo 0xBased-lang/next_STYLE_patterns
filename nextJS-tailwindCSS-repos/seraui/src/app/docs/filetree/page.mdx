@@ -1,0 +1,93 @@
+export const metadata = {
+    title: 'React File Tree Component | Sera UI',
+    description: 'Interactive file tree component with expandable folders, file icons, and hierarchical structure. Perfect for file explorers and directory navigation interfaces.',
+    keywords: [
+        'React file tree',
+        'file explorer component',
+        'directory tree',
+        'folder structure',
+        'file navigation',
+        'tree view component',
+        'Tailwind CSS file tree',
+        'UI file explorer',
+        'hierarchical tree',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React File Tree Component | Sera UI',
+        description: 'Interactive React file tree component with expandable folders, file icons, and hierarchical structure for file navigation.',
+        type: 'article',
+        url: '/docs/filetree',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'File Tree Component | Sera UI',
+        description: 'Interactive React file tree component with expandable folders, file icons, and hierarchical structure for file navigation.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/filetree',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import { Table, StatusBadge } from "@/components/ui/table";
+import FileTree from "./filetree.tsx"
+import FileTree2 from "./filetree2.tsx"
+
+
+
+# File Tree <AI dir="left"/>
+A customizable and interactive file tree component with a built-in ripple effect.
+
+
+## Advanced Example
+ A more advanced file tree example with a built-in ripple effect.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<FileTree />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/filetree/filetree.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+## Basic Example
+ A minimal file tree example with basic menu items.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<FileTree2 />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/filetree/filetree2.tsx" />
+  </TabsContent>
+</Tabs>

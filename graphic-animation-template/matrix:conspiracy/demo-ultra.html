@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FallingGlitch ULTRA Demo - Advanced Matrix Animation Controls</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: black;
+            color: #00ff41;
+            overflow-x: hidden;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 15px;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            z-index: 10;
+            max-width: 350px;
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .controls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .controls::-webkit-scrollbar-track {
+            background: rgba(0, 20, 0, 0.5);
+        }
+
+        .controls::-webkit-scrollbar-thumb {
+            background: #00ff41;
+            border-radius: 4px;
+        }
+
+        .controls h2 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #00ff41;
+            text-align: center;
+            border-bottom: 1px solid #00ff41;
+            padding-bottom: 8px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 20, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 13px;
+            color: #06b6d4;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 11px;
+            color: #00cc33;
+        }
+
+        .control-group select,
+        .control-group input[type="text"],
+        .control-group input[type="number"] {
+            width: 100%;
+            padding: 5px;
+            background: rgba(0, 20, 0, 0.8);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .control-group input[type="checkbox"] {
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .color-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .color-input-group input[type="color"] {
+            width: 40px;
+            height: 30px;
+            border: 1px solid #00ff41;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .color-input-group input[type="text"] {
+            flex: 1;
+            padding: 5px;
+            font-size: 10px;
+        }
+
+        .preset-btn {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 6px 10px;
+            margin: 3px 3px 3px 0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 255, 65, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 255, 65, 0.3);
+        }
+
+        .preset-btn.active {
+            background: rgba(0, 255, 65, 0.6);
+            border-width: 2px;
+        }
+
+        .action-btn {
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid #06b6d4;
+            color: #06b6d4;
+            padding: 8px 12px;
+            margin: 5px 5px 5px 0;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            background: rgba(6, 182, 212, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 15px;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            z-index: 10;
+            font-size: 11px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+            max-width: 300px;
+        }
+
+        .info h1 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #06b6d4;
+        }
+
+        .info .fps {
+            font-size: 14px;
+            color: #00ff41;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            z-index: 11;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(0, 255, 65, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .value-display {
+            display: inline-block;
+            min-width: 40px;
+            text-align: right;
+            color: #06b6d4;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                top: 60px;
+                right: 5px;
+                max-width: 280px;
+                font-size: 10px;
+            }
+
+            .info {
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <button class="toggle-btn" onclick="toggleControls()">⚙️ ULTRA CONTROLS</button>
+
+    <div class="controls" id="controls">
+        <h2>🌑 ULTRA MATRIX CONTROLS</h2>
+
+        <!-- Quick Presets -->
+        <div class="section">
+            <div class="section-title">⚡ Quick Presets</div>
+            <button class="preset-btn" onclick="applyPreset('matrix')">Matrix</button>
+            <button class="preset-btn" onclick="applyPreset('cyberpunk')">Cyberpunk</button>
+            <button class="preset-btn" onclick="applyPreset('conspiracy')">Conspiracy</button>
+            <button class="preset-btn" onclick="applyPreset('fire')">Fire</button>
+            <button class="preset-btn" onclick="applyPreset('ice')">Ice</button>
+            <button class="preset-btn" onclick="applyPreset('vaporwave')">Vaporwave</button>
+            <button class="preset-btn" onclick="applyPreset('binary')">Binary</button>
+            <button class="preset-btn" onclick="applyPreset('chaos')">Chaos</button>
+            <button class="preset-btn" onclick="randomPreset()">🎲 Random</button>
+        </div>
+
+        <!-- Speed & Motion -->
+        <div class="section">
+            <div class="section-title">🚀 Speed & Motion</div>
+
+            <div class="control-group">
+                <label>Fall Speed: <span class="value-display" id="speedValue">1.0</span>x</label>
+                <input type="range" id="fallSpeed" min="0.1" max="5" step="0.1" value="1" oninput="updateConfig('fallSpeed', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Speed Variation: <span class="value-display" id="speedVarValue">0</span>%</label>
+                <input type="range" id="speedVariation" min="0" max="100" step="5" value="0" oninput="updateConfig('speedVariation', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Direction:</label>
+                <select id="direction" onchange="updateConfig('direction', this.value)">
+                    <option value="down">⬇️ Falling</option>
+                    <option value="up">⬆️ Rising</option>
+                    <option value="left">⬅️ Left</option>
+                    <option value="right">➡️ Right</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Visual Effects -->
+        <div class="section">
+            <div class="section-title">✨ Visual Effects</div>
+
+            <div class="control-group">
+                <label>Glitch Intensity: <span class="value-display" id="glitchValue">5</span>%</label>
+                <input type="range" id="glitchIntensity" min="0" max="50" step="1" value="5" oninput="updateConfig('glitchIntensity', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Trail Fade: <span class="value-display" id="fadeValue">5</span>%</label>
+                <input type="range" id="trailFade" min="1" max="20" step="1" value="5" oninput="updateConfig('trailFade', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="glowEffect" onchange="updateConfig('glowEffect', this.checked)">
+                    Glow Effect
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>Glow Intensity: <span class="value-display" id="glowValue">5</span></label>
+                <input type="range" id="glowIntensity" min="0" max="20" step="1" value="5" oninput="updateConfig('glowIntensity', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Blur Amount: <span class="value-display" id="blurValue">0</span>px</label>
+                <input type="range" id="blurAmount" min="0" max="5" step="0.5" value="0" oninput="updateConfig('blurAmount', this.value)">
+            </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="section">
+            <div class="section-title">🔤 Typography</div>
+
+            <div class="control-group">
+                <label>Font Size: <span class="value-display" id="fontValue">14</span>px</label>
+                <input type="range" id="fontSize" min="8" max="32" step="2" value="14" oninput="updateConfig('fontSize', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Character Set:</label>
+                <select id="charSet" onchange="updateConfig('charSet', this.value)">
+                    <option value="full">Full (Mixed)</option>
+                    <option value="letters">Letters Only</option>
+                    <option value="numbers">Numbers Only</option>
+                    <option value="binary">Binary (01)</option>
+                    <option value="symbols">Symbols</option>
+                    <option value="katakana">Japanese Katakana</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+
+            <div class="control-group" id="customCharGroup" style="display: none;">
+                <label>Custom Characters:</label>
+                <input type="text" id="customChars" placeholder="Enter custom chars..." oninput="updateConfig('customChars', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Column Density: <span class="value-display" id="densityValue">100</span>%</label>
+                <input type="range" id="columnDensity" min="25" max="200" step="5" value="100" oninput="updateConfig('columnDensity', this.value)">
+            </div>
+        </div>
+
+        <!-- Colors -->
+        <div class="section">
+            <div class="section-title">🎨 Color Configuration</div>
+
+            <div class="control-group">
+                <label>Active Colors: <span class="value-display" id="colorCountValue">4</span></label>
+                <input type="range" id="colorCount" min="1" max="8" step="1" value="4" oninput="updateConfig('colorCount', this.value)">
+            </div>
+
+            <div class="color-inputs" id="colorInputs">
+                <!-- Color inputs will be generated dynamically -->
+            </div>
+
+            <div class="control-group">
+                <label>Color Mode:</label>
+                <select id="colorMode" onchange="updateConfig('colorMode', this.value)">
+                    <option value="random">Random Switch</option>
+                    <option value="sequential">Sequential</option>
+                    <option value="wave">Wave Pattern</option>
+                    <option value="pulse">Pulse</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="rainbow" onchange="updateConfig('rainbow', this.checked)">
+                    Rainbow Mode
+                </label>
+            </div>
+        </div>
+
+        <!-- Advanced -->
+        <div class="section">
+            <div class="section-title">🔬 Advanced</div>
+
+            <div class="control-group">
+                <label>Drop Reset Chance: <span class="value-display" id="resetValue">2.5</span>%</label>
+                <input type="range" id="resetChance" min="0.1" max="10" step="0.1" value="2.5" oninput="updateConfig('resetChance', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Character Change Speed: <span class="value-display" id="charChangeValue">100</span>%</label>
+                <input type="range" id="charChangeSpeed" min="10" max="200" step="10" value="100" oninput="updateConfig('charChangeSpeed', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="wavyMotion" onchange="updateConfig('wavyMotion', this.checked)">
+                    Wavy Motion
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>Wave Amplitude: <span class="value-display" id="waveAmpValue">10</span></label>
+                <input type="range" id="waveAmplitude" min="0" max="50" step="5" value="10" oninput="updateConfig('waveAmplitude', this.value)">
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="section">
+            <div class="section-title">💾 Save & Export</div>
+
+            <button class="action-btn" onclick="exportAsCode()">📋 Export as React Code</button>
+            <button class="action-btn" onclick="exportAsJSON()">📄 Export as JSON</button>
+            <button class="action-btn" onclick="savePreset()">💾 Save Custom Preset</button>
+            <button class="action-btn" onclick="loadPreset()">📂 Load Preset</button>
+            <button class="action-btn" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+        </div>
+    </div>
+
+    <div class="info">
+        <h1>🌑 ULTRA DEMO</h1>
+        <p>Advanced Matrix Animation</p>
+        <p class="fps">FPS: <span id="fpsCounter">60</span></p>
+        <p style="margin-top: 8px; opacity: 0.7; font-size: 10px;">
+            20+ customizable parameters<br>
+            Real-time performance monitoring<br>
+            Export as code or JSON
+        </p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ultra configuration with all parameters
+        let config = {
+            // Speed & Motion
+            fallSpeed: 1,
+            speedVariation: 0,
+            direction: 'down',
+
+            // Visual Effects
+            glitchIntensity: 0.05,
+            trailFade: 0.05,
+            glowEffect: false,
+            glowIntensity: 5,
+            blurAmount: 0,
+
+            // Typography
+            fontSize: 14,
+            charSet: 'full',
+            customChars: '',
+            columnDensity: 100,
+
+            // Colors
+            colorCount: 4,
+            colors: ['#00ff41', '#06b6d4', '#9333ea', '#f59e0b', '#ff00ff', '#00ffff', '#ffff00', '#ff0080'],
+            colorMode: 'random',
+            rainbow: false,
+
+            // Advanced
+            resetChance: 2.5,
+            charChangeSpeed: 100,
+            wavyMotion: false,
+            waveAmplitude: 10
+        };
+
+        // Character sets
+        const charSets = {
+            full: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/~`アイウエオカキクケコ'.split(''),
+            letters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+            numbers: '0123456789'.split(''),
+            binary: '01'.split(''),
+            symbols: '@#$%^&*()_+-=[]{}|;:,.<>?/~`'.split(''),
+            katakana: 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'.split(''),
+            custom: []
+        };
+
+        let drops = [];
+        let colors = [];
+        let speeds = [];
+        let waveOffsets = [];
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let fps = 60;
+
+        // Canvas setup
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        }
+
+        function init() {
+            const effectiveFontSize = config.fontSize * (config.columnDensity / 100);
+            const columns = Math.floor(canvas.width / effectiveFontSize);
+            drops = Array(columns).fill(1);
+            colors = Array(columns).fill(0).map((_, i) =>
+                config.colors[i % config.colorCount]
+            );
+            speeds = Array(columns).fill(0).map(() =>
+                config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100))
+            );
+            waveOffsets = Array(columns).fill(0).map((_, i) => i * 0.1);
+        }
+
+        function getChars() {
+            if (config.charSet === 'custom' && config.customChars) {
+                return config.customChars.split('');
+            }
+            return charSets[config.charSet] || charSets.full;
+        }
+
+        // Animation
+        function draw() {
+            // FPS calculation
+            const currentTime = performance.now();
+            const delta = currentTime - lastTime;
+            fps = Math.round(1000 / delta);
+            lastTime = currentTime;
+            frameCount++;
+
+            // Update FPS display every 10 frames
+            if (frameCount % 10 === 0) {
+                document.getElementById('fpsCounter').textContent = fps;
+            }
+
+            // Background with trail fade
+            ctx.fillStyle = `rgba(0, 0, 0, ${config.trailFade / 100})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Apply blur if enabled
+            if (config.blurAmount > 0) {
+                ctx.filter = `blur(${config.blurAmount}px)`;
+            } else {
+                ctx.filter = 'none';
+            }
+
+            const chars = getChars();
+            const effectiveFontSize = config.fontSize * (config.columnDensity / 100);
+
+            for (let i = 0; i < drops.length; i++) {
+                // Character selection (affected by charChangeSpeed)
+                const charIndex = config.charChangeSpeed === 100
+                    ? Math.floor(Math.random() * chars.length)
+                    : Math.floor((frameCount * config.charChangeSpeed / 100) + i) % chars.length;
+                const char = chars[charIndex] || chars[0];
+
+                // Position calculation
+                let x = i * effectiveFontSize;
+                let y = drops[i] * config.fontSize;
+
+                // Wavy motion
+                if (config.wavyMotion) {
+                    x += Math.sin((frameCount * 0.05) + waveOffsets[i]) * config.waveAmplitude;
+                }
+
+                // Direction handling
+                switch (config.direction) {
+                    case 'up':
+                        y = canvas.height - y;
+                        break;
+                    case 'left':
+                        [x, y] = [canvas.width - y, x];
+                        break;
+                    case 'right':
+                        [x, y] = [y, x];
+                        break;
+                }
+
+                // Color handling
+                if (config.rainbow) {
+                    const hue = (frameCount + i * 10) % 360;
+                    colors[i] = `hsl(${hue}, 100%, 50%)`;
+                } else if (Math.random() < config.glitchIntensity) {
+                    switch (config.colorMode) {
+                        case 'sequential':
+                            const currentIndex = config.colors.indexOf(colors[i]);
+                            colors[i] = config.colors[(currentIndex + 1) % config.colorCount];
+                            break;
+                        case 'wave':
+                            const waveIndex = Math.floor((Math.sin((frameCount * 0.01) + i * 0.1) + 1) / 2 * config.colorCount);
+                            colors[i] = config.colors[waveIndex % config.colorCount];
+                            break;
+                        case 'pulse':
+                            const pulse = Math.sin(frameCount * 0.05) > 0 ? 0 : 1;
+                            colors[i] = config.colors[pulse % config.colorCount];
+                            break;
+                        default: // random
+                            colors[i] = config.colors[Math.floor(Math.random() * config.colorCount)];
+                    }
+                }
+
+                // Apply glow effect
+                if (config.glowEffect) {
+                    ctx.shadowBlur = config.glowIntensity;
+                    ctx.shadowColor = colors[i];
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+
+                // Draw character
+                ctx.fillStyle = colors[i];
+                ctx.font = `${config.fontSize}px monospace`;
+                ctx.fillText(char, x, y);
+
+                // Reset drop
+                const resetThreshold = 1 - (config.resetChance / 100);
+                const maxPos = config.direction === 'left' || config.direction === 'right'
+                    ? canvas.width
+                    : canvas.height;
+
+                if (y > maxPos && Math.random() > resetThreshold) {
+                    drops[i] = 0;
+                    // Reset speed variation
+                    speeds[i] = config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100));
+                }
+
+                drops[i] += speeds[i];
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        // Update configuration
+        function updateConfig(param, value) {
+            const numValue = parseFloat(value);
+
+            switch(param) {
+                case 'fallSpeed':
+                    config.fallSpeed = numValue;
+                    document.getElementById('speedValue').textContent = numValue.toFixed(1);
+                    // Update speed variations
+                    speeds = speeds.map(() =>
+                        config.fallSpeed * (1 + (Math.random() - 0.5) * (config.speedVariation / 100))
+                    );
+                    break;
+                case 'speedVariation':
+                    config.speedVariation = numValue;
+                    document.getElementById('speedVarValue').textContent = Math.round(numValue);
+                    break;
+                case 'direction':
+                    config.direction = value;
+                    break;
+                case 'glitchIntensity':
+                    config.glitchIntensity = numValue / 100;
+                    document.getElementById('glitchValue').textContent = Math.round(numValue);
+                    break;
+                case 'trailFade':
+                    config.trailFade = numValue;
+                    document.getElementById('fadeValue').textContent = Math.round(numValue);
+                    break;
+                case 'glowEffect':
+                    config.glowEffect = value;
+                    break;
+                case 'glowIntensity':
+                    config.glowIntensity = numValue;
+                    document.getElementById('glowValue').textContent = Math.round(numValue);
+                    break;
+                case 'blurAmount':
+                    config.blurAmount = numValue;
+                    document.getElementById('blurValue').textContent = numValue.toFixed(1);
+                    break;
+                case 'fontSize':
+                    config.fontSize = parseInt(value);
+                    document.getElementById('fontValue').textContent = value;
+                    resizeCanvas();
+                    break;
+                case 'charSet':
+                    config.charSet = value;
+                    document.getElementById('customCharGroup').style.display =
+                        value === 'custom' ? 'block' : 'none';
+                    break;
+                case 'customChars':
+                    config.customChars = value;
+                    break;
+                case 'columnDensity':
+                    config.columnDensity = numValue;
+                    document.getElementById('densityValue').textContent = Math.round(numValue);
+                    resizeCanvas();
+                    break;
+                case 'colorCount':
+                    config.colorCount = parseInt(value);
+                    document.getElementById('colorCountValue').textContent = value;
+                    generateColorInputs();
+                    break;
+                case 'colorMode':
+                    config.colorMode = value;
+                    break;
+                case 'rainbow':
+                    config.rainbow = value;
+                    break;
+                case 'resetChance':
+                    config.resetChance = numValue;
+                    document.getElementById('resetValue').textContent = numValue.toFixed(1);
+                    break;
+                case 'charChangeSpeed':
+                    config.charChangeSpeed = numValue;
+                    document.getElementById('charChangeValue').textContent = Math.round(numValue);
+                    break;
+                case 'wavyMotion':
+                    config.wavyMotion = value;
+                    break;
+                case 'waveAmplitude':
+                    config.waveAmplitude = numValue;
+                    document.getElementById('waveAmpValue').textContent = Math.round(numValue);
+                    break;
+            }
+        }
+
+        // Generate color inputs
+        function generateColorInputs() {
+            const container = document.getElementById('colorInputs');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 8; i++) {
+                const group = document.createElement('div');
+                group.className = 'color-input-group';
+                group.style.opacity = i < config.colorCount ? '1' : '0.3';
+
+                const colorInput = document.createElement('input');
+                colorInput.type = 'color';
+                colorInput.value = config.colors[i];
+                colorInput.disabled = i >= config.colorCount;
+                colorInput.onchange = (e) => {
+                    config.colors[i] = e.target.value;
+                    hexInput.value = e.target.value;
+                };
+
+                const hexInput = document.createElement('input');
+                hexInput.type = 'text';
+                hexInput.value = config.colors[i];
+                hexInput.disabled = i >= config.colorCount;
+                hexInput.onchange = (e) => {
+                    if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                        config.colors[i] = e.target.value;
+                        colorInput.value = e.target.value;
+                    }
+                };
+
+                group.appendChild(colorInput);
+                group.appendChild(hexInput);
+                container.appendChild(group);
+            }
+        }
+
+        // Presets
+        const presets = {
+            matrix: {
+                colors: ['#00ff41', '#00cc33', '#00aa22', '#008811'],
+                colorCount: 3,
+                fallSpeed: 1,
+                glitchIntensity: 0.05,
+                trailFade: 5,
+                fontSize: 14,
+                charSet: 'full',
+                direction: 'down',
+                glowEffect: false,
+                rainbow: false
+            },
+            cyberpunk: {
+                colors: ['#ff00ff', '#00ffff', '#ffff00', '#ff0080'],
+                colorCount: 4,
+                fallSpeed: 1.5,
+                glitchIntensity: 0.1,
+                trailFade: 8,
+                fontSize: 16,
+                charSet: 'full',
+                direction: 'down',
+                glowEffect: true,
+                glowIntensity: 10,
+                rainbow: false
+            },
+            conspiracy: {
+                colors: ['#9333ea', '#06b6d4', '#a855f7', '#22d3ee'],
+                colorCount: 4,
+                fallSpeed: 1.2,
+                glitchIntensity: 0.08,
+                trailFade: 5,
+                fontSize: 14,
+                charSet: 'full',
+                direction: 'down',
+                glowEffect: true,
+                glowIntensity: 8,
+                rainbow: false
+            },
+            fire: {
+                colors: ['#ff0000', '#ff6600', '#ff9900', '#ffcc00'],
+                colorCount: 4,
+                fallSpeed: 1.5,
+                glitchIntensity: 0.12,
+                trailFade: 10,
+                fontSize: 16,
+                charSet: 'symbols',
+                direction: 'up',
+                glowEffect: true,
+                glowIntensity: 15,
+                rainbow: false
+            },
+            ice: {
+                colors: ['#00ffff', '#0099ff', '#66ccff', '#99ddff'],
+                colorCount: 4,
+                fallSpeed: 0.8,
+                glitchIntensity: 0.04,
+                trailFade: 3,
+                fontSize: 14,
+                charSet: 'full',
+                direction: 'down',
+                glowEffect: true,
+                glowIntensity: 5,
+                rainbow: false
+            },
+            vaporwave: {
+                colors: ['#ff71ce', '#01cdfe', '#05ffa1', '#b967ff'],
+                colorCount: 4,
+                fallSpeed: 1,
+                glitchIntensity: 0.1,
+                trailFade: 8,
+                fontSize: 15,
+                charSet: 'katakana',
+                direction: 'down',
+                glowEffect: true,
+                glowIntensity: 12,
+                wavyMotion: true,
+                waveAmplitude: 15,
+                rainbow: false
+            },
+            binary: {
+                colors: ['#00ff00', '#00cc00'],
+                colorCount: 2,
+                fallSpeed: 2,
+                glitchIntensity: 0.15,
+                trailFade: 2,
+                fontSize: 12,
+                charSet: 'binary',
+                direction: 'down',
+                glowEffect: false,
+                rainbow: false
+            },
+            chaos: {
+                colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff', '#ff8800'],
+                colorCount: 8,
+                fallSpeed: 3,
+                glitchIntensity: 0.3,
+                trailFade: 15,
+                fontSize: 20,
+                charSet: 'full',
+                direction: 'down',
+                glowEffect: true,
+                glowIntensity: 20,
+                speedVariation: 100,
+                wavyMotion: true,
+                waveAmplitude: 30,
+                rainbow: false
+            }
+        };
+
+        function applyPreset(name) {
+            const preset = presets[name];
+            if (!preset) return;
+
+            // Apply preset values
+            Object.assign(config, preset);
+
+            // Update UI
+            document.getElementById('fallSpeed').value = config.fallSpeed;
+            document.getElementById('glitchIntensity').value = config.glitchIntensity * 100;
+            document.getElementById('trailFade').value = config.trailFade;
+            document.getElementById('fontSize').value = config.fontSize;
+            document.getElementById('charSet').value = config.charSet;
+            document.getElementById('direction').value = config.direction;
+            document.getElementById('glowEffect').checked = config.glowEffect || false;
+            document.getElementById('glowIntensity').value = config.glowIntensity || 5;
+            document.getElementById('colorCount').value = config.colorCount;
+            document.getElementById('speedVariation').value = config.speedVariation || 0;
+            document.getElementById('wavyMotion').checked = config.wavyMotion || false;
+            document.getElementById('waveAmplitude').value = config.waveAmplitude || 10;
+            document.getElementById('rainbow').checked = config.rainbow || false;
+
+            // Update displays
+            updateConfig('fallSpeed', config.fallSpeed);
+            updateConfig('glitchIntensity', config.glitchIntensity * 100);
+            updateConfig('trailFade', config.trailFade);
+            updateConfig('fontSize', config.fontSize);
+            updateConfig('colorCount', config.colorCount);
+
+            generateColorInputs();
+            resizeCanvas();
+        }
+
+        function randomPreset() {
+            config.colors = Array(8).fill(0).map(() =>
+                '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
+            );
+            config.colorCount = Math.floor(Math.random() * 7) + 2;
+            config.fallSpeed = Math.random() * 4 + 0.5;
+            config.glitchIntensity = Math.random() * 0.3;
+            config.trailFade = Math.random() * 15 + 2;
+            config.fontSize = Math.floor(Math.random() * 16) + 10;
+            config.glowEffect = Math.random() > 0.5;
+            config.glowIntensity = Math.floor(Math.random() * 15) + 5;
+
+            const charSetsKeys = Object.keys(charSets).filter(k => k !== 'custom');
+            config.charSet = charSetsKeys[Math.floor(Math.random() * charSetsKeys.length)];
+
+            // Update UI with random values
+            document.getElementById('fallSpeed').value = config.fallSpeed;
+            document.getElementById('glitchIntensity').value = config.glitchIntensity * 100;
+            document.getElementById('trailFade').value = config.trailFade;
+            document.getElementById('fontSize').value = config.fontSize;
+            document.getElementById('charSet').value = config.charSet;
+            document.getElementById('glowEffect').checked = config.glowEffect;
+            document.getElementById('glowIntensity').value = config.glowIntensity;
+            document.getElementById('colorCount').value = config.colorCount;
+
+            updateConfig('fallSpeed', config.fallSpeed);
+            updateConfig('glitchIntensity', config.glitchIntensity * 100);
+            updateConfig('trailFade', config.trailFade);
+            updateConfig('fontSize', config.fontSize);
+            updateConfig('colorCount', config.colorCount);
+
+            generateColorInputs();
+            resizeCanvas();
+        }
+
+        // Export functions
+        function exportAsCode() {
+            const activeColors = config.colors.slice(0, config.colorCount);
+            const code = `<FallingGlitch
+  glitchColors={${JSON.stringify(activeColors)}}
+  fontSize={${config.fontSize}}
+  fallSpeed={${config.fallSpeed}}
+  glitchIntensity={${config.glitchIntensity}}
+  backgroundColor="rgba(0, 0, 0, ${config.trailFade / 100})"
+>
+  <div />
+</FallingGlitch>`;
+
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ React code copied to clipboard!');
+            });
+        }
+
+        function exportAsJSON() {
+            const json = JSON.stringify(config, null, 2);
+            navigator.clipboard.writeText(json).then(() => {
+                alert('✅ JSON configuration copied to clipboard!');
+            });
+        }
+
+        function savePreset() {
+            const name = prompt('Enter preset name:');
+            if (name) {
+                localStorage.setItem(`fallingglitch_preset_${name}`, JSON.stringify(config));
+                alert(`✅ Preset "${name}" saved!`);
+            }
+        }
+
+        function loadPreset() {
+            const name = prompt('Enter preset name to load:');
+            if (name) {
+                const saved = localStorage.getItem(`fallingglitch_preset_${name}`);
+                if (saved) {
+                    Object.assign(config, JSON.parse(saved));
+                    alert(`✅ Preset "${name}" loaded!`);
+                    location.reload(); // Reload to apply all settings
+                } else {
+                    alert(`❌ Preset "${name}" not found!`);
+                }
+            }
+        }
+
+        function resetToDefaults() {
+            if (confirm('Reset all settings to defaults?')) {
+                location.reload();
+            }
+        }
+
+        function toggleControls() {
+            const controls = document.getElementById('controls');
+            controls.classList.toggle('hidden');
+        }
+
+        // Initialize
+        window.addEventListener('resize', resizeCanvas);
+        generateColorInputs();
+        resizeCanvas();
+        draw();
+
+        // Auto-hide controls on mobile after 5 seconds
+        if (window.innerWidth < 768) {
+            setTimeout(() => {
+                document.getElementById('controls').classList.add('hidden');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

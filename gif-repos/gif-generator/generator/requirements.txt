@@ -1,0 +1,23 @@
+# Core dependencies
+pyyaml>=6.0
+click>=8.1.0
+jsonschema>=4.0
+python-dotenv>=1.0
+
+# Image/Video processing
+pillow>=10.0
+imageio>=2.31
+imageio-ffmpeg>=0.4.9
+numpy>=1.24
+
+# Optional: AI model dependencies
+# Uncomment if using LivePortrait, first-order-model, etc.
+# torch>=2.0
+# torchvision>=0.15
+# opencv-python>=4.8
+# onnxruntime-gpu>=1.16  # or onnxruntime for CPU
+
+# Development tools
+pytest>=7.4
+black>=23.0
+mypy>=1.5

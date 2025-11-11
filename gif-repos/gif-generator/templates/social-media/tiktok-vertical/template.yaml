@@ -1,0 +1,122 @@
+# TikTok Vertical Video Template
+# Creates vertical 9:16 videos optimized for TikTok/Reels/Shorts
+
+name: "TikTok Vertical Video"
+description: "Create vertical short-form videos for TikTok, Instagram Reels, YouTube Shorts (9:16)"
+version: "1.0.0"
+category: "social-media"
+
+# Pipeline: video → vertical crop → optimize for mobile → compress
+pipeline:
+  - tool: "gifcurry"
+    config:
+      start_time: 0
+      end_time: 15  # TikTok optimal: 7-15s
+      width: 1080
+      height: 1920  # 9:16 vertical
+      fps: 30       # Smooth for mobile
+      quality: 100
+      crop_mode: "center_vertical"
+      text_overlay:
+        text: "{{hook_text}}"
+        position: "top"
+        font: "Arial-Bold"
+        font_size: 64
+        fill_color: [255, 255, 255, 255]
+        outline_color: [0, 0, 0, 255]
+        outline_size: 4
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 256
+      lossy: 60
+
+  - tool: "ffmpeg"
+    config:
+      codec: "h264"
+      format: "mp4"
+      audio: true
+      bitrate: "5M"
+      mobile_optimized: true
+
+assets:
+  required:
+    - name: "video"
+      type: "video/*"
+      description: "Horizontal or vertical source video"
+
+  optional:
+    - name: "audio"
+      type: "audio/*"
+      description: "Background music or voiceover"
+
+    - name: "captions"
+      type: "text/srt"
+      description: "Subtitles file"
+
+variables:
+  hook_text:
+    type: "string"
+    default: "Watch this!"
+    description: "Opening hook text (first 3 seconds)"
+
+  content_type:
+    type: "string"
+    default: "general"
+    description: "Content type (tutorial/dance/comedy/product)"
+
+presets:
+  tutorial:  # How-to content
+    gifcurry:
+      end_time: 30  # Longer for education
+      fps: 24
+      text_overlay:
+        position: "bottom"
+        font_size: 56
+    ffmpeg:
+      bitrate: "4M"
+
+  product:  # Product showcase
+    gifcurry:
+      end_time: 15
+      fps: 30
+      quality: 100
+    ffmpeg:
+      bitrate: "6M"
+
+  comedy:  # Comedy/Entertainment
+    gifcurry:
+      end_time: 10  # Quick punchline
+      fps: 30
+    ffmpeg:
+      bitrate: "5M"
+
+  dance:  # Dance/Performance
+    gifcurry:
+      end_time: 15
+      fps: 60  # Smooth motion
+    ffmpeg:
+      bitrate: "8M"
+
+validation:
+  max_duration: 60  # TikTok limit
+  max_size_mb: 287  # TikTok's limit (Android)
+  required_format: "mp4"
+  aspect_ratio: [9, 16]  # Must be vertical
+  min_width: 720
+  max_width: 1080
+  audio_required: false
+
+metadata:
+  author: "gif-repos generator"
+  tags: [tiktok, reels, shorts, vertical, mobile, short-form]
+  platform: ["tiktok", "instagram-reels", "youtube-shorts"]
+  use_cases:
+    - "TikTok videos"
+    - "Instagram Reels"
+    - "YouTube Shorts"
+    - "Product demos"
+    - "Tutorials"
+    - "Dance videos"
+    - "Comedy skits"

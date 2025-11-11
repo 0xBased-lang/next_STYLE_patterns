@@ -1,0 +1,124 @@
+export const metadata = {
+    title: 'React Sign In Component | Sera UI',
+    description: 'Modern sign-in form components with validation, social authentication options, and responsive design. Perfect for user authentication and login interfaces.',
+    keywords: [
+        'React sign in component',
+        'signin form',
+        'login component',
+        'authentication form',
+        'user signin',
+        'social signin',
+        'Tailwind CSS signin',
+        'UI signin library',
+        'login interface',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Sign In Component | Sera UI',
+        description: 'Modern React sign-in form components with validation, social authentication options, and responsive design.',
+        type: 'article',
+        url: '/docs/signin',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Sign In Component | Sera UI',
+        description: 'Modern React sign-in form components with validation, social authentication options, and responsive design.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/signin',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import Signin1 from "./signin1.tsx"
+import Signin2 from "./signin2.tsx"
+import Signin3 from "./signin3.tsx"
+import Signin4 from "./signin4.tsx"
+
+
+
+# Sign In <AI dir="left"/>
+
+A collection of 4 unique black and white themed sign-in components, each with distinctive features and design approaches. From minimalist step-by-step forms to elegant geometric designs, these components offer various styles for modern authentication interfaces.
+
+## Signin 1 - Multi-Step Form
+A minimalist black and white sign-in with step-by-step progression, typing animation, and brutalist design elements. Features progress tracking, form validation, and clean geometric styling.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Signin1 />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/signin/signin1.tsx" />
+  </TabsContent>
+</Tabs>
+
+## Signin 2 - Interactive Design
+A modern black and white sign-in with floating label inputs, mouse tracking effects, and geometric decorations. Features animated grid background and hover interactions.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Signin2 />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/signin/signin2.tsx" />
+  </TabsContent>
+</Tabs>
+
+## Signin 3 - Glitch Effect
+An elegant black and white sign-in with glitch text effects, animated borders, and cyberpunk-inspired design. Features scanline effects and rotating elements.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Signin3 />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/signin/signin3.tsx" />
+  </TabsContent>
+</Tabs>
+
+## Signin 4 - Brutalist Style
+A bold black and white sign-in with brutalist design, geometric floating elements, and strong typography. Features corner cuts and shadow effects.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Signin4 />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/signin/signin4.tsx" />
+  </TabsContent>
+</Tabs>

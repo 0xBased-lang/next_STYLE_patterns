@@ -1,0 +1,94 @@
+# Expression Transfer Template
+# Transfers facial expressions from one face to another
+
+name: "Expression Transfer"
+description: "Transfer facial expressions and emotions between portraits using AI"
+version: "1.0.0"
+category: "portrait-animation"
+
+# Pipeline: source portrait + expression video → transfer → output
+pipeline:
+  - tool: "first-order-model"
+    config:
+      mode: "transfer"
+      relative: true
+      adapt_movement_scale: true
+      num_keypoints: 10
+      resolution: [256, 256]
+
+  - tool: "ffmpeg"
+    config:
+      upscale: "2x"  # Enhance resolution
+      codec: "h264"
+      format: "mp4"
+
+assets:
+  required:
+    - name: "source_image"
+      type: "image/*"
+      description: "Portrait to animate"
+
+    - name: "expression_video"
+      type: "video/*"
+      description: "Video with expressions to transfer"
+
+  optional:
+    - name: "mask"
+      type: "image/*"
+      description: "Face mask for region control"
+
+variables:
+  intensity:
+    type: "number"
+    default: 1.0
+    description: "Expression intensity multiplier (0.5-2.0)"
+
+  transfer_mode:
+    type: "string"
+    default: "expression"
+    description: "What to transfer (expression/head-pose/both)"
+
+presets:
+  subtle:  # Gentle expression transfer
+    first-order-model:
+      relative: true
+      adapt_movement_scale: true
+    variables:
+      intensity: 0.7
+
+  normal:  # Standard transfer (default)
+    first-order-model:
+      relative: true
+      adapt_movement_scale: true
+    variables:
+      intensity: 1.0
+
+  exaggerated:  # Amplified expressions
+    first-order-model:
+      relative: true
+      adapt_movement_scale: true
+    variables:
+      intensity: 1.5
+
+  headpose_only:  # Only head movement
+    first-order-model:
+      relative: false
+      adapt_movement_scale: false
+    variables:
+      transfer_mode: "head-pose"
+
+validation:
+  min_resolution: [256, 256]
+  face_detected: true
+  max_duration: 60
+
+metadata:
+  author: "gif-repos generator"
+  tags: [ai, expression, emotion, transfer, animation]
+  model: ["first-order-model"]
+  use_cases:
+    - "Emotion demonstration"
+    - "Character animation"
+    - "Educational content"
+    - "Artistic projects"
+    - "Meme creation"

@@ -1,0 +1,68 @@
+export const metadata = {
+    title: 'React Forgot Password Component | Sera UI',
+    description: 'Modern forgot password form component with validation, email input, and responsive design. Perfect for authentication flows and password recovery interfaces.',
+    keywords: [
+        'React forgot password',
+        'password recovery form',
+        'forgot password component',
+        'authentication form',
+        'password reset',
+        'email validation',
+        'Tailwind CSS form',
+        'UI auth library',
+        'password recovery',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Forgot Password Component | Sera UI',
+        description: 'Modern React forgot password form component with validation and responsive design for authentication flows.',
+        type: 'article',
+        url: '/docs/forgotpassword',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Forgot Password Component | Sera UI',
+        description: 'Modern React forgot password form component with validation and responsive design for authentication flows.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/forgotpassword',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import ForgotPassword from "./forgotpassword"
+
+
+
+# Forgot Password <AI dir="left"/>
+A modern, responsive, and user-friendly password recovery form with a focus on security and ease of use. Features a sleek design with a green color scheme and smooth animations.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<ForgotPassword />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/forgotpassword/forgotpassword.tsx" />
+  </TabsContent>
+</Tabs>

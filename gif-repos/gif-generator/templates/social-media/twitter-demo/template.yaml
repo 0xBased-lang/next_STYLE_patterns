@@ -1,0 +1,100 @@
+# Twitter Product Demo Template
+# Creates 5-second optimized GIF for Twitter (<5MB)
+
+name: "Twitter Product Demo"
+description: "5-second product demo GIF optimized for Twitter platform"
+version: "1.0.0"
+category: "social-media"
+
+# Processing pipeline: gifcurry → gifsicle
+pipeline:
+  # Stage 1: Convert video to GIF with text overlay
+  - tool: "gifcurry"
+    config:
+      start_time: 0
+      end_time: 5
+      width: 600
+      fps: 15
+      quality: 100
+      text_overlay:
+        text: "{{product_name}}"
+        position: "bottom"
+        font: "Arial-Bold"
+        font_size: 36
+        fill_color: [255, 255, 255, 255]  # White
+        outline_color: [0, 0, 0, 255]     # Black
+        outline_size: 3
+
+  # Stage 2: Optimize for web
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 128
+      lossy: 80
+
+# Required inputs
+assets:
+  required:
+    - name: "video"
+      type: "video/*"
+      description: "Product demo video file"
+
+  optional:
+    - name: "logo"
+      type: "image/*"
+      description: "Brand logo for overlay"
+
+# Template variables with defaults
+variables:
+  product_name:
+    type: "string"
+    default: "Product Demo"
+    description: "Text displayed on the GIF"
+
+# Preset configurations for different priorities
+presets:
+  # Quick: Fastest processing, smallest file
+  quick:
+    gifcurry:
+      fps: 10
+      quality: 80
+    gifsicle:
+      colors: 64
+      lossy: 100
+
+  # Balanced: Good quality, reasonable size (default)
+  balanced:
+    gifcurry:
+      fps: 15
+      quality: 100
+    gifsicle:
+      colors: 128
+      lossy: 80
+
+  # Quality: Best quality, larger file
+  quality:
+    gifcurry:
+      fps: 20
+      quality: 100
+    gifsicle:
+      colors: 256
+      lossy: 40
+
+# Output validation
+validation:
+  max_duration: 5.5  # Twitter allows up to 5s technically
+  max_size_mb: 5     # Twitter's GIF size limit
+  min_width: 400
+  max_width: 1200
+  required_format: "gif"
+
+# Metadata
+metadata:
+  author: "gif-repos generator"
+  tags: [social-media, twitter, product, demo, marketing]
+  platform: "twitter"
+  use_cases:
+    - "Product launches"
+    - "Feature announcements"
+    - "Quick tutorials"
+    - "Marketing campaigns"

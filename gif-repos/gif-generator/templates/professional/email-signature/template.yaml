@@ -1,0 +1,267 @@
+# Email Signature GIF Template
+# Creates professional animated GIFs for email signatures
+
+name: "Email Signature Animation"
+description: "Create professional animated GIFs for email signatures (logos, badges, CTAs)"
+version: "1.0.0"
+category: "professional"
+
+# Pipeline: design → animate → optimize for email
+pipeline:
+  steps:
+    - tool: "gifcurry"
+      operation: "create_animation"
+      input: "{{source_path}}"
+      output: "temp_signature.gif"
+      params:
+        width: "{{width|150}}"
+        height: "{{height|50}}"
+        duration: "{{duration|2}}"
+        animation_type: "{{animation_type|fade-in}}"
+        quality: 85
+        fps: 10  # Lower FPS for smaller file size
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_signature.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 128  # Reduced colors for email compatibility
+        lossy: 30
+        loop: 0
+
+# Email signature element presets
+presets:
+  logo:
+    description: "Animated company logo (subtle fade-in)"
+    width: 150
+    height: 50
+    animation_type: "fade-in"
+    duration: 2
+    fps: 10
+    expected_size: "20-50KB"
+    processing_time: "10s"
+
+  cta-button:
+    description: "Call-to-action button (subtle pulse)"
+    width: 200
+    height: 60
+    animation_type: "pulse"
+    duration: 2.5
+    fps: 12
+    expected_size: "30-60KB"
+    processing_time: "12s"
+
+  badge:
+    description: "Award/certification badge (subtle glow)"
+    width: 100
+    height: 100
+    animation_type: "glow"
+    duration: 2
+    fps: 10
+    expected_size: "25-55KB"
+    processing_time: "11s"
+
+  social-icon:
+    description: "Animated social media icon (bounce)"
+    width: 32
+    height: 32
+    animation_type: "subtle-bounce"
+    duration: 1.5
+    fps: 10
+    expected_size: "5-15KB"
+    processing_time: "8s"
+
+  banner:
+    description: "Promotional banner (slide-in)"
+    width: 600
+    height: 100
+    animation_type: "slide-in"
+    duration: 2.5
+    fps: 12
+    expected_size: "50-100KB"
+    processing_time: "15s"
+
+# Variable definitions
+variables:
+  source_path:
+    type: "file"
+    required: true
+    description: "Source image or video file"
+
+  width:
+    type: "integer"
+    required: false
+    default: 150
+    description: "Output width in pixels (keep small for emails)"
+
+  height:
+    type: "integer"
+    required: false
+    default: 50
+    description: "Output height in pixels"
+
+  animation_type:
+    type: "string"
+    required: false
+    default: "fade-in"
+    options: ["fade-in", "pulse", "glow", "subtle-bounce", "slide-in"]
+    description: "Animation effect"
+
+  duration:
+    type: "float"
+    required: false
+    default: 2
+    description: "Animation duration in seconds (keep short)"
+
+  fps:
+    type: "integer"
+    required: false
+    default: 10
+    description: "Frames per second (lower = smaller file)"
+
+# Output validation
+validation:
+  max_file_size_kb: 100  # Critical for email delivery
+  duration:
+    min: 1
+    max: 3
+  format: "GIF"
+  email_safe: true
+
+# Email client compatibility
+email_clients:
+  gmail:
+    animated_gifs: true
+    max_recommended_size: "100KB"
+    notes: "Works well with GIFs"
+
+  outlook:
+    animated_gifs: "Partial (desktop only)"
+    max_recommended_size: "50KB"
+    notes: "Animated in desktop, static in web/mobile"
+
+  apple_mail:
+    animated_gifs: true
+    max_recommended_size: "100KB"
+    notes: "Full GIF support"
+
+  mobile:
+    animated_gifs: "Varies"
+    max_recommended_size: "50KB"
+    notes: "Keep file size minimal"
+
+# Metadata
+tags:
+  - email
+  - signature
+  - professional
+  - logo
+  - cta
+  - badge
+  - banner
+
+use_cases:
+  - "Company logo in signature"
+  - "Call-to-action buttons (Book a Meeting, Get Started)"
+  - "Award/certification badges"
+  - "Social media icons"
+  - "Promotional banners"
+  - "Event announcements"
+  - "Product highlights"
+  - "Personal branding"
+
+# Recommended dimensions by type
+recommended_dimensions:
+  logo:
+    width: 120-200
+    height: 40-80
+    ratio: "Landscape (3:1 or 2:1)"
+
+  cta_button:
+    width: 150-250
+    height: 40-70
+    ratio: "Landscape (3:1)"
+
+  badge:
+    width: 80-120
+    height: 80-120
+    ratio: "Square (1:1)"
+
+  social_icon:
+    width: 24-40
+    height: 24-40
+    ratio: "Square (1:1)"
+
+  banner:
+    width: 400-600
+    height: 80-120
+    ratio: "Wide landscape (5:1 or 6:1)"
+
+best_practices:
+  file_size:
+    - "Keep under 100KB (critical!)"
+    - "Under 50KB ideal for mobile"
+    - "Reduce colors (128 or less)"
+    - "Lower FPS (10-12)"
+    - "Short duration (1-3s)"
+
+  animation:
+    - "Subtle is professional"
+    - "Avoid distracting loops"
+    - "Fade-in or gentle pulse best"
+    - "Test in actual email clients"
+
+  design:
+    - "High contrast for visibility"
+    - "Simple, clear design"
+    - "Readable at small sizes"
+    - "Brand-consistent colors"
+
+  technical:
+    - "Provide static fallback (first frame)"
+    - "Test in Outlook (often shows static)"
+    - "Alt text for accessibility"
+    - "Link to relevant page"
+
+email_signature_html:
+  example: |
+    <a href="https://example.com">
+      <img src="https://example.com/signature.gif"
+           alt="Company Logo"
+           width="150"
+           height="50"
+           style="border:0; display:block;" />
+    </a>
+
+common_mistakes:
+  file_too_large:
+    problem: "GIF doesn't load or blocks email delivery"
+    solution: "Reduce to <100KB, use fewer colors, lower FPS"
+
+  too_distracting:
+    problem: "Unprofessional, annoying animation"
+    solution: "Use subtle fade-in or gentle pulse only"
+
+  not_mobile_friendly:
+    problem: "Too large or doesn't work on mobile"
+    solution: "Keep under 50KB, test on mobile clients"
+
+  outlook_static:
+    problem: "Animated in Gmail but static in Outlook"
+    solution: "Ensure first frame looks good (it's the fallback)"
+
+  blocked_by_firewall:
+    problem: "Corporate emails block external images"
+    solution: "Can't fix, but keep file small to improve delivery"
+
+testing_checklist:
+  - "Send test email to yourself"
+  - "Check in Gmail (web and mobile)"
+  - "Check in Outlook (desktop and web)"
+  - "Check in Apple Mail"
+  - "Verify file size < 100KB"
+  - "Confirm animation is subtle"
+  - "Check static fallback (first frame)"
+  - "Test on phone"

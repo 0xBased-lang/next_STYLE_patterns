@@ -1,0 +1,179 @@
+export const metadata = {
+    title: 'React Announcement Component | Sera UI',
+    description: 'Modern announcement banner components with dismissible functionality and customizable styling. Perfect for displaying important messages and notifications.',
+    keywords: [
+        'React announcement component',
+        'announcement banner',
+        'notification banner',
+        'dismissible banner',
+        'alert banner',
+        'message component',
+        'Tailwind CSS announcement',
+        'UI banner library',
+        'announcement bar',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Announcement Component | Sera UI',
+        description: 'Modern React announcement banner components with dismissible functionality for displaying important messages.',
+        type: 'article',
+        url: '/docs/announcement',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Announcement Component | Sera UI',
+        description: 'Modern React announcement banner components with dismissible functionality for displaying important messages.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/announcement',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { MdxTable } from "@/components/site/mdx-table.tsx";
+import AnnouncementView from "./announcement-view"
+
+
+# Announcement <AI dir="left"/>
+
+A versatile announcement component that displays important messages with different visual styles and states. Perfect for notifications, alerts, and call-to-action messages.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<AnnouncementView />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/announcement/announcement-view.tsx" />
+  </TabsContent>
+</Tabs>
+
+## Installation
+
+<Tabs defaultValue="cli" className="">
+  <TabsList>
+    <TabsTrigger value="cli">CLI</TabsTrigger>
+    <TabsTrigger value="manual">Manual</TabsTrigger>
+  </TabsList>
+  <TabsContent value="cli">
+    <Cli command={`add announcement.json`} />
+  </TabsContent>
+
+  <TabsContent value="manual">
+    <CodeBlock filePath="src/app/docs/announcement/announcement.tsx" />
+  </TabsContent>
+</Tabs>
+
+
+
+## Usage
+
+```tsx
+import Announcement from "@/components/seraui/Announcement";
+
+function AnnouncementView() {
+  return (
+        <Announcement variant="default">
+          New feature added
+        </Announcement>
+  );
+}
+```
+
+
+## Features
+
+- Multiple variants (default, success, error, warning, info, gradient)
+- Dark mode support
+- Keyboard accessibility
+- Disabled state
+- Click interactions
+- Smooth animations and transitions
+
+
+
+## variant
+The visual style variant of the announcement. Can be one of the following:
+
+- `"default"`: Default style
+- `"success"`: Success style
+- `"error"`: Error style
+- `"warning"`: Warning style
+- `"info"`: Info style
+- `"gradient"`: Gradient style
+
+```tsx
+<Announcement
+  variant="default"
+>
+  New feature added
+</Announcement>
+
+<Announcement
+  variant="success"
+>
+  Update successful
+</Announcement>
+
+<Announcement
+  variant="error"
+>
+  Action failed
+</Announcement>
+
+<Announcement
+  variant="warning"
+>
+  Please check input
+</Announcement>
+
+<Announcement
+  variant="info"
+>
+  For your information
+</Announcement>
+
+<Announcement
+  variant="gradient"
+>
+  Announcing Gradients!
+</Announcement>
+
+<Announcement variant="default" disabled>
+  Disabled state
+</Announcement>
+```
+
+
+## Props
+
+<MdxTable>
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"default"` \| `"success"` \| `"error"` \| `"warning"` \| `"info"` \| `"gradient"` | `"default"` | The visual style variant of the announcement |
+| `children` | `React.ReactNode` | - | The content to display inside the announcement |
+| `onClick` | `(e: React.MouseEvent \| React.KeyboardEvent) => void` | - | Callback function triggered when the announcement is clicked |
+| `className` | `string` | `""` | Additional CSS classes to apply to the component |
+| `disabled` | `boolean` | `false` | Whether the announcement is disabled and non-interactive |
+
+</MdxTable>

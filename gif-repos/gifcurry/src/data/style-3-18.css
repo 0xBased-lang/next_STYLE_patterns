@@ -1,0 +1,70 @@
+/*
+  Gifcurry
+  (C) 2018 David Lettier
+  lettier.com
+*/
+
+@define-color _gifcurry_light_purple #6d4cff;
+@define-color _gifcurry_orange       #ff6a28;
+@define-color _gifcurry_dark_red     #db2267;
+@define-color _gifcurry_red          #ff2878;
+
+* {
+  -GtkPaned-handle-size: 0;
+}
+
+button,
+GtkButton,
+colorswatch#add-color-button,
+GtkColorSwatch#add-color-button {
+  text-decoration: none;
+}
+
+button label,
+GtkButton GtkLabel {
+  text-decoration: none;
+}
+
+button:hover,
+GtkButton:hover,
+colorswatch#add-color-button:hover,
+GtkColorSwatch#add-color-button:hover {
+  text-decoration: none;
+}
+
+button label,
+GtkButton GtkLabel,
+button label:hover,
+GtkButton GtkLabel:hover {
+  text-decoration: none;
+}
+
+button.toggle:checked,
+button.radio:checked,
+GtkToggleButton:checked,
+GtkRadioButton:checked {
+  text-decoration: none;
+  background-color: @_gifcurry_light_purple;
+  text-shadow: none;
+}
+
+modelbutton check:checked,
+GtkModelButton .check:checked {
+  text-decoration: none;
+  background-color: @_gifcurry_orange;
+  text-shadow: none;
+}
+
+dialog#about-dialog label,
+dialog#about-dialog label link,
+GtkDialog#about-dialog GtkLabel,
+GtkDialog#about-dialog GtkLabel GtkLink,
+#status-label link,
+#status-label GtkLink,
+#status-label {
+  text-decoration-color: white;
+}
+
+.gifcurry-button-dangerous:checked {
+  background-color: @_gifcurry_red;
+}

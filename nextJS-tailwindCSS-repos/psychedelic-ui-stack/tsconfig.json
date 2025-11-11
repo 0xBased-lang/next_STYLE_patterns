@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@psychedelic-ui/core-components": ["./packages/core-components/src"],
+      "@psychedelic-ui/conspiracy-establishment": ["./packages/conspiracy-establishment/src"],
+      "@psychedelic-ui/neon-crypto": ["./packages/neon-crypto/src"],
+      "@psychedelic-ui/organic-harmony": ["./packages/organic-harmony/src"],
+      "@psychedelic-ui/experimental": ["./packages/experimental/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next", "coverage"]
+}

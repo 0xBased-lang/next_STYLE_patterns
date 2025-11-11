@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluid Psychedelia: Cosmic - HYPER ULTRA Demo (171 Parameters!)</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      background: #000;
+      color: #0ff;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    /* HYPER ULTRA TABBED CONTROLS */
+    #controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.95);
+      border: 3px solid #0ff;
+      border-radius: 15px;
+      padding: 20px;
+      max-height: 95vh;
+      overflow-y: auto;
+      width: 450px;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.6), inset 0 0 30px rgba(0, 255, 255, 0.15);
+      z-index: 1000;
+      backdrop-filter: blur(15px);
+      transition: transform 0.3s ease;
+    }
+
+    #controls.hidden {
+      transform: translateX(480px);
+    }
+
+    #controls::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    #controls::-webkit-scrollbar-track {
+      background: rgba(0, 255, 255, 0.1);
+      border-radius: 6px;
+    }
+
+    #controls::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #0ff, #f0f);
+      border-radius: 6px;
+    }
+
+    #controls h1 {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 24px;
+      text-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+      color: #0ff;
+      letter-spacing: 3px;
+      animation: hyperGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes hyperGlow {
+      from { text-shadow: 0 0 15px #0ff, 0 0 30px #0ff; }
+      to { text-shadow: 0 0 30px #0ff, 0 0 60px #0ff, 0 0 90px #f0f; }
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 10px;
+      color: #f0f;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      letter-spacing: 2px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #f0f, #0ff, #ff0);
+      padding: 3px 12px;
+      border-radius: 15px;
+      font-size: 10px;
+      font-weight: bold;
+      color: #000;
+      display: inline-block;
+      margin-left: 8px;
+      animation: megaPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes megaPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* TABS - 9 TABS! */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .tab {
+      padding: 8px 6px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #0ff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .tab:hover {
+      background: rgba(0, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.4);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #0ff, #f0f);
+      color: #000;
+      font-weight: bold;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* PRESETS */
+    #presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 15px;
+    }
+
+    .preset-btn {
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(255, 0, 128, 0.4), rgba(0, 212, 255, 0.4));
+      border: 2px solid #f08;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    .preset-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 0, 128, 0.8);
+      border-color: #0ff;
+    }
+
+    .preset-btn.new {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.4), rgba(255, 0, 255, 0.4));
+      border-color: #ff0;
+    }
+
+    /* CONTROLS */
+    .control-group {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: rgba(0, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #0ff;
+    }
+
+    .control-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      color: #0ff;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+      border-radius: 20px;
+      border: 2px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background: linear-gradient(135deg, #0ff, #f0f);
+      border-color: #0ff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(18px);
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 255, 0.3));
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0ff, #f0f);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+
+    .control-group select {
+      width: 100%;
+      padding: 6px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #0ff;
+      border-radius: 6px;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .value-display {
+      color: #f0f;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    /* UTILITY BUTTONS */
+    .utility-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .utility-btn {
+      padding: 8px;
+      background: rgba(0, 255, 255, 0.2);
+      border: 2px solid #0ff;
+      border-radius: 8px;
+      color: #0ff;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .utility-btn:hover {
+      background: rgba(0, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    /* TOGGLE PANEL BUTTON */
+    #togglePanel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #0ff, #f0f);
+      border: 3px solid #fff;
+      border-radius: 25px;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 999;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+      transition: all 0.3s ease;
+    }
+
+    #togglePanel:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(255, 0, 255, 1);
+    }
+
+    /* SECTION HEADERS */
+    .section-header {
+      font-size: 13px;
+      color: #ff0;
+      font-weight: bold;
+      margin: 15px 0 10px 0;
+      padding: 5px;
+      background: rgba(255, 255, 0, 0.1);
+      border-left: 4px solid #ff0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <button id="togglePanel" onclick="toggleControls()">⚙️ CONTROLS</button>
+
+  <div id="controls">
+    <h1>🌌 HYPER ULTRA<span class="badge">171 PARAMS!</span></h1>
+    <div class="subtitle">⭐ THE ULTIMATE PSYCHEDELIC EXPERIENCE ⭐</div>
+
+    <!-- UTILITY BUTTONS -->
+    <div class="utility-buttons">
+      <button class="utility-btn" onclick="exportConfig()">💾 EXPORT</button>
+      <button class="utility-btn" onclick="document.getElementById('importFile').click()">📂 IMPORT</button>
+      <button class="utility-btn" onclick="resetToDefaults()">🔄 RESET</button>
+    </div>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importConfig(event)">
+
+    <!-- PRESETS -->
+    <div id="presets"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('basics')">⚡ BASICS</div>
+      <div class="tab" onclick="switchTab('color')">🎨 COLOR</div>
+      <div class="tab" onclick="switchTab('effects')">✨ EFFECTS</div>
+      <div class="tab" onclick="switchTab('particles')">💫 PARTICLES</div>
+      <div class="tab" onclick="switchTab('physics')">🔮 PHYSICS</div>
+      <div class="tab" onclick="switchTab('emitters')">🌟 EMITTERS</div>
+      <div class="tab" onclick="switchTab('rendering')">🎬 RENDER</div>
+      <div class="tab" onclick="switchTab('camera')">📷 CAMERA</div>
+      <div class="tab" onclick="switchTab('advanced')">🚀 ADVANCED</div>
+    </div>
+
+    <!-- TAB CONTENTS -->
+    <div id="tab-basics" class="tab-content active"></div>
+    <div id="tab-color" class="tab-content"></div>
+    <div id="tab-effects" class="tab-content"></div>
+    <div id="tab-particles" class="tab-content"></div>
+    <div id="tab-physics" class="tab-content"></div>
+    <div id="tab-emitters" class="tab-content"></div>
+    <div id="tab-rendering" class="tab-content"></div>
+    <div id="tab-camera" class="tab-content"></div>
+    <div id="tab-advanced" class="tab-content"></div>
+  </div>
+
+  <script>
+    // ============================================
+    // FLUID PSYCHEDELIA: HYPER ULTRA ENGINE
+    // 171 Parameters | 15 Effect Systems
+    // ============================================
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    // Configuration with ALL 171 parameters
+    const config = {
+      // FLUID PHYSICS (12)
+      resolution: 128,
+      viscosity: 0.1,
+      velocityDissipation: 0.98,
+      dyeDissipation: 0.97,
+      pressure: 1.0,
+      pressureIterations: 20,
+      curl: 15,
+      curlRadius: 3,
+      timeStep: 0.016,
+      gravity: 0,
+      buoyancy: 0,
+      boundary: 'clamp',
+
+      // COLOR SYSTEM (14)
+      colorPalette: ['#FF0080', '#00D4FF', '#FFD700', '#9D4EDD', '#00FF88'],
+      colorCycleSpeed: 0.005,
+      colorMode: 'rainbow',
+      saturation: 100,
+      brightness: 100,
+      colorBlendMode: 'normal',
+      baseColor: '#000000',
+      colorVariation: 30,
+      iridescent: false,
+      glowColor: '#FFFFFF',
+      colorTemperature: 0,
+      contrastBoost: 1,
+      hueShift: 0,
+      colorInversion: false,
+
+      // ADVANCED COLOR (8)
+      advancedColorMode: 'off',
+      temperatureScale: false,
+      colorZones: 4,
+      colorInversionSpeed: 1,
+      colorContrast: 1,
+      colorSaturationBoost: 1,
+      zoneColorShift: 60,
+      reactiveColorIntensity: 5,
+
+      // SPLAT CONFIG (12)
+      splatRadius: 150,
+      splatForce: 5000,
+      splatCount: 1,
+      randomSplats: true,
+      splatInterval: 1000,
+      splatDecay: 3,
+      multiTouch: true,
+      splatShape: 'circle',
+      splatTexture: '',
+      splatAnimation: 'expand',
+      splatTrail: true,
+      splatDelay: 0,
+
+      // PATTERNS (10)
+      autoSplatEnabled: false,
+      autoSplatPattern: 'random',
+      autoSplatFrequency: 2,
+      autoSplatSize: 1,
+      autoSplatForce: 3,
+      turbulenceEnabled: false,
+      turbulenceIntensity: 2,
+      turbulenceScale: 3,
+      gravitationalWells: 0,
+      wellStrength: 2,
+
+      // VISUAL EFFECTS (10)
+      bloomIntensity: 0.3,
+      bloomThreshold: 0.8,
+      bloomRadius: 10,
+      distortionAmount: 0,
+      chromaticAberration: 0,
+      vignette: 0.2,
+      noise: 0,
+      scanLines: 0,
+      posterize: 0,
+      pixelate: 0,
+
+      // POST-PROCESSING (8)
+      pixelationEnabled: false,
+      pixelationSize: 1,
+      edgeDetection: false,
+      edgeThickness: 2,
+      chromaticAberrationAmount: 0,
+      scanlineEffect: false,
+      scanlineIntensity: 0.3,
+      noiseOverlay: 0,
+
+      // WARPING (9)
+      warpEnabled: false,
+      warpIntensity: 1,
+      warpFrequency: 2,
+      warpSpeed: 1,
+      kaleidoscopeMode: false,
+      kaleidoscopeSegments: 4,
+      fisheyeDistortion: 0,
+      rippleEffect: false,
+      rippleFrequency: 5,
+
+      // SYMMETRY (5)
+      symmetryEnabled: false,
+      symmetryMode: 'quad',
+      symmetrySegments: 4,
+      mirrorCenterX: 0.5,
+      mirrorCenterY: 0.5,
+
+      // ANIMATION (6)
+      autoRotation: 0,
+      flowSpeed: 1,
+      wavyMotion: 0,
+      spiralForce: 0,
+      explosionChance: 0,
+      windDirection: 0,
+
+      // TIME ANIMATIONS (7)
+      pulseEnabled: false,
+      pulseSpeed: 1,
+      pulseIntensity: 0.5,
+      waveAnimation: false,
+      waveFrequency: 1,
+      colorCycleMode: 'linear',
+      morphingEnabled: false,
+
+      // PARTICLE SYSTEM (10)
+      particleOverlay: false,
+      particleCount: 1000,
+      particleSize: 3,
+      particleLifetime: 2,
+      particleTrailLength: 10,
+      particleColorMode: 'fluid',
+      particleOpacity: 0.7,
+      particleVelocityInheritance: 0.8,
+      particleGravity: 0,
+      particleRotation: false,
+
+      // 🆕 PARTICLE PHYSICS (12)
+      particleToParticleForce: 0,
+      particleCollision: false,
+      particleBounciness: 0.5,
+      particleMass: 1,
+      particleCharge: 0,
+      particleDrag: 0.01,
+      particleMaxSpeed: 20,
+      particleMinSpeed: 0,
+      particleSpawnRate: 0,
+      particleLifeVariation: 0.2,
+      particleSizeVariation: 0.3,
+      particleColorVariation: 30,
+
+      // 🆕 EMITTERS (8)
+      emitterCount: 0,
+      emitterPattern: 'circle',
+      emitterRadius: 100,
+      emitterForce: 5,
+      emitterFrequency: 10,
+      emitterLifetime: -1,
+      emitterFollow: 'static',
+      emitterSize: 1,
+
+      // 🆕 RENDER MODES (8)
+      renderMode: 'blobs',
+      pointSize: 3,
+      lineWidth: 2,
+      shapeType: 'circle',
+      spriteTexture: '',
+      renderBlendMode: 'normal',
+      renderOpacity: 1,
+      renderSmoothing: true,
+
+      // 🆕 CAMERA (7)
+      cameraZoom: 1,
+      cameraPanX: 0,
+      cameraPanY: 0,
+      cameraRotation: 0,
+      cameraShake: 0,
+      cameraShakeFrequency: 5,
+      cameraFollowMouse: 0,
+
+      // 🆕 TRAILS (5)
+      trailFadeMode: 'linear',
+      trailColorMode: 'solid',
+      trailBlendMode: 'normal',
+      trailWidth: 2,
+      trailSegments: 10,
+
+      // 🆕 COLOR GRADING (6)
+      exposure: 0,
+      contrastGrade: 1,
+      colorTint: '#ffffff',
+      colorTemperatureGrade: 0,
+      vibrance: 1,
+      highlights: 1,
+
+      // 🆕 TURBULENCE ADVANCED (4)
+      turbulenceLayers: 1,
+      turbulenceOctaves: 1,
+      turbulencePersistence: 0.5,
+      turbulenceLacunarity: 2,
+
+      // MOUSE (6)
+      mouseMode: 'splat',
+      mouseTrailIntensity: 1,
+      mouseInfluenceRadius: 100,
+      mouseVortexStrength: 5,
+      mouseDrawMode: false,
+      mouseDrawSize: 1,
+
+      // PERFORMANCE (4)
+      renderQuality: 'high',
+      shaderPrecision: 'medium',
+      optimizeForMobile: false,
+      frameLimit: 60
+    };
+
+    // State
+    let time = 0;
+    let particles = [];
+    let emitters = [];
+    let wells = [];
+    let metaballs = [];
+    let particleIdCounter = 0;
+    let mouse = { x: 0, y: 0, lastX: 0, lastY: 0, down: false };
+
+    // Resize canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // ============================================
+    // COLOR UTILITIES
+    // ============================================
+    function hsvToRgb(h, s, v) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.max(0, Math.min(1, s / 100));
+      v = Math.max(0, Math.min(2, v / 100));
+
+      const c = v * s;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = v - c;
+
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; b = 0; }
+      else if (h < 120) { r = x; g = c; b = 0; }
+      else if (h < 180) { r = 0; g = c; b = x; }
+      else if (h < 240) { r = 0; g = x; b = c; }
+      else if (h < 300) { r = x; g = 0; b = c; }
+      else { r = c; g = 0; b = x; }
+
+      return {
+        r: Math.floor((r + m) * 255),
+        g: Math.floor((g + m) * 255),
+        b: Math.floor((b + m) * 255)
+      };
+    }
+
+    function getColor(index = 0) {
+      let brightness = config.brightness;
+      let saturation = config.saturation * config.colorSaturationBoost;
+
+      if (config.pulseEnabled) {
+        brightness *= 1 + Math.sin(time * config.pulseSpeed) * config.pulseIntensity;
+      }
+
+      if (config.colorMode === 'rainbow') {
+        let hue = (time * config.colorCycleSpeed * 360 + index * 30 + config.hueShift) % 360;
+        const rgb = hsvToRgb(hue, saturation, brightness);
+        return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      } else if (config.colorMode === 'monochrome') {
+        const gray = Math.floor(brightness * 2.55);
+        return `rgb(${gray}, ${gray}, ${gray})`;
+      } else if (config.colorMode === 'palette') {
+        const paletteIndex = Math.floor(time * config.colorCycleSpeed * 10) % config.colorPalette.length;
+        return config.colorPalette[paletteIndex];
+      }
+      return '#0ff';
+    }
+
+    // ============================================
+    // PARTICLE SYSTEM WITH PHYSICS
+    // ============================================
+    function createParticle(x, y, vx = 0, vy = 0) {
+      const lifeMult = 1 + (Math.random() - 0.5) * config.particleLifeVariation;
+      const sizeMult = 1 + (Math.random() - 0.5) * config.particleSizeVariation;
+
+      particles.push({
+        x, y, vx, vy,
+        life: config.particleLifetime * lifeMult,
+        maxLife: config.particleLifetime * lifeMult,
+        size: config.particleSize * sizeMult,
+        color: getColor(particleIdCounter),
+        rotation: 0,
+        trail: [],
+        mass: config.particleMass,
+        charge: config.particleCharge + (Math.random() - 0.5) * 2,
+        id: particleIdCounter++
+      });
+    }
+
+    function updateParticles(dt) {
+      // Spawn new particles
+      if (config.particleSpawnRate > 0 && config.particleOverlay) {
+        const toSpawn = Math.floor(config.particleSpawnRate * dt);
+        for (let i = 0; i < toSpawn; i++) {
+          createParticle(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            (Math.random() - 0.5) * 5,
+            (Math.random() - 0.5) * 5
+          );
+        }
+      }
+
+      // Update existing particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life -= dt;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        // Apply forces
+        // Particle-to-particle forces
+        if (config.particleToParticleForce !== 0) {
+          for (let j = 0; j < particles.length; j++) {
+            if (i === j) continue;
+            const p2 = particles[j];
+            const dx = p2.x - p.x;
+            const dy = p2.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > 0 && dist < 200) {
+              const force = config.particleToParticleForce / (dist * dist);
+              const fx = (dx / dist) * force;
+              const fy = (dy / dist) * force;
+              p.vx += fx / p.mass;
+              p.vy += fy / p.mass;
+            }
+          }
+        }
+
+        // Gravity
+        p.vy += config.particleGravity * dt * 100;
+
+        // Drag
+        p.vx *= (1 - config.particleDrag);
+        p.vy *= (1 - config.particleDrag);
+
+        // Speed limits
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > config.particleMaxSpeed) {
+          p.vx = (p.vx / speed) * config.particleMaxSpeed;
+          p.vy = (p.vy / speed) * config.particleMaxSpeed;
+        }
+        if (speed < config.particleMinSpeed && speed > 0) {
+          p.vx = (p.vx / speed) * config.particleMinSpeed;
+          p.vy = (p.vy / speed) * config.particleMinSpeed;
+        }
+
+        // Update position
+        p.x += p.vx * dt * 60;
+        p.y += p.vy * dt * 60;
+
+        // Collision with bounds
+        if (p.x < 0 || p.x > canvas.width) {
+          p.vx *= -config.particleBounciness;
+          p.x = Math.max(0, Math.min(canvas.width, p.x));
+        }
+        if (p.y < 0 || p.y > canvas.height) {
+          p.vy *= -config.particleBounciness;
+          p.y = Math.max(0, Math.min(canvas.height, p.y));
+        }
+
+        // Particle collision
+        if (config.particleCollision) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dx = p2.x - p.x;
+            const dy = p2.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = p.size + p2.size;
+
+            if (dist < minDist) {
+              // Collision response
+              const nx = dx / dist;
+              const ny = dy / dist;
+              const overlap = minDist - dist;
+
+              p.x -= nx * overlap * 0.5;
+              p.y -= ny * overlap * 0.5;
+              p2.x += nx * overlap * 0.5;
+              p2.y += ny * overlap * 0.5;
+
+              // Velocity exchange
+              const dvx = p2.vx - p.vx;
+              const dvy = p2.vy - p.vy;
+              const dvn = dvx * nx + dvy * ny;
+
+              p.vx += nx * dvn * config.particleBounciness;
+              p.vy += ny * dvn * config.particleBounciness;
+              p2.vx -= nx * dvn * config.particleBounciness;
+              p2.vy -= ny * dvn * config.particleBounciness;
+            }
+          }
+        }
+
+        // Rotation
+        if (config.particleRotation) {
+          p.rotation += speed * 0.1 * dt;
+        }
+
+        // Trail
+        if (config.particleTrailLength > 0) {
+          p.trail.push({ x: p.x, y: p.y });
+          if (p.trail.length > config.particleTrailLength) {
+            p.trail.shift();
+          }
+        }
+      }
+
+      // Limit total particle count
+      while (particles.length > config.particleCount) {
+        particles.shift();
+      }
+    }
+
+    // ============================================
+    // EMITTER SYSTEM
+    // ============================================
+    function initEmitters() {
+      emitters = [];
+      for (let i = 0; i < config.emitterCount; i++) {
+        const angle = (i / config.emitterCount) * Math.PI * 2;
+        let x, y;
+
+        if (config.emitterPattern === 'circle') {
+          x = canvas.width / 2 + Math.cos(angle) * config.emitterRadius;
+          y = canvas.height / 2 + Math.sin(angle) * config.emitterRadius;
+        } else if (config.emitterPattern === 'grid') {
+          const cols = Math.ceil(Math.sqrt(config.emitterCount));
+          x = (i % cols) * (canvas.width / cols) + canvas.width / (cols * 2);
+          y = Math.floor(i / cols) * (canvas.height / cols) + canvas.height / (cols * 2);
+        } else {
+          x = Math.random() * canvas.width;
+          y = Math.random() * canvas.height;
+        }
+
+        emitters.push({
+          x, y,
+          baseX: x,
+          baseY: y,
+          radius: config.emitterRadius,
+          force: config.emitterForce,
+          frequency: config.emitterFrequency,
+          size: config.emitterSize,
+          life: config.emitterLifetime === -1 ? Infinity : config.emitterLifetime,
+          maxLife: config.emitterLifetime,
+          pattern: config.emitterPattern,
+          particlesSpawned: 0,
+          timer: 0,
+          angle: angle
+        });
+      }
+    }
+
+    function updateEmitters(dt) {
+      for (let i = emitters.length - 1; i >= 0; i--) {
+        const e = emitters[i];
+
+        if (e.life !== Infinity) {
+          e.life -= dt;
+          if (e.life <= 0) {
+            emitters.splice(i, 1);
+            continue;
+          }
+        }
+
+        // Update position based on follow mode
+        if (config.emitterFollow === 'mouse') {
+          e.x = mouse.x;
+          e.y = mouse.y;
+        } else if (config.emitterFollow === 'orbit') {
+          e.angle += dt;
+          e.x = canvas.width / 2 + Math.cos(e.angle) * config.emitterRadius;
+          e.y = canvas.height / 2 + Math.sin(e.angle) * config.emitterRadius;
+        }
+
+        // Spawn particles
+        e.timer += dt;
+        const spawnInterval = 1 / e.frequency;
+        while (e.timer >= spawnInterval && config.particleOverlay) {
+          e.timer -= spawnInterval;
+
+          const angle = Math.random() * Math.PI * 2;
+          const speed = e.force;
+          createParticle(
+            e.x,
+            e.y,
+            Math.cos(angle) * speed,
+            Math.sin(angle) * speed
+          );
+          e.particlesSpawned++;
+        }
+      }
+    }
+
+    // ============================================
+    // CAMERA SYSTEM
+    // ============================================
+    function applyCameraTransform() {
+      ctx.save();
+
+      // Camera shake
+      let shakeX = 0, shakeY = 0;
+      if (config.cameraShake > 0) {
+        shakeX = (Math.random() - 0.5) * config.cameraShake;
+        shakeY = (Math.random() - 0.5) * config.cameraShake;
+      }
+
+      // Mouse follow
+      if (config.cameraFollowMouse > 0) {
+        const followX = (mouse.x - canvas.width / 2) * config.cameraFollowMouse * 0.1;
+        const followY = (mouse.y - canvas.height / 2) * config.cameraFollowMouse * 0.1;
+        ctx.translate(followX, followY);
+      }
+
+      // Pan
+      ctx.translate(
+        canvas.width / 2 + config.cameraPanX * canvas.width + shakeX,
+        canvas.height / 2 + config.cameraPanY * canvas.height + shakeY
+      );
+
+      // Rotation
+      if (config.cameraRotation !== 0) {
+        ctx.rotate(config.cameraRotation * Math.PI / 180);
+      }
+
+      // Zoom
+      ctx.scale(config.cameraZoom, config.cameraZoom);
+
+      // Center
+      ctx.translate(-canvas.width / 2, -canvas.height / 2);
+    }
+
+    function resetCameraTransform() {
+      ctx.restore();
+    }
+
+    // ============================================
+    // RENDERING SYSTEM
+    // ============================================
+    function renderParticles() {
+      ctx.globalAlpha = config.renderOpacity;
+      ctx.globalCompositeOperation = config.renderBlendMode;
+
+      for (const p of particles) {
+        const alpha = p.life / p.maxLife;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        if (config.particleRotation) {
+          ctx.rotate(p.rotation);
+        }
+
+        // Draw trail
+        if (p.trail.length > 1 && config.particleTrailLength > 0) {
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = config.trailWidth;
+          ctx.globalAlpha = alpha * config.particleOpacity * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(p.trail[0].x - p.x, p.trail[0].y - p.y);
+          for (let i = 1; i < p.trail.length; i++) {
+            ctx.lineTo(p.trail[i].x - p.x, p.trail[i].y - p.y);
+          }
+          ctx.stroke();
+        }
+
+        ctx.globalAlpha = alpha * config.particleOpacity;
+
+        // Render based on mode
+        if (config.renderMode === 'blobs' || config.renderMode === 'mixed') {
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (config.renderMode === 'points') {
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-config.pointSize/2, -config.pointSize/2, config.pointSize, config.pointSize);
+        } else if (config.renderMode === 'lines') {
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = config.lineWidth;
+          ctx.beginPath();
+          ctx.moveTo(-p.size, 0);
+          ctx.lineTo(p.size, 0);
+          ctx.stroke();
+        } else if (config.renderMode === 'shapes') {
+          ctx.fillStyle = p.color;
+          drawShape(0, 0, p.size, config.shapeType);
+        }
+
+        ctx.restore();
+      }
+
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawShape(x, y, size, type) {
+      ctx.beginPath();
+      if (type === 'circle') {
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+      } else if (type === 'square') {
+        ctx.rect(x - size, y - size, size * 2, size * 2);
+      } else if (type === 'triangle') {
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x + size, y + size);
+        ctx.lineTo(x - size, y + size);
+        ctx.closePath();
+      } else if (type === 'star') {
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+          const r = i % 2 === 0 ? size : size / 2;
+          if (i === 0) ctx.moveTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+          else ctx.lineTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+        }
+        ctx.closePath();
+      }
+      ctx.fill();
+    }
+
+    // ============================================
+    // POST-PROCESSING
+    // ============================================
+    function applyPostProcessing() {
+      // Get image data
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // Color grading
+      if (config.exposure !== 0 || config.contrastGrade !== 1 || config.vibrance !== 1) {
+        for (let i = 0; i < data.length; i += 4) {
+          let r = data[i];
+          let g = data[i + 1];
+          let b = data[i + 2];
+
+          // Exposure
+          const exposureMult = Math.pow(2, config.exposure);
+          r *= exposureMult;
+          g *= exposureMult;
+          b *= exposureMult;
+
+          // Contrast
+          r = ((r / 255 - 0.5) * config.contrastGrade + 0.5) * 255;
+          g = ((g / 255 - 0.5) * config.contrastGrade + 0.5) * 255;
+          b = ((b / 255 - 0.5) * config.contrastGrade + 0.5) * 255;
+
+          // Vibrance
+          const avg = (r + g + b) / 3;
+          r = avg + (r - avg) * config.vibrance;
+          g = avg + (g - avg) * config.vibrance;
+          b = avg + (b - avg) * config.vibrance;
+
+          data[i] = Math.max(0, Math.min(255, r));
+          data[i + 1] = Math.max(0, Math.min(255, g));
+          data[i + 2] = Math.max(0, Math.min(255, b));
+        }
+      }
+
+      // Pixelation
+      if (config.pixelationEnabled && config.pixelationSize > 1) {
+        const pixSize = config.pixelationSize;
+        for (let y = 0; y < canvas.height; y += pixSize) {
+          for (let x = 0; x < canvas.width; x += pixSize) {
+            const i = (y * canvas.width + x) * 4;
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+
+            for (let py = 0; py < pixSize; py++) {
+              for (let px = 0; px < pixSize; px++) {
+                const pi = ((y + py) * canvas.width + (x + px)) * 4;
+                if (pi < data.length) {
+                  data[pi] = r;
+                  data[pi + 1] = g;
+                  data[pi + 2] = b;
+                  data[pi + 3] = a;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+
+      // Scanlines
+      if (config.scanlineEffect) {
+        ctx.globalAlpha = config.scanlineIntensity;
+        ctx.fillStyle = '#000';
+        for (let y = 0; y < canvas.height; y += 3) {
+          ctx.fillRect(0, y, canvas.width, 1);
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // ============================================
+    // FLUID SIMULATION (SIMPLIFIED)
+    // ============================================
+    function createSplat(x, y, dx, dy) {
+      const color = getColor(Math.floor(Math.random() * 100));
+      const radius = config.splatRadius;
+      const force = config.splatForce / 10000;
+
+      ctx.globalAlpha = 0.3;
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(1, 'transparent');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+      ctx.globalAlpha = 1;
+
+      // Create some particles at splat location
+      if (config.particleOverlay) {
+        for (let i = 0; i < 10; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * config.splatForce / 1000;
+          createParticle(
+            x + (Math.random() - 0.5) * radius,
+            y + (Math.random() - 0.5) * radius,
+            Math.cos(angle) * speed * config.particleVelocityInheritance,
+            Math.sin(angle) * speed * config.particleVelocityInheritance
+          );
+        }
+      }
+    }
+
+    // ============================================
+    // ANIMATION LOOP
+    // ============================================
+    let lastTime = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      time += dt;
+
+      // Apply camera transform
+      applyCameraTransform();
+
+      // Fade trail effect
+      ctx.fillStyle = 'rgba(0, 0, 0, ' + (1 - config.dyeDissipation) * 0.05 + ')';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Random splats
+      if (config.randomSplats && Math.random() < 0.02) {
+        createSplat(
+          Math.random() * canvas.width,
+          Math.random() * canvas.height,
+          (Math.random() - 0.5) * 100,
+          (Math.random() - 0.5) * 100
+        );
+      }
+
+      // Update systems
+      updateEmitters(dt);
+      updateParticles(dt);
+
+      // Render particles
+      if (config.particleOverlay && particles.length > 0) {
+        renderParticles();
+      }
+
+      // Reset camera
+      resetCameraTransform();
+
+      // Post-processing
+      applyPostProcessing();
+    }
+
+    // ============================================
+    // MOUSE INTERACTIONS
+    // ============================================
+    canvas.addEventListener('mousemove', (e) => {
+      mouse.lastX = mouse.x;
+      mouse.lastY = mouse.y;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+
+      if (mouse.down) {
+        createSplat(mouse.x, mouse.y, mouse.x - mouse.lastX, mouse.y - mouse.lastY);
+      }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      mouse.down = true;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      createSplat(mouse.x, mouse.y, 0, 0);
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      mouse.down = false;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      mouse.lastX = mouse.x;
+      mouse.lastY = mouse.y;
+      mouse.x = touch.clientX;
+      mouse.y = touch.clientY;
+      createSplat(mouse.x, mouse.y, mouse.x - mouse.lastX, mouse.y - mouse.lastY);
+    }, { passive: false });
+
+    // ============================================
+    // UI CONTROLS GENERATION
+    // ============================================
+    function createToggle(parent, label, configKey) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+
+      const toggleDiv = document.createElement('label');
+      toggleDiv.className = 'toggle-switch';
+
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = config[configKey];
+      input.addEventListener('change', (e) => {
+        config[configKey] = e.target.checked;
+        if (configKey === 'emitterCount' || configKey.startsWith('emitter')) {
+          initEmitters();
+        }
+      });
+
+      const slider = document.createElement('span');
+      slider.className = 'slider';
+
+      toggleDiv.appendChild(input);
+      toggleDiv.appendChild(slider);
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = label;
+
+      labelEl.appendChild(toggleDiv);
+      labelEl.appendChild(textSpan);
+      group.appendChild(labelEl);
+      parent.appendChild(group);
+    }
+
+    function createSlider(parent, label, configKey, min, max, step = 0.01) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+      labelEl.innerHTML = `${label}: <span class="value-display" id="val-${configKey}">${config[configKey]}</span>`;
+
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.min = min;
+      input.max = max;
+      input.step = step;
+      input.value = config[configKey];
+      input.addEventListener('input', (e) => {
+        config[configKey] = parseFloat(e.target.value);
+        document.getElementById(`val-${configKey}`).textContent = config[configKey].toFixed(3);
+
+        if (configKey === 'emitterCount' || configKey.startsWith('emitter')) {
+          initEmitters();
+        }
+      });
+
+      group.appendChild(labelEl);
+      group.appendChild(input);
+      parent.appendChild(group);
+    }
+
+    function createSelect(parent, label, configKey, options) {
+      const group = document.createElement('div');
+      group.className = 'control-group';
+
+      const labelEl = document.createElement('label');
+      labelEl.textContent = label;
+
+      const select = document.createElement('select');
+      options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        if (config[configKey] === opt) option.selected = true;
+        select.appendChild(option);
+      });
+      select.addEventListener('change', (e) => {
+        config[configKey] = e.target.value;
+        if (configKey.startsWith('emitter')) initEmitters();
+      });
+
+      group.appendChild(labelEl);
+      group.appendChild(select);
+      parent.appendChild(group);
+    }
+
+    function initControls() {
+      // TAB 1: BASICS
+      const basicsTab = document.getElementById('tab-basics');
+      basicsTab.innerHTML = '<div class="section-header">⚡ Fluid Physics</div>';
+      createSlider(basicsTab, 'Viscosity', 'viscosity', 0, 1, 0.01);
+      createSlider(basicsTab, 'Velocity Dissipation', 'velocityDissipation', 0.9, 1, 0.001);
+      createSlider(basicsTab, 'Dye Dissipation', 'dyeDissipation', 0.9, 1, 0.001);
+      createSlider(basicsTab, 'Pressure', 'pressure', 0, 2, 0.1);
+      createSlider(basicsTab, 'Curl', 'curl', 0, 50, 1);
+
+      basicsTab.innerHTML += '<div class="section-header">💥 Splat Settings</div>';
+      createToggle(basicsTab, 'Random Splats', 'randomSplats');
+      createToggle(basicsTab, 'Splat Trail', 'splatTrail');
+      createSlider(basicsTab, 'Splat Radius', 'splatRadius', 10, 500, 10);
+      createSlider(basicsTab, 'Splat Force', 'splatForce', 100, 10000, 100);
+
+      // TAB 2: COLOR
+      const colorTab = document.getElementById('tab-color');
+      colorTab.innerHTML = '<div class="section-header">🎨 Color System</div>';
+      createSelect(colorTab, 'Color Mode', 'colorMode', ['rainbow', 'palette', 'monochrome']);
+      createSlider(colorTab, 'Color Cycle Speed', 'colorCycleSpeed', 0, 0.05, 0.001);
+      createSlider(colorTab, 'Saturation', 'saturation', 0, 200, 1);
+      createSlider(colorTab, 'Brightness', 'brightness', 0, 200, 1);
+      createSlider(colorTab, 'Hue Shift', 'hueShift', -180, 180, 1);
+      createToggle(colorTab, 'Color Inversion', 'colorInversion');
+
+      colorTab.innerHTML += '<div class="section-header">✨ Color Grading</div>';
+      createSlider(colorTab, 'Exposure', 'exposure', -2, 2, 0.1);
+      createSlider(colorTab, 'Contrast', 'contrastGrade', 0, 2, 0.1);
+      createSlider(colorTab, 'Vibrance', 'vibrance', 0, 2, 0.1);
+      createSlider(colorTab, 'Highlights', 'highlights', 0, 2, 0.1);
+
+      // TAB 3: EFFECTS
+      const effectsTab = document.getElementById('tab-effects');
+      effectsTab.innerHTML = '<div class="section-header">✨ Post-Processing</div>';
+      createToggle(effectsTab, 'Pixelation', 'pixelationEnabled');
+      createSlider(effectsTab, 'Pixel Size', 'pixelationSize', 1, 20, 1);
+      createToggle(effectsTab, 'Edge Detection', 'edgeDetection');
+      createToggle(effectsTab, 'Scanline Effect', 'scanlineEffect');
+      createSlider(effectsTab, 'Scanline Intensity', 'scanlineIntensity', 0, 1, 0.05);
+
+      effectsTab.innerHTML += '<div class="section-header">🌀 Warping</div>';
+      createToggle(effectsTab, 'Kaleidoscope Mode', 'kaleidoscopeMode');
+      createSlider(effectsTab, 'Kaleidoscope Segments', 'kaleidoscopeSegments', 2, 16, 2);
+      createToggle(effectsTab, 'Symmetry', 'symmetryEnabled');
+      createSelect(effectsTab, 'Symmetry Mode', 'symmetryMode', ['horizontal', 'vertical', 'quad', 'radial']);
+
+      // TAB 4: PARTICLES
+      const particlesTab = document.getElementById('tab-particles');
+      particlesTab.innerHTML = '<div class="section-header">💫 Particle System</div>';
+      createToggle(particlesTab, 'Enable Particles', 'particleOverlay');
+      createSlider(particlesTab, 'Particle Count', 'particleCount', 0, 5000, 100);
+      createSlider(particlesTab, 'Particle Size', 'particleSize', 1, 20, 0.5);
+      createSlider(particlesTab, 'Particle Lifetime', 'particleLifetime', 0.5, 10, 0.5);
+      createSlider(particlesTab, 'Trail Length', 'particleTrailLength', 0, 50, 1);
+      createToggle(particlesTab, 'Particle Rotation', 'particleRotation');
+      createSlider(particlesTab, 'Particle Gravity', 'particleGravity', -10, 10, 0.1);
+      createSlider(particlesTab, 'Spawn Rate (per sec)', 'particleSpawnRate', 0, 100, 1);
+
+      // TAB 5: PHYSICS
+      const physicsTab = document.getElementById('tab-physics');
+      physicsTab.innerHTML = '<div class="section-header">🔮 Particle Physics</div>';
+      createSlider(physicsTab, 'Particle-to-Particle Force', 'particleToParticleForce', -10, 10, 0.5);
+      createToggle(physicsTab, 'Particle Collision', 'particleCollision');
+      createSlider(physicsTab, 'Bounciness', 'particleBounciness', 0, 1, 0.1);
+      createSlider(physicsTab, 'Particle Mass', 'particleMass', 0.1, 10, 0.1);
+      createSlider(physicsTab, 'Particle Charge', 'particleCharge', -10, 10, 0.5);
+      createSlider(physicsTab, 'Drag', 'particleDrag', 0, 0.1, 0.01);
+      createSlider(physicsTab, 'Max Speed', 'particleMaxSpeed', 1, 50, 1);
+      createSlider(physicsTab, 'Min Speed', 'particleMinSpeed', 0, 10, 0.5);
+      createSlider(physicsTab, 'Size Variation', 'particleSizeVariation', 0, 1, 0.05);
+      createSlider(physicsTab, 'Life Variation', 'particleLifeVariation', 0, 1, 0.05);
+
+      // TAB 6: EMITTERS
+      const emittersTab = document.getElementById('tab-emitters');
+      emittersTab.innerHTML = '<div class="section-header">🌟 Particle Emitters</div>';
+      createSlider(emittersTab, 'Emitter Count', 'emitterCount', 0, 16, 1);
+      createSelect(emittersTab, 'Emitter Pattern', 'emitterPattern', ['circle', 'line', 'grid', 'random', 'orbit']);
+      createSlider(emittersTab, 'Emitter Radius', 'emitterRadius', 10, 500, 10);
+      createSlider(emittersTab, 'Emitter Force', 'emitterForce', 0, 20, 0.5);
+      createSlider(emittersTab, 'Emitter Frequency', 'emitterFrequency', 0, 50, 1);
+      createSelect(emittersTab, 'Emitter Follow', 'emitterFollow', ['static', 'mouse', 'center', 'orbit']);
+      createSlider(emittersTab, 'Emitter Size', 'emitterSize', 0.1, 5, 0.1);
+      createSlider(emittersTab, 'Emitter Lifetime', 'emitterLifetime', -1, 60, 1);
+
+      // TAB 7: RENDERING
+      const renderingTab = document.getElementById('tab-rendering');
+      renderingTab.innerHTML = '<div class="section-header">🎬 Render Modes</div>';
+      createSelect(renderingTab, 'Render Mode', 'renderMode', ['blobs', 'points', 'lines', 'shapes', 'sprites', 'trails', 'mixed']);
+      createSlider(renderingTab, 'Point Size', 'pointSize', 1, 20, 1);
+      createSlider(renderingTab, 'Line Width', 'lineWidth', 1, 10, 1);
+      createSelect(renderingTab, 'Shape Type', 'shapeType', ['circle', 'square', 'triangle', 'star', 'heart', 'hexagon']);
+      createSelect(renderingTab, 'Blend Mode', 'renderBlendMode', ['normal', 'additive', 'multiply', 'screen', 'overlay']);
+      createSlider(renderingTab, 'Render Opacity', 'renderOpacity', 0, 1, 0.05);
+      createToggle(renderingTab, 'Smoothing', 'renderSmoothing');
+
+      renderingTab.innerHTML += '<div class="section-header">🎨 Trail Rendering</div>';
+      createSelect(renderingTab, 'Trail Fade Mode', 'trailFadeMode', ['linear', 'exponential', 'sigmoid']);
+      createSelect(renderingTab, 'Trail Color Mode', 'trailColorMode', ['solid', 'gradient', 'rainbow']);
+      createSlider(renderingTab, 'Trail Width', 'trailWidth', 1, 20, 1);
+
+      // TAB 8: CAMERA
+      const cameraTab = document.getElementById('tab-camera');
+      cameraTab.innerHTML = '<div class="section-header">📷 Camera Effects</div>';
+      createSlider(cameraTab, 'Camera Zoom', 'cameraZoom', 0.1, 5, 0.1);
+      createSlider(cameraTab, 'Camera Pan X', 'cameraPanX', -1, 1, 0.05);
+      createSlider(cameraTab, 'Camera Pan Y', 'cameraPanY', -1, 1, 0.05);
+      createSlider(cameraTab, 'Camera Rotation', 'cameraRotation', 0, 360, 5);
+      createSlider(cameraTab, 'Camera Shake', 'cameraShake', 0, 10, 0.5);
+      createSlider(cameraTab, 'Shake Frequency', 'cameraShakeFrequency', 0, 10, 0.5);
+      createSlider(cameraTab, 'Follow Mouse', 'cameraFollowMouse', 0, 1, 0.05);
+
+      // TAB 9: ADVANCED
+      const advancedTab = document.getElementById('tab-advanced');
+      advancedTab.innerHTML = '<div class="section-header">🚀 Time Animations</div>';
+      createToggle(advancedTab, 'Pulse Effect', 'pulseEnabled');
+      createSlider(advancedTab, 'Pulse Speed', 'pulseSpeed', 0.1, 5, 0.1);
+      createSlider(advancedTab, 'Pulse Intensity', 'pulseIntensity', 0, 1, 0.05);
+      createToggle(advancedTab, 'Wave Animation', 'waveAnimation');
+      createSlider(advancedTab, 'Wave Frequency', 'waveFrequency', 0.1, 10, 0.1);
+
+      advancedTab.innerHTML += '<div class="section-header">🌊 Turbulence</div>';
+      createToggle(advancedTab, 'Turbulence', 'turbulenceEnabled');
+      createSlider(advancedTab, 'Turbulence Intensity', 'turbulenceIntensity', 0, 10, 0.5);
+      createSlider(advancedTab, 'Turbulence Layers', 'turbulenceLayers', 1, 5, 1);
+      createSlider(advancedTab, 'Turbulence Octaves', 'turbulenceOctaves', 1, 8, 1);
+
+      advancedTab.innerHTML += '<div class="section-header">🖱️ Mouse Interactions</div>';
+      createSelect(advancedTab, 'Mouse Mode', 'mouseMode', ['splat', 'attract', 'repel', 'vortex', 'draw']);
+      createSlider(advancedTab, 'Mouse Influence Radius', 'mouseInfluenceRadius', 10, 500, 10);
+    }
+
+    // ============================================
+    // PRESETS
+    // ============================================
+    const presets = {
+      'PARTICLE STORM': {
+        particleOverlay: true,
+        particleCount: 3000,
+        particleSpawnRate: 50,
+        particleToParticleForce: 2,
+        emitterCount: 4,
+        emitterPattern: 'circle',
+        emitterFollow: 'orbit',
+        renderMode: 'blobs',
+        colorMode: 'rainbow'
+      },
+      'QUANTUM FIELD': {
+        particleOverlay: true,
+        particleCount: 2000,
+        particleCollision: true,
+        particleToParticleForce: -3,
+        particleCharge: 5,
+        renderMode: 'points',
+        pointSize: 2,
+        colorMode: 'rainbow'
+      },
+      'NEURAL NETWORK': {
+        particleOverlay: true,
+        particleCount: 1500,
+        renderMode: 'lines',
+        lineWidth: 1,
+        particleToParticleForce: 0.5,
+        colorMode: 'monochrome',
+        scanlineEffect: true
+      },
+      'COSMIC VORTEX': {
+        particleOverlay: true,
+        emitterCount: 8,
+        emitterPattern: 'circle',
+        emitterFollow: 'orbit',
+        cameraRotation: 45,
+        cameraShake: 2,
+        kaleidoscopeMode: true,
+        kaleidoscopeSegments: 8
+      },
+      'GLITCH MATRIX': {
+        pixelationEnabled: true,
+        pixelationSize: 4,
+        scanlineEffect: true,
+        colorMode: 'monochrome',
+        chromaticAberrationAmount: 5,
+        cameraShake: 5
+      },
+      'RAINBOW CASCADE': {
+        particleOverlay: true,
+        particleGravity: 5,
+        particleCount: 2000,
+        emitterCount: 3,
+        emitterPattern: 'line',
+        colorMode: 'rainbow',
+        renderMode: 'shapes',
+        shapeType: 'star'
+      }
+    };
+
+    function loadPreset(name) {
+      Object.assign(config, presets[name]);
+      initEmitters();
+      // Refresh all controls
+      document.querySelectorAll('input[type="range"]').forEach(input => {
+        const key = input.parentElement.parentElement.querySelector('.value-display')?.id.replace('val-', '');
+        if (key && config[key] !== undefined) {
+          input.value = config[key];
+          const display = document.getElementById(`val-${key}`);
+          if (display) display.textContent = config[key].toFixed(3);
+        }
+      });
+      document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        const label = input.parentElement.parentElement.querySelector('span');
+        if (label) {
+          const text = label.textContent.toLowerCase().replace(/\s+/g, '');
+          const key = Object.keys(config).find(k => k.toLowerCase().includes(text.substr(0, 6)));
+          if (key !== undefined) input.checked = config[key];
+        }
+      });
+    }
+
+    function initPresets() {
+      const presetsDiv = document.getElementById('presets');
+      Object.keys(presets).forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'preset-btn new';
+        btn.textContent = name;
+        btn.onclick = () => loadPreset(name);
+        presetsDiv.appendChild(btn);
+      });
+    }
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function toggleControls() {
+      document.getElementById('controls').classList.toggle('hidden');
+    }
+
+    function exportConfig() {
+      const json = JSON.stringify(config, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hyper-ultra-config.json';
+      a.click();
+    }
+
+    function importConfig(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const imported = JSON.parse(e.target.result);
+            Object.assign(config, imported);
+            initEmitters();
+            alert('Configuration imported successfully!');
+          } catch (err) {
+            alert('Error importing configuration: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function resetToDefaults() {
+      if (confirm('Reset all parameters to defaults?')) {
+        location.reload();
+      }
+    }
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
+    initControls();
+    initPresets();
+    initEmitters();
+    animate();
+
+    console.log('🌌 HYPER ULTRA LOADED! 171 parameters ready!');
+    console.log('💫 Try toggling features and exploring presets!');
+  </script>
+</body>
+</html>

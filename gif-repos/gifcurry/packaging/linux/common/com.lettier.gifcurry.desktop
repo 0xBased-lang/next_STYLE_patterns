@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Gifcurry
+Comment=The open-source, Haskell-built video editor for GIF makers.
+Icon=com.lettier.gifcurry
+Categories=AudioVideo;Video;Graphics;Utility;
+Terminal=false
+Exec=gifcurry_gui

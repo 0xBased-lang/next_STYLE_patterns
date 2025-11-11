@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React Image Swiper Component | Sera UI',
+    description: 'Interactive image swiper component with touch gestures, navigation controls, and smooth transitions. Perfect for image galleries and product showcases.',
+    keywords: [
+        'React image swiper',
+        'image carousel',
+        'touch swiper',
+        'image gallery',
+        'swiper with navigation',
+        'image slider',
+        'Tailwind CSS swiper',
+        'UI swiper library',
+        'interactive gallery',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Image Swiper Component | Sera UI',
+        description: 'Interactive React image swiper component with touch gestures, navigation controls, and smooth transitions.',
+        type: 'article',
+        url: '/docs/imageswiper',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Image Swiper Component | Sera UI',
+        description: 'Interactive React image swiper component with touch gestures, navigation controls, and smooth transitions.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/imageswiper',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import ImageSwiperPage from "./imageswiper.tsx"
+
+
+
+# Image Swiper <AI dir="left"/>
+A beautiful image swiper component that allows users to swipe through images with a smooth and interactive experience.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<ImageSwiperPage />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/imageswiper/imageswiper.tsx" />
+  </TabsContent>
+</Tabs>

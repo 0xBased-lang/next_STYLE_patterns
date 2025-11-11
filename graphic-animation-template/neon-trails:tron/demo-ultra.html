@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Light Trails: Tron - ULTRA Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', 'SF Mono', monospace;
+      background: #000;
+      color: #00d4ff;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    /* Controls Panel - Tron Theme */
+    .controls-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 340px;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 40, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border-left: 2px solid #00d4ff;
+      box-shadow: -10px 0 60px rgba(0, 212, 255, 0.5),
+                  inset 0 0 30px rgba(0, 212, 255, 0.1);
+      padding: 25px;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .controls-panel.hidden {
+      transform: translateX(100%);
+    }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+      background: rgba(0, 212, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #00d4ff 0%, #00ff88 100%);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+
+    .controls-panel h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #00d4ff 0%, #00ff88 50%, #ff0080 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+    }
+
+    .subtitle {
+      color: #00d4ff;
+      font-size: 11px;
+      margin-bottom: 25px;
+      opacity: 0.8;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* Presets - Tron Grid Style */
+    .presets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .preset-btn {
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
+      border: 1px solid #00d4ff;
+      border-radius: 4px;
+      color: #00d4ff;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preset-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .preset-btn:hover::before {
+      left: 100%;
+    }
+
+    .preset-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+      border-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+                  inset 0 0 20px rgba(0, 212, 255, 0.1);
+      color: #00ff88;
+    }
+
+    /* Control Groups - Grid Style */
+    .control-group {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .control-group::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+    }
+
+    .control-group h3 {
+      font-size: 13px;
+      margin-bottom: 18px;
+      color: #00d4ff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-group h3::before {
+      content: '//';
+      color: #00ff88;
+      font-size: 16px;
+    }
+
+    /* Controls */
+    .control {
+      margin-bottom: 18px;
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #7dd3fc;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .control-value {
+      color: #00ff88;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: rgba(0, 212, 255, 0.2);
+      border-radius: 2px;
+      outline: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.8),
+                  inset 0 0 10px rgba(255, 255, 255, 0.3);
+      transition: all 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 1);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+      border-radius: 2px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: 2px solid #00d4ff;
+      border-radius: 4px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid #00d4ff;
+      border-radius: 4px;
+      color: #00d4ff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #001428;
+      color: #00d4ff;
+    }
+
+    /* Action Buttons - Tron Style */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 255, 136, 0.15) 100%);
+      border: 1px solid #00d4ff;
+      border-radius: 4px;
+      color: #00d4ff;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(0, 212, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .action-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .action-btn:hover {
+      border-color: #00ff88;
+      color: #00ff88;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    }
+
+    .action-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* FPS Monitor - Tron HUD */
+    .fps-monitor {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 20, 40, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 2px solid #00d4ff;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      z-index: 999;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.6),
+                  inset 0 0 20px rgba(0, 212, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
+    }
+
+    .fps-value {
+      color: #00ff88;
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+      font-size: 18px;
+    }
+
+    /* Toggle Button - Tron Grid */
+    .toggle-controls {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border: 2px solid #00d4ff;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+    }
+
+    .toggle-controls:hover {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 255, 136, 0.3) 100%);
+      transform: scale(1.1);
+      box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+      border-color: #00ff88;
+    }
+
+    /* Info Banner - Tron HUD */
+    .info-banner {
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      max-width: 400px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 20, 40, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 2px solid #00d4ff;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.6;
+      z-index: 998;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.6),
+                  inset 0 0 20px rgba(0, 212, 255, 0.1);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .info-banner h4 {
+      color: #00d4ff;
+      margin-bottom: 8px;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+    }
+
+    .info-banner p {
+      color: #7dd3fc;
+      margin: 0;
+      opacity: 0.9;
+      font-size: 12px;
+    }
+
+    /* Grid overlay effect */
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.3; }
+    }
+
+    .controls-panel::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      animation: gridPulse 4s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .controls-panel {
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+      }
+
+      .presets {
+        grid-template-columns: 1fr;
+      }
+
+      .info-banner {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <!-- FPS Monitor -->
+  <div class="fps-monitor">
+    <span>FPS:</span>
+    <span class="fps-value">60</span>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <h4>⚡ Neon Light Trails: Tron</h4>
+    <p>Epic light cycle effects with flowing neon trails. Move your mouse to guide the beams!</p>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel" id="controlsPanel">
+    <h1>⚡ NEON TRAILS</h1>
+    <p class="subtitle">Tron Light Cycle System</p>
+
+    <!-- Presets -->
+    <div class="presets">
+      <button class="preset-btn" onclick="applyPreset('classic')"><span>CLASSIC TRON</span></button>
+      <button class="preset-btn" onclick="applyPreset('chaos')"><span>CHAOS MODE</span></button>
+      <button class="preset-btn" onclick="applyPreset('elegant')"><span>ELEGANT</span></button>
+      <button class="preset-btn" onclick="applyPreset('cyberpunk')"><span>CYBERPUNK</span></button>
+      <button class="preset-btn" onclick="applyPreset('minimal')"><span>MINIMAL</span></button>
+      <button class="preset-btn" onclick="applyPreset('intense')"><span>INTENSE</span></button>
+      <button class="preset-btn" onclick="applyPreset('rainbow')"><span>RAINBOW</span></button>
+      <button class="preset-btn" onclick="applyPreset('ghost')"><span>GHOST MODE</span></button>
+    </div>
+
+    <!-- Trail Parameters -->
+    <div class="control-group">
+      <h3>Trail System</h3>
+
+      <div class="control">
+        <label>
+          <span>Trail Count</span>
+          <span class="control-value" id="trailCountValue">5</span>
+        </label>
+        <input type="range" id="trailCount" min="1" max="15" step="1" value="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Trail Speed</span>
+          <span class="control-value" id="trailSpeedValue">3</span>
+        </label>
+        <input type="range" id="trailSpeed" min="0.5" max="10" step="0.5" value="3">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Trail Length</span>
+          <span class="control-value" id="trailLengthValue">50</span>
+        </label>
+        <input type="range" id="trailLength" min="20" max="150" step="5" value="50">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Trail Width</span>
+          <span class="control-value" id="trailWidthValue">3</span>
+        </label>
+        <input type="range" id="trailWidth" min="1" max="10" step="0.5" value="3">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Path Type</span>
+          <span class="control-value" id="pathTypeValue">sine</span>
+        </label>
+        <select id="pathType">
+          <option value="sine">Sine Wave</option>
+          <option value="spiral">Spiral</option>
+          <option value="zigzag">Zigzag</option>
+          <option value="circular">Circular</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Visual Effects -->
+    <div class="control-group">
+      <h3>Visual FX</h3>
+
+      <div class="control">
+        <label>
+          <span>Glow Intensity</span>
+          <span class="control-value" id="glowValue">20</span>
+        </label>
+        <input type="range" id="glow" min="0" max="50" step="2" value="20">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Bloom Effect</span>
+          <span class="control-value" id="bloomValue">15</span>
+        </label>
+        <input type="range" id="bloom" min="0" max="40" step="2" value="15">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Trail Opacity</span>
+          <span class="control-value" id="opacityValue">0.8</span>
+        </label>
+        <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.8">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Fade Speed</span>
+          <span class="control-value" id="fadeSpeedValue">0.05</span>
+        </label>
+        <input type="range" id="fadeSpeed" min="0.01" max="0.2" step="0.01" value="0.05">
+      </div>
+    </div>
+
+    <!-- Grid System -->
+    <div class="control-group">
+      <h3>Tron Grid</h3>
+
+      <div class="control">
+        <label>
+          <span>Grid Enabled</span>
+          <span class="control-value" id="gridEnabledValue">true</span>
+        </label>
+        <input type="range" id="gridEnabled" min="0" max="1" step="1" value="1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Grid Size</span>
+          <span class="control-value" id="gridSizeValue">50</span>
+        </label>
+        <input type="range" id="gridSize" min="20" max="100" step="5" value="50">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Grid Opacity</span>
+          <span class="control-value" id="gridOpacityValue">0.2</span>
+        </label>
+        <input type="range" id="gridOpacity" min="0" max="0.5" step="0.05" value="0.2">
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="control-group">
+      <h3>Color System</h3>
+
+      <div class="control">
+        <label><span>Primary Color</span></label>
+        <input type="color" id="color1" value="#00d4ff">
+      </div>
+
+      <div class="control">
+        <label><span>Secondary Color</span></label>
+        <input type="color" id="color2" value="#00ff88">
+      </div>
+
+      <div class="control">
+        <label><span>Grid Color</span></label>
+        <input type="color" id="gridColor" value="#0080ff">
+      </div>
+    </div>
+
+    <!-- Interaction -->
+    <div class="control-group">
+      <h3>Interaction</h3>
+
+      <div class="control">
+        <label>
+          <span>Mouse Influence</span>
+          <span class="control-value" id="mouseInfluenceValue">5</span>
+        </label>
+        <input type="range" id="mouseInfluence" min="0" max="15" step="1" value="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Influence Radius</span>
+          <span class="control-value" id="influenceRadiusValue">150</span>
+        </label>
+        <input type="range" id="influenceRadius" min="50" max="400" step="10" value="150">
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn" onclick="exportConfig()"><span>EXPORT</span></button>
+      <button class="action-btn" onclick="resetToDefaults()"><span>RESET</span></button>
+      <button class="action-btn" onclick="randomize()"><span>RANDOM</span></button>
+    </div>
+  </div>
+
+  <!-- Toggle Button -->
+  <div class="toggle-controls" onclick="toggleControls()">⚙️</div>
+
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    // Mouse tracking
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+
+    // Animation state
+    let animationId;
+    let time = 0;
+    let trails = [];
+
+    // Configuration
+    let config = {
+      trailCount: 5,
+      trailSpeed: 3,
+      trailLength: 50,
+      trailWidth: 3,
+      pathType: 'sine',
+      glow: 20,
+      bloom: 15,
+      opacity: 0.8,
+      fadeSpeed: 0.05,
+      gridEnabled: 1,
+      gridSize: 50,
+      gridOpacity: 0.2,
+      color1: '#00d4ff',
+      color2: '#00ff88',
+      gridColor: '#0080ff',
+      mouseInfluence: 5,
+      influenceRadius: 150
+    };
+
+    // Presets
+    const presets = {
+      classic: {
+        trailCount: 5,
+        trailSpeed: 3,
+        trailLength: 50,
+        trailWidth: 3,
+        pathType: 'sine',
+        glow: 20,
+        bloom: 15,
+        opacity: 0.8,
+        fadeSpeed: 0.05,
+        gridEnabled: 1,
+        gridSize: 50,
+        gridOpacity: 0.2,
+        color1: '#00d4ff',
+        color2: '#00ff88',
+        gridColor: '#0080ff',
+        mouseInfluence: 5,
+        influenceRadius: 150
+      },
+      chaos: {
+        trailCount: 12,
+        trailSpeed: 7,
+        trailLength: 80,
+        trailWidth: 2,
+        pathType: 'zigzag',
+        glow: 35,
+        bloom: 30,
+        opacity: 0.9,
+        fadeSpeed: 0.08,
+        gridEnabled: 1,
+        gridSize: 30,
+        gridOpacity: 0.3,
+        color1: '#ff00ff',
+        color2: '#00ffff',
+        gridColor: '#ff0080',
+        mouseInfluence: 12,
+        influenceRadius: 250
+      },
+      elegant: {
+        trailCount: 3,
+        trailSpeed: 1.5,
+        trailLength: 100,
+        trailWidth: 5,
+        pathType: 'sine',
+        glow: 30,
+        bloom: 25,
+        opacity: 0.7,
+        fadeSpeed: 0.03,
+        gridEnabled: 0,
+        gridSize: 50,
+        gridOpacity: 0.1,
+        color1: '#ffffff',
+        color2: '#e0e0e0',
+        gridColor: '#404040',
+        mouseInfluence: 3,
+        influenceRadius: 200
+      },
+      cyberpunk: {
+        trailCount: 8,
+        trailSpeed: 5,
+        trailLength: 60,
+        trailWidth: 4,
+        pathType: 'spiral',
+        glow: 40,
+        bloom: 35,
+        opacity: 0.85,
+        fadeSpeed: 0.06,
+        gridEnabled: 1,
+        gridSize: 40,
+        gridOpacity: 0.25,
+        color1: '#ff0080',
+        color2: '#00d4ff',
+        gridColor: '#9d00ff',
+        mouseInfluence: 8,
+        influenceRadius: 180
+      },
+      minimal: {
+        trailCount: 2,
+        trailSpeed: 2,
+        trailLength: 40,
+        trailWidth: 2,
+        pathType: 'sine',
+        glow: 10,
+        bloom: 5,
+        opacity: 0.6,
+        fadeSpeed: 0.04,
+        gridEnabled: 1,
+        gridSize: 60,
+        gridOpacity: 0.15,
+        color1: '#00d4ff',
+        color2: '#00d4ff',
+        gridColor: '#003366',
+        mouseInfluence: 2,
+        influenceRadius: 100
+      },
+      intense: {
+        trailCount: 15,
+        trailSpeed: 9,
+        trailLength: 120,
+        trailWidth: 6,
+        pathType: 'circular',
+        glow: 50,
+        bloom: 40,
+        opacity: 1,
+        fadeSpeed: 0.1,
+        gridEnabled: 1,
+        gridSize: 25,
+        gridOpacity: 0.4,
+        color1: '#ff0000',
+        color2: '#ffff00',
+        gridColor: '#ff8800',
+        mouseInfluence: 15,
+        influenceRadius: 300
+      },
+      rainbow: {
+        trailCount: 10,
+        trailSpeed: 4,
+        trailLength: 70,
+        trailWidth: 4,
+        pathType: 'sine',
+        glow: 30,
+        bloom: 25,
+        opacity: 0.8,
+        fadeSpeed: 0.07,
+        gridEnabled: 0,
+        gridSize: 50,
+        gridOpacity: 0.2,
+        color1: '#ff0080',
+        color2: '#00ff88',
+        gridColor: '#0080ff',
+        mouseInfluence: 6,
+        influenceRadius: 170
+      },
+      ghost: {
+        trailCount: 6,
+        trailSpeed: 1,
+        trailLength: 150,
+        trailWidth: 1.5,
+        pathType: 'sine',
+        glow: 15,
+        bloom: 10,
+        opacity: 0.4,
+        fadeSpeed: 0.02,
+        gridEnabled: 1,
+        gridSize: 70,
+        gridOpacity: 0.1,
+        color1: '#a0a0a0',
+        color2: '#c0c0c0',
+        gridColor: '#404040',
+        mouseInfluence: 1,
+        influenceRadius: 80
+      }
+    };
+
+    // Trail class
+    class Trail {
+      constructor(index) {
+        this.index = index;
+        this.points = [];
+        this.angle = (index / config.trailCount) * Math.PI * 2;
+        this.speed = config.trailSpeed;
+        this.radius = Math.min(width, height) * 0.3;
+        this.time = 0;
+        this.color = this.getColor();
+      }
+
+      getColor() {
+        const progress = this.index / config.trailCount;
+        return lerpColor(config.color1, config.color2, progress);
+      }
+
+      update() {
+        this.time += 0.02;
+        this.color = this.getColor();
+
+        let x, y;
+
+        switch(config.pathType) {
+          case 'sine':
+            x = width / 2 + Math.cos(this.angle + this.time) * this.radius;
+            y = height / 2 + Math.sin(this.angle + this.time) * this.radius +
+                Math.sin(this.time * 2) * 50;
+            break;
+
+          case 'spiral':
+            const spiralRadius = this.radius + Math.sin(this.time) * 100;
+            x = width / 2 + Math.cos(this.angle + this.time) * spiralRadius;
+            y = height / 2 + Math.sin(this.angle + this.time) * spiralRadius;
+            break;
+
+          case 'zigzag':
+            x = width / 2 + Math.cos(this.angle + this.time) * this.radius;
+            y = height / 2 + (Math.floor(this.time * 2) % 2 ? 1 : -1) * this.radius;
+            break;
+
+          case 'circular':
+            x = width / 2 + Math.cos(this.angle + this.time) * this.radius;
+            y = height / 2 + Math.sin(this.angle + this.time) * this.radius;
+            break;
+
+          default:
+            x = width / 2;
+            y = height / 2;
+        }
+
+        // Mouse influence
+        const dx = mouseX - x;
+        const dy = mouseY - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < config.influenceRadius) {
+          const force = (config.influenceRadius - distance) / config.influenceRadius;
+          x += (dx / distance) * force * config.mouseInfluence;
+          y += (dy / distance) * force * config.mouseInfluence;
+        }
+
+        // Add point
+        this.points.unshift({ x, y });
+
+        // Limit trail length
+        if (this.points.length > config.trailLength) {
+          this.points.pop();
+        }
+      }
+
+      draw() {
+        if (this.points.length < 2) return;
+
+        // Draw trail
+        for (let i = 0; i < this.points.length - 1; i++) {
+          const point = this.points[i];
+          const nextPoint = this.points[i + 1];
+          const alpha = (1 - i / this.points.length) * config.opacity;
+
+          // Glow
+          if (config.glow > 0) {
+            ctx.shadowBlur = config.glow;
+            ctx.shadowColor = this.color;
+          }
+
+          // Bloom (outer glow)
+          if (config.bloom > 0 && i < this.points.length * 0.2) {
+            ctx.shadowBlur = config.bloom * 2;
+          }
+
+          ctx.strokeStyle = this.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+          ctx.lineWidth = config.trailWidth;
+          ctx.lineCap = 'round';
+
+          ctx.beginPath();
+          ctx.moveTo(point.x, point.y);
+          ctx.lineTo(nextPoint.x, nextPoint.y);
+          ctx.stroke();
+        }
+
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // Color interpolation
+    function lerpColor(color1, color2, t) {
+      const c1 = hexToRgb(color1);
+      const c2 = hexToRgb(color2);
+
+      const r = Math.floor(c1.r + (c2.r - c1.r) * t);
+      const g = Math.floor(c1.g + (c2.g - c1.g) * t);
+      const b = Math.floor(c1.b + (c2.b - c1.b) * t);
+
+      return rgbToHex(r, g, b);
+    }
+
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 0, g: 0, b: 0 };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    // Draw Tron grid
+    function drawGrid() {
+      if (config.gridEnabled === 0) return;
+
+      const gridColor = hexToRgb(config.gridColor);
+      ctx.strokeStyle = `rgba(${gridColor.r}, ${gridColor.g}, ${gridColor.b}, ${config.gridOpacity})`;
+      ctx.lineWidth = 1;
+
+      // Vertical lines
+      for (let x = 0; x <= width; x += config.gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+
+      // Horizontal lines
+      for (let y = 0; y <= height; y += config.gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Initialize trails
+    function initTrails() {
+      trails = [];
+      for (let i = 0; i < config.trailCount; i++) {
+        trails.push(new Trail(i));
+      }
+    }
+
+    // Animation loop
+    function animate() {
+      // Fade effect
+      ctx.fillStyle = `rgba(0, 0, 0, ${config.fadeSpeed})`;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw grid
+      drawGrid();
+
+      // Update and draw trails
+      for (const trail of trails) {
+        trail.update();
+        trail.draw();
+      }
+
+      // FPS
+      updateFPS();
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // FPS counter
+    let fps = 60;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+
+    function updateFPS() {
+      frameCount++;
+      const currentTime = performance.now();
+
+      if (currentTime >= lastFrameTime + 1000) {
+        fps = Math.round((frameCount * 1000) / (currentTime - lastFrameTime));
+        document.querySelector('.fps-value').textContent = fps;
+        document.querySelector('.fps-value').style.color =
+          fps >= 50 ? '#00ff88' : fps >= 30 ? '#fbbf24' : '#f87171';
+        frameCount = 0;
+        lastFrameTime = currentTime;
+      }
+    }
+
+    // Apply preset
+    function applyPreset(presetName) {
+      const preset = presets[presetName];
+      if (!preset) return;
+
+      Object.assign(config, preset);
+      updateControlsFromConfig();
+      initTrails();
+    }
+
+    // Update controls from config
+    function updateControlsFromConfig() {
+      for (const key in config) {
+        const element = document.getElementById(key);
+        const valueElement = document.getElementById(key + 'Value');
+
+        if (element && element.type === 'range') {
+          element.value = config[key];
+          if (valueElement) {
+            if (key === 'gridEnabled') {
+              valueElement.textContent = config[key] === 1 ? 'true' : 'false';
+            } else {
+              valueElement.textContent = config[key];
+            }
+          }
+        } else if (element && element.type === 'color') {
+          element.value = config[key];
+        } else if (element && element.tagName === 'SELECT') {
+          element.value = config[key];
+          if (valueElement) {
+            valueElement.textContent = config[key];
+          }
+        }
+      }
+    }
+
+    // Export configuration
+    function exportConfig() {
+      const configStr = JSON.stringify(config, null, 2);
+      const blob = new Blob([configStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'neon-trails-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Reset to defaults
+    function resetToDefaults() {
+      applyPreset('classic');
+    }
+
+    // Randomize
+    function randomize() {
+      config.trailCount = Math.floor(Math.random() * 14) + 1;
+      config.trailSpeed = Math.random() * 9.5 + 0.5;
+      config.trailLength = Math.floor(Math.random() * 130) + 20;
+      config.trailWidth = Math.random() * 9 + 1;
+      config.glow = Math.random() * 50;
+      config.bloom = Math.random() * 40;
+      config.opacity = Math.random() * 0.8 + 0.2;
+      config.fadeSpeed = Math.random() * 0.19 + 0.01;
+      config.gridSize = Math.floor(Math.random() * 80) + 20;
+      config.gridOpacity = Math.random() * 0.5;
+      config.mouseInfluence = Math.random() * 15;
+      config.influenceRadius = Math.random() * 350 + 50;
+
+      // Random colors
+      config.color1 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.color2 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.gridColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+      // Random path type
+      const pathTypes = ['sine', 'spiral', 'zigzag', 'circular'];
+      config.pathType = pathTypes[Math.floor(Math.random() * pathTypes.length)];
+
+      updateControlsFromConfig();
+      initTrails();
+    }
+
+    // Toggle controls
+    function toggleControls() {
+      document.getElementById('controlsPanel').classList.toggle('hidden');
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Range inputs
+      const rangeInputs = document.querySelectorAll('input[type="range"]');
+      rangeInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          const key = e.target.id;
+          const value = parseFloat(e.target.value);
+          config[key] = value;
+
+          const valueElement = document.getElementById(key + 'Value');
+          if (valueElement) {
+            if (key === 'gridEnabled') {
+              valueElement.textContent = value === 1 ? 'true' : 'false';
+            } else {
+              valueElement.textContent = value;
+            }
+          }
+
+          if (key === 'trailCount') {
+            initTrails();
+          }
+        });
+      });
+
+      // Color inputs
+      const colorInputs = document.querySelectorAll('input[type="color"]');
+      colorInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          config[e.target.id] = e.target.value;
+        });
+      });
+
+      // Path type select
+      document.getElementById('pathType').addEventListener('change', (e) => {
+        config.pathType = e.target.value;
+        document.getElementById('pathTypeValue').textContent = e.target.value;
+      });
+
+      // Mouse tracking
+      canvas.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Window resize
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initTrails();
+      });
+    }
+
+    // Initialize
+    function init() {
+      setupEventListeners();
+      updateControlsFromConfig();
+      initTrails();
+      animate();
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

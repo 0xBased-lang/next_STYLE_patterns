@@ -1,0 +1,71 @@
+export const metadata = {
+    title: 'React Fuzzy Search Component | Sera UI',
+    description: 'Advanced fuzzy search component with intelligent matching, highlighting, and real-time filtering. Perfect for search interfaces and data exploration.',
+    keywords: [
+        'React fuzzy search',
+        'fuzzy matching',
+        'intelligent search',
+        'search with highlighting',
+        'advanced search component',
+        'search filtering',
+        'Tailwind CSS search',
+        'UI search library',
+        'fuzzy finder',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Fuzzy Search Component | Sera UI',
+        description: 'Advanced React fuzzy search component with intelligent matching, highlighting, and real-time filtering.',
+        type: 'article',
+        url: '/docs/fuzzy',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Fuzzy Search Component | Sera UI',
+        description: 'Advanced React fuzzy search component with intelligent matching, highlighting, and real-time filtering.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/fuzzy',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import FuzzyText from "./fuzzy"
+
+
+
+# Fuzzy Text <AI dir="left"/>
+
+A dynamic text component that creates an animated fuzzy/glitch effect using HTML5 Canvas. Perfect for creating eye-catching headings, hero text, and interactive typography with customizable intensity and hover effects.
+
+## Preview
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<FuzzyText />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/fuzzy/fuzzy.tsx" />
+  </TabsContent>
+</Tabs>

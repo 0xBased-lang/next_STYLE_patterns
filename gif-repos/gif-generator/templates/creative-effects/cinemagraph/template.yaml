@@ -1,0 +1,124 @@
+# Cinemagraph Template
+# Creates living photos with selective motion (part moves, rest is still)
+
+name: "Cinemagraph (Living Photo)"
+description: "Create artistic cinemagraphs with selective motion - part animated, rest frozen"
+version: "1.0.0"
+category: "creative-effects"
+
+# Pipeline: video → freeze base → mask motion → composite → loop
+pipeline:
+  - tool: "ffmpeg"
+    config:
+      extract_still: true  # First frame as base
+      still_frame: 0
+
+  - tool: "custom"  # Masking and compositing
+    config:
+      motion_mask: "{{mask_file}}"
+      blend_mode: "multiply"
+      feather_edge: 10  # Smooth mask edges
+      loop_seamless: true
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 256  # Artistic quality
+      lossy: 30
+      loop_count: 0  # Infinite loop
+
+assets:
+  required:
+    - name: "video"
+      type: "video/*"
+      description: "Video with subtle motion (water, smoke, hair, etc.)"
+
+  optional:
+    - name: "mask"
+      type: "image/*"
+      description: "Motion mask (white=animate, black=freeze)"
+
+variables:
+  motion_region:
+    type: "string"
+    default: "auto"
+    description: "Region to animate (auto/custom/center/edges)"
+
+  loop_duration:
+    type: "number"
+    default: 5
+    description: "Loop duration in seconds"
+
+  effect_style:
+    type: "string"
+    default: "subtle"
+    description: "Effect intensity (subtle/medium/dramatic)"
+
+presets:
+  water:  # Water/liquid motion
+    ffmpeg:
+      extract_still: 0
+    custom:
+      motion_detection: "flow"
+      feather_edge: 15
+    gifsicle:
+      colors: 256
+      lossy: 20
+
+  portrait:  # Hair/clothing motion
+    ffmpeg:
+      extract_still: 0
+    custom:
+      motion_detection: "selective"
+      feather_edge: 20  # Smooth transitions
+    gifsicle:
+      colors: 256
+      lossy: 25
+
+  nature:  # Leaves/clouds motion
+    ffmpeg:
+      extract_still: 0
+    custom:
+      motion_detection: "organic"
+      feather_edge: 12
+    gifsicle:
+      colors: 256
+      lossy: 30
+
+  urban:  # Traffic/lights motion
+    ffmpeg:
+      extract_still: 0
+    custom:
+      motion_detection: "linear"
+      feather_edge: 8
+    gifsicle:
+      colors: 256
+      lossy: 25
+
+validation:
+  max_duration: 10
+  max_size_mb: 10
+  required_format: "gif"
+  min_loop_duration: 2
+  seamless_loop: true
+
+metadata:
+  author: "gif-repos generator"
+  tags: [cinemagraph, living-photo, artistic, creative, motion]
+  difficulty: "advanced"
+  use_cases:
+    - "Artistic photography"
+    - "Social media content"
+    - "Website backgrounds"
+    - "Digital art"
+    - "Product photography"
+    - "Fashion lookbooks"
+    - "Travel content"
+
+  inspiration:
+    - "Moving water/waves"
+    - "Swaying hair/fabric"
+    - "Floating smoke/steam"
+    - "Flickering lights/fire"
+    - "Falling rain/snow"
+    - "Flowing traffic"

@@ -1,0 +1,110 @@
+# Talking Head Animation Template
+# Creates realistic talking portrait videos using AI
+
+name: "AI Talking Head"
+description: "Animate portrait photo to speak using LivePortrait or first-order-model"
+version: "1.0.0"
+category: "portrait-animation"
+
+# Pipeline: portrait + driving video → AI animation → post-process
+pipeline:
+  - tool: "liveportrait"
+    fallback: "first-order-model"
+    config:
+      mode: "image-to-video"
+      flag_pasteback: true
+      flag_stitching: true
+      flag_relative: true
+      eye_retargeting_ratio: 0.9
+      lip_retargeting_ratio: 1.0
+      flag_do_crop: true
+      flag_do_rot: true
+
+  - tool: "ffmpeg"
+    config:
+      add_audio: true
+      codec: "h264"
+      bitrate: "4M"
+      resolution: "1080p"
+      format: "mp4"
+
+assets:
+  required:
+    - name: "portrait"
+      type: "image/*"
+      description: "Portrait photo (clear face, front-facing)"
+
+    - name: "driving_video"
+      type: "video/*"
+      description: "Talking video to transfer motion from"
+
+  optional:
+    - name: "audio"
+      type: "audio/*"
+      description: "Voice audio to sync with animation"
+
+    - name: "motion_template"
+      type: "motion/*.pkl"
+      description: "Pre-saved motion template (privacy-preserving)"
+
+variables:
+  emotion:
+    type: "string"
+    default: "neutral"
+    description: "Emotion style (neutral/happy/serious/energetic)"
+
+  style:
+    type: "string"
+    default: "professional"
+    description: "Presentation style"
+
+presets:
+  professional:  # Business presentations
+    liveportrait:
+      eye_retargeting_ratio: 0.8
+      lip_retargeting_ratio: 1.0
+    ffmpeg:
+      resolution: "1080p"
+      bitrate: "4M"
+
+  casual:  # Casual content
+    liveportrait:
+      eye_retargeting_ratio: 1.0
+      lip_retargeting_ratio: 1.2
+    ffmpeg:
+      resolution: "720p"
+      bitrate: "2M"
+
+  subtle:  # Minimal animation
+    liveportrait:
+      eye_retargeting_ratio: 0.5
+      lip_retargeting_ratio: 0.8
+    ffmpeg:
+      resolution: "1080p"
+      bitrate: "3M"
+
+  expressive:  # Exaggerated for impact
+    liveportrait:
+      eye_retargeting_ratio: 1.2
+      lip_retargeting_ratio: 1.5
+    ffmpeg:
+      resolution: "1080p"
+      bitrate: "5M"
+
+validation:
+  min_resolution: [512, 512]
+  face_detected: true
+  temporal_consistency: 0.85
+  audio_sync: true
+
+metadata:
+  author: "gif-repos generator"
+  tags: [ai, portrait, animation, talking-head, presentation, video]
+  model: ["liveportrait", "first-order-model"]
+  use_cases:
+    - "Video presentations"
+    - "Virtual avatars"
+    - "Testimonials"
+    - "E-learning content"
+    - "Social media videos"
+    - "Product demos with presenter"

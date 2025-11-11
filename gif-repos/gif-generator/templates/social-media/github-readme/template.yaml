@@ -1,0 +1,98 @@
+# GitHub README Demo Template
+# Creates demo GIF for GitHub repositories and documentation
+
+name: "GitHub README Demo"
+description: "Animated demo GIF optimized for GitHub README files and documentation"
+version: "1.0.0"
+category: "technical-docs"
+
+# Pipeline: screen recording → optimize for GitHub → compress
+pipeline:
+  - tool: "gifcurry"
+    config:
+      start_time: 0
+      end_time: 10  # GitHub optimal: 8-10 seconds
+      width: 800    # Readable in README
+      height: 600
+      fps: 12       # Smooth but not excessive
+      quality: 100
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 128    # Technical content doesn't need many colors
+      lossy: 80      # Good compression for code
+
+assets:
+  required:
+    - name: "video"
+      type: "video/*"
+      description: "Screen recording or demo video"
+
+  optional:
+    - name: "cursor_highlight"
+      type: "boolean"
+      description: "Highlight cursor movements"
+
+variables:
+  demo_type:
+    type: "string"
+    default: "feature"
+    description: "Type of demo (feature/installation/usage)"
+
+presets:
+  feature:  # Feature demonstration
+    gifcurry:
+      width: 800
+      height: 600
+      fps: 12
+      end_time: 10
+    gifsicle:
+      colors: 128
+      lossy: 80
+
+  quickstart:  # Quick installation demo
+    gifcurry:
+      width: 600
+      height: 400
+      fps: 10
+      end_time: 6
+    gifsicle:
+      colors: 64
+      lossy: 100
+
+  tutorial:  # Detailed tutorial
+    gifcurry:
+      width: 1000
+      height: 750
+      fps: 15
+      end_time: 15
+    gifsicle:
+      colors: 256
+      lossy: 60
+
+  mobile:  # Mobile app demo
+    gifcurry:
+      width: 360
+      height: 640
+      fps: 20
+    gifsicle:
+      colors: 256
+      lossy: 70
+
+validation:
+  max_duration: 30  # Keep READMEs loading fast
+  max_size_mb: 10   # GitHub raw file limit
+  required_format: "gif"
+
+metadata:
+  author: "gif-repos generator"
+  tags: [github, readme, documentation, demo, tutorial]
+  platform: "github"
+  use_cases:
+    - "Feature demonstrations"
+    - "Installation guides"
+    - "Usage examples"
+    - "API showcases"
+    - "CLI tool demos"
+    - "UI/UX previews"

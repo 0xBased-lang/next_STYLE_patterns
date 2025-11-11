@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morphing Blob: Organic - ULTRA Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(ellipse at bottom, #1a1a2e 0%, #0f0f1e 100%);
+      color: #e8d5ff;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1e 100%);
+    }
+
+    /* Controls Panel - Organic Theme */
+    .controls-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 340px;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(30, 20, 40, 0.95) 0%, rgba(20, 30, 50, 0.95) 100%);
+      backdrop-filter: blur(30px);
+      border-left: 1px solid rgba(200, 150, 255, 0.3);
+      border-radius: 30px 0 0 30px;
+      box-shadow: -15px 0 60px rgba(150, 100, 255, 0.4);
+      padding: 25px;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .controls-panel.hidden {
+      transform: translateX(100%);
+    }
+
+    .controls-panel::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .controls-panel::-webkit-scrollbar-track {
+      background: rgba(200, 150, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .controls-panel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #c896ff 0%, #9d4edd 100%);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(200, 150, 255, 0.5);
+    }
+
+    .controls-panel h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #c896ff 0%, #ff9eff 50%, #7dd3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-shadow: 0 0 40px rgba(200, 150, 255, 0.6);
+    }
+
+    .subtitle {
+      color: #c896ff;
+      font-size: 13px;
+      margin-bottom: 25px;
+      opacity: 0.9;
+      font-weight: 600;
+    }
+
+    /* Presets - Organic Blobs */
+    .presets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .preset-btn {
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.15) 0%, rgba(157, 78, 221, 0.15) 100%);
+      border: 2px solid rgba(200, 150, 255, 0.3);
+      border-radius: 20px;
+      color: #e8d5ff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      text-shadow: 0 0 15px rgba(200, 150, 255, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preset-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, rgba(200, 150, 255, 0.4) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .preset-btn:hover::before {
+      width: 300%;
+      height: 300%;
+    }
+
+    .preset-btn:hover {
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.25) 0%, rgba(157, 78, 221, 0.25) 100%);
+      border-color: rgba(200, 150, 255, 0.6);
+      transform: scale(1.05) translateY(-3px);
+      box-shadow: 0 10px 30px rgba(200, 150, 255, 0.4);
+    }
+
+    /* Control Groups - Fluid Design */
+    .control-group {
+      margin-bottom: 25px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.1) 0%, rgba(157, 78, 221, 0.1) 100%);
+      border: 2px solid rgba(200, 150, 255, 0.25);
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+
+    .control-group:hover {
+      border-color: rgba(200, 150, 255, 0.4);
+      box-shadow: 0 0 25px rgba(200, 150, 255, 0.2);
+    }
+
+    .control-group h3 {
+      font-size: 15px;
+      margin-bottom: 20px;
+      color: #c896ff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-group h3::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #c896ff 0%, #9d4edd 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(200, 150, 255, 0.8);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.7; }
+    }
+
+    /* Controls - Organic Feel */
+    .control {
+      margin-bottom: 20px;
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #d1b3ff;
+    }
+
+    .control-value {
+      color: #c896ff;
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(200, 150, 255, 0.6);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, rgba(200, 150, 255, 0.2), rgba(157, 78, 221, 0.3));
+      border-radius: 10px;
+      outline: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(200, 150, 255, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #c896ff 0%, #9d4edd 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(200, 150, 255, 0.8),
+                  inset 0 0 10px rgba(255, 255, 255, 0.4);
+      transition: all 0.3s;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 30px rgba(200, 150, 255, 1);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #c896ff 0%, #9d4edd 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(200, 150, 255, 0.8);
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 45px;
+      border: 2px solid rgba(200, 150, 255, 0.4);
+      border-radius: 15px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.1) 0%, rgba(157, 78, 221, 0.1) 100%);
+      border: 2px solid rgba(200, 150, 255, 0.3);
+      border-radius: 15px;
+      color: #e8d5ff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    select option {
+      background: #1a1a2e;
+      color: #e8d5ff;
+    }
+
+    /* Action Buttons - Fluid Shape */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.2) 0%, rgba(157, 78, 221, 0.2) 100%);
+      border: 2px solid rgba(200, 150, 255, 0.4);
+      border-radius: 20px;
+      color: #e8d5ff;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      text-shadow: 0 0 15px rgba(200, 150, 255, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, rgba(200, 150, 255, 0.4) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .action-btn:hover::before {
+      width: 300%;
+      height: 300%;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.3) 0%, rgba(157, 78, 221, 0.3) 100%);
+      border-color: rgba(200, 150, 255, 0.6);
+      transform: scale(1.05) translateY(-3px);
+      box-shadow: 0 10px 30px rgba(200, 150, 255, 0.5);
+    }
+
+    .action-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* FPS Monitor - Organic Design */
+    .fps-monitor {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, rgba(30, 20, 40, 0.9) 0%, rgba(20, 30, 50, 0.9) 100%);
+      backdrop-filter: blur(30px);
+      border: 2px solid rgba(200, 150, 255, 0.4);
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 700;
+      z-index: 999;
+      box-shadow: 0 10px 40px rgba(200, 150, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fps-value {
+      color: #c896ff;
+      text-shadow: 0 0 20px rgba(200, 150, 255, 0.8);
+      font-size: 20px;
+    }
+
+    /* Toggle Button - Organic Blob */
+    .toggle-controls {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 65px;
+      height: 65px;
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.25) 0%, rgba(157, 78, 221, 0.25) 100%);
+      backdrop-filter: blur(30px);
+      border: 2px solid rgba(200, 150, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 10px 40px rgba(200, 150, 255, 0.5);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .toggle-controls:hover {
+      background: linear-gradient(135deg, rgba(200, 150, 255, 0.35) 0%, rgba(157, 78, 221, 0.35) 100%);
+      transform: scale(1.15) translateY(-5px);
+      box-shadow: 0 15px 50px rgba(200, 150, 255, 0.7);
+      border-color: rgba(200, 150, 255, 0.8);
+      animation: none;
+    }
+
+    /* Info Banner - Organic */
+    .info-banner {
+      position: fixed;
+      top: 85px;
+      left: 20px;
+      max-width: 420px;
+      padding: 18px 26px;
+      background: linear-gradient(135deg, rgba(30, 20, 40, 0.9) 0%, rgba(20, 30, 50, 0.9) 100%);
+      backdrop-filter: blur(30px);
+      border: 2px solid rgba(200, 150, 255, 0.4);
+      border-radius: 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      z-index: 998;
+      box-shadow: 0 10px 40px rgba(200, 150, 255, 0.4);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .info-banner h4 {
+      color: #c896ff;
+      margin-bottom: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      text-shadow: 0 0 20px rgba(200, 150, 255, 0.6);
+    }
+
+    .info-banner p {
+      color: #d1b3ff;
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .controls-panel {
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+        border-radius: 30px 30px 0 0;
+      }
+
+      .presets {
+        grid-template-columns: 1fr;
+      }
+
+      .info-banner {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <!-- FPS Monitor -->
+  <div class="fps-monitor">
+    <span>FPS:</span>
+    <span class="fps-value">60</span>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <h4>💫 Morphing Blob: Organic</h4>
+    <p>Mesmerizing liquid/fluid effects with smooth morphing blobs. Watch them flow and transform organically!</p>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel" id="controlsPanel">
+    <h1>💫 Morphing Blob</h1>
+    <p class="subtitle">Organic Fluid Simulation</p>
+
+    <!-- Presets -->
+    <div class="presets">
+      <button class="preset-btn" onclick="applyPreset('calm')">🌊 Calm Flow</button>
+      <button class="preset-btn" onclick="applyPreset('energetic')">⚡ Energetic</button>
+      <button class="preset-btn" onclick="applyPreset('dreamy')">✨ Dreamy</button>
+      <button class="preset-btn" onclick="applyPreset('cosmic')">🌌 Cosmic</button>
+      <button class="preset-btn" onclick="applyPreset('fire')">🔥 Lava Flow</button>
+      <button class="preset-btn" onclick="applyPreset('ice')">❄️ Ice Crystal</button>
+      <button class="preset-btn" onclick="applyPreset('rainbow')">🌈 Rainbow</button>
+      <button class="preset-btn" onclick="applyPreset('minimal')">⚪ Minimal</button>
+    </div>
+
+    <!-- Blob Parameters -->
+    <div class="control-group">
+      <h3>Blob Properties</h3>
+
+      <div class="control">
+        <label>
+          <span>Blob Size</span>
+          <span class="control-value" id="blobSizeValue">150</span>
+        </label>
+        <input type="range" id="blobSize" min="50" max="300" step="10" value="150">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Morphing Speed</span>
+          <span class="control-value" id="morphSpeedValue">0.5</span>
+        </label>
+        <input type="range" id="morphSpeed" min="0.1" max="2" step="0.1" value="0.5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Points Count</span>
+          <span class="control-value" id="pointsCountValue">8</span>
+        </label>
+        <input type="range" id="pointsCount" min="4" max="16" step="1" value="8">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Smoothness</span>
+          <span class="control-value" id="smoothnessValue">0.5</span>
+        </label>
+        <input type="range" id="smoothness" min="0.1" max="1" step="0.05" value="0.5">
+      </div>
+    </div>
+
+    <!-- Motion Parameters -->
+    <div class="control-group">
+      <h3>Motion & Flow</h3>
+
+      <div class="control">
+        <label>
+          <span>Movement Speed</span>
+          <span class="control-value" id="moveSpeedValue">1</span>
+        </label>
+        <input type="range" id="moveSpeed" min="0.1" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Rotation Speed</span>
+          <span class="control-value" id="rotationSpeedValue">0.2</span>
+        </label>
+        <input type="range" id="rotationSpeed" min="-1" max="1" step="0.1" value="0.2">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Flow Intensity</span>
+          <span class="control-value" id="flowIntensityValue">30</span>
+        </label>
+        <input type="range" id="flowIntensity" min="0" max="100" step="5" value="30">
+      </div>
+    </div>
+
+    <!-- Visual Effects -->
+    <div class="control-group">
+      <h3>Visual Effects</h3>
+
+      <div class="control">
+        <label>
+          <span>Glow Intensity</span>
+          <span class="control-value" id="glowValue">25</span>
+        </label>
+        <input type="range" id="glow" min="0" max="50" step="2" value="25">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Opacity</span>
+          <span class="control-value" id="opacityValue">0.8</span>
+        </label>
+        <input type="range" id="opacity" min="0.3" max="1" step="0.05" value="0.8">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Gradient Type</span>
+          <span class="control-value" id="gradientTypeValue">radial</span>
+        </label>
+        <select id="gradientType">
+          <option value="radial">Radial</option>
+          <option value="linear">Linear</option>
+          <option value="angular">Angular</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="control-group">
+      <h3>Color Palette</h3>
+
+      <div class="control">
+        <label><span>Primary Color</span></label>
+        <input type="color" id="color1" value="#c896ff">
+      </div>
+
+      <div class="control">
+        <label><span>Secondary Color</span></label>
+        <input type="color" id="color2" value="#ff9eff">
+      </div>
+
+      <div class="control">
+        <label><span>Accent Color</span></label>
+        <input type="color" id="color3" value="#7dd3fc">
+      </div>
+    </div>
+
+    <!-- Interaction -->
+    <div class="control-group">
+      <h3>Mouse Interaction</h3>
+
+      <div class="control">
+        <label>
+          <span>Attraction Strength</span>
+          <span class="control-value" id="attractionValue">5</span>
+        </label>
+        <input type="range" id="attraction" min="0" max="15" step="1" value="5">
+      </div>
+
+      <div class="control">
+        <label>
+          <span>Attraction Range</span>
+          <span class="control-value" id="rangeValue">200</span>
+        </label>
+        <input type="range" id="range" min="50" max="400" step="10" value="200">
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-btn" onclick="exportConfig()"><span>📤 Export</span></button>
+      <button class="action-btn" onclick="resetToDefaults()"><span>🔄 Reset</span></button>
+      <button class="action-btn" onclick="randomize()"><span>🎲 Random</span></button>
+    </div>
+  </div>
+
+  <!-- Toggle Button -->
+  <div class="toggle-controls" onclick="toggleControls()">⚙️</div>
+
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    // Mouse tracking
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+
+    // Animation state
+    let animationId;
+    let time = 0;
+    let blob;
+
+    // Configuration
+    let config = {
+      blobSize: 150,
+      morphSpeed: 0.5,
+      pointsCount: 8,
+      smoothness: 0.5,
+      moveSpeed: 1,
+      rotationSpeed: 0.2,
+      flowIntensity: 30,
+      glow: 25,
+      opacity: 0.8,
+      gradientType: 'radial',
+      color1: '#c896ff',
+      color2: '#ff9eff',
+      color3: '#7dd3fc',
+      attraction: 5,
+      range: 200
+    };
+
+    // Presets
+    const presets = {
+      calm: {
+        blobSize: 150,
+        morphSpeed: 0.5,
+        pointsCount: 8,
+        smoothness: 0.5,
+        moveSpeed: 1,
+        rotationSpeed: 0.2,
+        flowIntensity: 30,
+        glow: 25,
+        opacity: 0.8,
+        gradientType: 'radial',
+        color1: '#c896ff',
+        color2: '#ff9eff',
+        color3: '#7dd3fc',
+        attraction: 5,
+        range: 200
+      },
+      energetic: {
+        blobSize: 200,
+        morphSpeed: 1.5,
+        pointsCount: 12,
+        smoothness: 0.7,
+        moveSpeed: 2.5,
+        rotationSpeed: 0.8,
+        flowIntensity: 70,
+        glow: 40,
+        opacity: 0.9,
+        gradientType: 'angular',
+        color1: '#ff0080',
+        color2: '#00d4ff',
+        color3: '#ffff00',
+        attraction: 12,
+        range: 300
+      },
+      dreamy: {
+        blobSize: 180,
+        morphSpeed: 0.3,
+        pointsCount: 10,
+        smoothness: 0.8,
+        moveSpeed: 0.7,
+        rotationSpeed: 0.1,
+        flowIntensity: 20,
+        glow: 35,
+        opacity: 0.7,
+        gradientType: 'radial',
+        color1: '#e0c3fc',
+        color2: '#f0d5ff',
+        color3: '#c3e0ff',
+        attraction: 3,
+        range: 250
+      },
+      cosmic: {
+        blobSize: 220,
+        morphSpeed: 1,
+        pointsCount: 14,
+        smoothness: 0.6,
+        moveSpeed: 1.8,
+        rotationSpeed: 0.5,
+        flowIntensity: 50,
+        glow: 45,
+        opacity: 0.85,
+        gradientType: 'angular',
+        color1: '#9d00ff',
+        color2: '#00ffff',
+        color3: '#ff00ff',
+        attraction: 8,
+        range: 280
+      },
+      fire: {
+        blobSize: 190,
+        morphSpeed: 1.2,
+        pointsCount: 10,
+        smoothness: 0.4,
+        moveSpeed: 2,
+        rotationSpeed: 0.6,
+        flowIntensity: 60,
+        glow: 50,
+        opacity: 0.9,
+        gradientType: 'radial',
+        color1: '#ff4500',
+        color2: '#ff6347',
+        color3: '#ffd700',
+        attraction: 10,
+        range: 220
+      },
+      ice: {
+        blobSize: 140,
+        morphSpeed: 0.2,
+        pointsCount: 6,
+        smoothness: 0.9,
+        moveSpeed: 0.5,
+        rotationSpeed: 0.05,
+        flowIntensity: 15,
+        glow: 20,
+        opacity: 0.6,
+        gradientType: 'linear',
+        color1: '#add8e6',
+        color2: '#87ceeb',
+        color3: '#e0f2ff',
+        attraction: 2,
+        range: 150
+      },
+      rainbow: {
+        blobSize: 210,
+        morphSpeed: 1,
+        pointsCount: 16,
+        smoothness: 0.7,
+        moveSpeed: 1.5,
+        rotationSpeed: 0.4,
+        flowIntensity: 55,
+        glow: 38,
+        opacity: 0.85,
+        gradientType: 'angular',
+        color1: '#ff0080',
+        color2: '#00ff00',
+        color3: '#0080ff',
+        attraction: 7,
+        range: 260
+      },
+      minimal: {
+        blobSize: 120,
+        morphSpeed: 0.4,
+        pointsCount: 6,
+        smoothness: 0.6,
+        moveSpeed: 0.8,
+        rotationSpeed: 0.1,
+        flowIntensity: 20,
+        glow: 15,
+        opacity: 0.7,
+        gradientType: 'radial',
+        color1: '#ffffff',
+        color2: '#e0e0e0',
+        color3: '#c0c0c0',
+        attraction: 4,
+        range: 180
+      }
+    };
+
+    // Blob class
+    class Blob {
+      constructor() {
+        this.x = width / 2;
+        this.y = height / 2;
+        this.points = [];
+        this.rotation = 0;
+        this.initPoints();
+      }
+
+      initPoints() {
+        this.points = [];
+        for (let i = 0; i < config.pointsCount; i++) {
+          const angle = (i / config.pointsCount) * Math.PI * 2;
+          this.points.push({
+            angle: angle,
+            distance: config.blobSize,
+            targetDistance: config.blobSize
+          });
+        }
+      }
+
+      update() {
+        // Update rotation
+        this.rotation += config.rotationSpeed * 0.01;
+
+        // Update blob position (flow)
+        this.x += Math.sin(time * config.moveSpeed * 0.01) * config.flowIntensity * 0.1;
+        this.y += Math.cos(time * config.moveSpeed * 0.01) * config.flowIntensity * 0.1;
+
+        // Keep blob in bounds
+        this.x = Math.max(config.blobSize, Math.min(width - config.blobSize, this.x));
+        this.y = Math.max(config.blobSize, Math.min(height - config.blobSize, this.y));
+
+        // Mouse attraction
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < config.range && distance > 0) {
+          const force = (config.range - distance) / config.range;
+          this.x += (dx / distance) * force * config.attraction;
+          this.y += (dy / distance) * force * config.attraction;
+        }
+
+        // Update points (morphing)
+        for (let i = 0; i < this.points.length; i++) {
+          const point = this.points[i];
+
+          // Morphing effect
+          const noise = Math.sin(time * config.morphSpeed * 0.1 + i) * config.blobSize * 0.3;
+          point.targetDistance = config.blobSize + noise;
+
+          // Smooth transition
+          point.distance += (point.targetDistance - point.distance) * config.smoothness * 0.1;
+        }
+
+        time++;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+
+        // Create path
+        ctx.beginPath();
+
+        for (let i = 0; i <= this.points.length; i++) {
+          const point = this.points[i % this.points.length];
+          const nextPoint = this.points[(i + 1) % this.points.length];
+
+          const x = Math.cos(point.angle) * point.distance;
+          const y = Math.sin(point.angle) * point.distance;
+
+          const nextX = Math.cos(nextPoint.angle) * nextPoint.distance;
+          const nextY = Math.sin(nextPoint.angle) * nextPoint.distance;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            // Smooth curve
+            const cpX = (x + nextX) / 2;
+            const cpY = (y + nextY) / 2;
+            ctx.quadraticCurveTo(x, y, cpX, cpY);
+          }
+        }
+
+        ctx.closePath();
+
+        // Create gradient
+        let gradient;
+        const c1 = hexToRgb(config.color1);
+        const c2 = hexToRgb(config.color2);
+        const c3 = hexToRgb(config.color3);
+
+        if (config.gradientType === 'radial') {
+          gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, config.blobSize);
+          gradient.addColorStop(0, `rgba(${c1.r}, ${c1.g}, ${c1.b}, ${config.opacity})`);
+          gradient.addColorStop(0.5, `rgba(${c2.r}, ${c2.g}, ${c2.b}, ${config.opacity})`);
+          gradient.addColorStop(1, `rgba(${c3.r}, ${c3.g}, ${c3.b}, ${config.opacity})`);
+        } else if (config.gradientType === 'linear') {
+          gradient = ctx.createLinearGradient(-config.blobSize, 0, config.blobSize, 0);
+          gradient.addColorStop(0, `rgba(${c1.r}, ${c1.g}, ${c1.b}, ${config.opacity})`);
+          gradient.addColorStop(0.5, `rgba(${c2.r}, ${c2.g}, ${c2.b}, ${config.opacity})`);
+          gradient.addColorStop(1, `rgba(${c3.r}, ${c3.g}, ${c3.b}, ${config.opacity})`);
+        } else { // angular
+          gradient = ctx.createConicGradient(0, 0, 0);
+          gradient.addColorStop(0, `rgba(${c1.r}, ${c1.g}, ${c1.b}, ${config.opacity})`);
+          gradient.addColorStop(0.33, `rgba(${c2.r}, ${c2.g}, ${c2.b}, ${config.opacity})`);
+          gradient.addColorStop(0.66, `rgba(${c3.r}, ${c3.g}, ${c3.b}, ${config.opacity})`);
+          gradient.addColorStop(1, `rgba(${c1.r}, ${c1.g}, ${c1.b}, ${config.opacity})`);
+        }
+
+        // Glow
+        if (config.glow > 0) {
+          ctx.shadowBlur = config.glow;
+          ctx.shadowColor = config.color1;
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+    }
+
+    // Helper functions
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 0, g: 0, b: 0 };
+    }
+
+    // Initialize blob
+    function initBlob() {
+      blob = new Blob();
+    }
+
+    // Animation loop
+    function animate() {
+      // Clear with fade
+      ctx.fillStyle = 'rgba(15, 15, 30, 0.1)';
+      ctx.fillRect(0, 0, width, height);
+
+      // Update and draw blob
+      if (blob) {
+        blob.update();
+        blob.draw();
+      }
+
+      // FPS
+      updateFPS();
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    // FPS counter
+    let fps = 60;
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+
+    function updateFPS() {
+      frameCount++;
+      const currentTime = performance.now();
+
+      if (currentTime >= lastFrameTime + 1000) {
+        fps = Math.round((frameCount * 1000) / (currentTime - lastFrameTime));
+        document.querySelector('.fps-value').textContent = fps;
+        document.querySelector('.fps-value').style.color =
+          fps >= 50 ? '#c896ff' : fps >= 30 ? '#fbbf24' : '#f87171';
+        frameCount = 0;
+        lastFrameTime = currentTime;
+      }
+    }
+
+    // Apply preset
+    function applyPreset(presetName) {
+      const preset = presets[presetName];
+      if (!preset) return;
+
+      Object.assign(config, preset);
+      updateControlsFromConfig();
+      initBlob();
+    }
+
+    // Update controls from config
+    function updateControlsFromConfig() {
+      for (const key in config) {
+        const element = document.getElementById(key);
+        const valueElement = document.getElementById(key + 'Value');
+
+        if (element && element.type === 'range') {
+          element.value = config[key];
+          if (valueElement) {
+            valueElement.textContent = config[key];
+          }
+        } else if (element && element.type === 'color') {
+          element.value = config[key];
+        } else if (element && element.tagName === 'SELECT') {
+          element.value = config[key];
+          if (valueElement) {
+            valueElement.textContent = config[key];
+          }
+        }
+      }
+    }
+
+    // Export configuration
+    function exportConfig() {
+      const configStr = JSON.stringify(config, null, 2);
+      const blob = new Blob([configStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'morphing-blob-config.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Reset to defaults
+    function resetToDefaults() {
+      applyPreset('calm');
+    }
+
+    // Randomize
+    function randomize() {
+      config.blobSize = Math.floor(Math.random() * 250) + 50;
+      config.morphSpeed = Math.random() * 1.9 + 0.1;
+      config.pointsCount = Math.floor(Math.random() * 12) + 4;
+      config.smoothness = Math.random() * 0.9 + 0.1;
+      config.moveSpeed = Math.random() * 2.9 + 0.1;
+      config.rotationSpeed = (Math.random() * 2) - 1;
+      config.flowIntensity = Math.random() * 100;
+      config.glow = Math.random() * 50;
+      config.opacity = Math.random() * 0.7 + 0.3;
+      config.attraction = Math.random() * 15;
+      config.range = Math.random() * 350 + 50;
+
+      // Random colors
+      config.color1 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.color2 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      config.color3 = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+
+      // Random gradient type
+      const types = ['radial', 'linear', 'angular'];
+      config.gradientType = types[Math.floor(Math.random() * types.length)];
+
+      updateControlsFromConfig();
+      initBlob();
+    }
+
+    // Toggle controls
+    function toggleControls() {
+      document.getElementById('controlsPanel').classList.toggle('hidden');
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Range inputs
+      const rangeInputs = document.querySelectorAll('input[type="range"]');
+      rangeInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          const key = e.target.id;
+          const value = parseFloat(e.target.value);
+          config[key] = value;
+
+          const valueElement = document.getElementById(key + 'Value');
+          if (valueElement) {
+            valueElement.textContent = value;
+          }
+
+          if (key === 'pointsCount') {
+            initBlob();
+          }
+        });
+      });
+
+      // Color inputs
+      const colorInputs = document.querySelectorAll('input[type="color"]');
+      colorInputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          config[e.target.id] = e.target.value;
+        });
+      });
+
+      // Gradient type select
+      document.getElementById('gradientType').addEventListener('change', (e) => {
+        config.gradientType = e.target.value;
+        document.getElementById('gradientTypeValue').textContent = e.target.value;
+      });
+
+      // Mouse tracking
+      canvas.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      // Window resize
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initBlob();
+      });
+    }
+
+    // Initialize
+    function init() {
+      setupEventListeners();
+      updateControlsFromConfig();
+      initBlob();
+      animate();
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

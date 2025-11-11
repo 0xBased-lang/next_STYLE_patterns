@@ -1,0 +1,150 @@
+# JSON Schema for Generator Templates
+# Ensures templates are valid and complete
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Generator Template Schema"
+description: "Schema for validating gif-repos template files"
+type: object
+
+required:
+  - name
+  - category
+  - pipeline
+
+properties:
+  name:
+    type: string
+    description: "Human-readable template name"
+    minLength: 3
+
+  description:
+    type: string
+    description: "What this template generates"
+
+  version:
+    type: string
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    default: "1.0.0"
+
+  category:
+    type: string
+    description: "Template category"
+    enum:
+      - social-media
+      - portrait-animation
+      - character-animation
+      - web-animation
+      - technical-docs
+      - creative-effects
+
+  pipeline:
+    type: array
+    description: "Ordered processing stages"
+    minItems: 1
+    items:
+      type: object
+      required: [tool, config]
+      properties:
+        tool:
+          type: string
+          description: "Tool to use for this stage"
+          enum:
+            - gifcurry
+            - gifsicle
+            - liveportrait
+            - first-order-model
+            - animatediff
+            - ffmpeg
+            - custom
+
+        config:
+          type: object
+          description: "Tool-specific configuration"
+
+        fallback:
+          type: string
+          description: "Alternative tool if primary fails"
+
+  assets:
+    type: object
+    description: "Required and optional input assets"
+    properties:
+      required:
+        type: array
+        description: "Assets that must be provided"
+        items:
+          type: object
+          required: [name, type]
+          properties:
+            name:
+              type: string
+            type:
+              type: string
+              pattern: "^(video|image|audio)/.*$"
+            description:
+              type: string
+
+      optional:
+        type: array
+        description: "Assets that enhance output"
+        items:
+          type: object
+
+  variables:
+    type: object
+    description: "Template variables ({{var_name}})"
+    additionalProperties:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [string, number, boolean]
+        default:
+          description: "Default value if not provided"
+        description:
+          type: string
+
+  presets:
+    type: object
+    description: "Named parameter sets"
+    additionalProperties:
+      type: object
+
+  validation:
+    type: object
+    description: "Output validation rules"
+    properties:
+      max_duration:
+        type: number
+        description: "Maximum duration in seconds"
+      max_size_mb:
+        type: number
+        description: "Maximum file size in MB"
+      min_width:
+        type: integer
+      max_width:
+        type: integer
+      min_height:
+        type: integer
+      max_height:
+        type: integer
+      required_format:
+        type: string
+        enum: [gif, mp4, webm, png, jpg]
+
+  metadata:
+    type: object
+    description: "Template metadata"
+    properties:
+      author:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      platform:
+        type: string
+      use_cases:
+        type: array
+        items:
+          type: string

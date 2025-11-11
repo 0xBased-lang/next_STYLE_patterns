@@ -1,0 +1,189 @@
+# Sticker Pack Template
+# Creates animated stickers for Telegram, WhatsApp, iMessage, etc.
+
+name: "Animated Sticker Pack"
+description: "Create animated stickers for messaging apps (Telegram, WhatsApp, iMessage, Discord)"
+version: "1.0.0"
+category: "social-media"
+
+# Pipeline: video/image → crop to square → resize → transparent bg → optimize
+pipeline:
+  steps:
+    - tool: "gifcurry"
+      operation: "create_gif"
+      input: "{{source_path}}"
+      output: "temp_sticker.gif"
+      params:
+        width: "{{size}}"
+        height: "{{size}}"
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|2}}"
+        quality: 90
+        crop: "square"
+        maintain_aspect: true
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_sticker.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: 3
+        colors: 256
+        lossy: 20
+        transparent: "{{transparent_bg|false}}"
+        loop: "{{loop_count|0}}"
+
+# Presets for different messaging platforms
+presets:
+  telegram:
+    description: "Telegram animated stickers (512×512, <512KB)"
+    size: 512
+    duration: 2
+    loop_count: 0
+    transparent_bg: true
+    max_file_size: 512  # KB
+    expected_size: "200-500KB"
+    processing_time: "30s"
+
+  whatsapp:
+    description: "WhatsApp animated stickers (512×512, <500KB)"
+    size: 512
+    duration: 3
+    loop_count: 0
+    transparent_bg: true
+    max_file_size: 500  # KB
+    expected_size: "200-450KB"
+    processing_time: "35s"
+
+  imessage:
+    description: "iMessage stickers (618×618, <500KB)"
+    size: 618
+    duration: 2.5
+    loop_count: 0
+    transparent_bg: true
+    max_file_size: 500  # KB
+    expected_size: "250-500KB"
+    processing_time: "40s"
+
+  discord:
+    description: "Discord emoji/stickers (128×128, <256KB)"
+    size: 128
+    duration: 2
+    loop_count: 0
+    transparent_bg: true
+    max_file_size: 256  # KB
+    expected_size: "50-200KB"
+    processing_time: "20s"
+
+  universal:
+    description: "Universal sticker (512×512, works on most platforms)"
+    size: 512
+    duration: 2.5
+    loop_count: 0
+    transparent_bg: true
+    expected_size: "300-500KB"
+    processing_time: "35s"
+
+# Variable definitions
+variables:
+  source_path:
+    type: "file"
+    required: true
+    description: "Source video or image file"
+
+  start_time:
+    type: "float"
+    required: false
+    default: 0
+    description: "Start time in seconds (for videos)"
+
+  duration:
+    type: "float"
+    required: false
+    default: 2
+    description: "Animation duration (1-3s recommended)"
+
+  size:
+    type: "integer"
+    required: false
+    default: 512
+    description: "Output size in pixels (square)"
+
+  transparent_bg:
+    type: "boolean"
+    required: false
+    default: true
+    description: "Use transparent background (recommended)"
+
+  loop_count:
+    type: "integer"
+    required: false
+    default: 0
+    description: "Loop count (0 = infinite)"
+
+# Output validation
+validation:
+  required_dimensions:
+    aspect_ratio: "1:1"
+  duration:
+    min: 1
+    max: 3
+  format: "GIF"
+
+# Platform-specific requirements
+platforms:
+  telegram:
+    max_size: 512
+    max_file_size_kb: 512
+    format: "GIF or WEBM"
+    duration_limit: 3
+    transparent_required: true
+
+  whatsapp:
+    max_size: 512
+    max_file_size_kb: 500
+    format: "WEBP or GIF"
+    duration_limit: 3
+    transparent_required: true
+
+  imessage:
+    max_size: 618
+    max_file_size_kb: 500
+    format: "GIF or APNG"
+    duration_limit: 10
+    transparent_required: false
+
+  discord:
+    max_size: 128
+    max_file_size_kb: 256
+    format: "GIF or PNG"
+    duration_limit: 5
+    transparent_required: false
+
+# Metadata
+tags:
+  - sticker
+  - emoji
+  - messaging
+  - telegram
+  - whatsapp
+  - imessage
+  - discord
+  - animated
+
+use_cases:
+  - "Custom emoji for servers/groups"
+  - "Branded stickers for marketing"
+  - "Personal expression stickers"
+  - "Reaction stickers"
+  - "Meme stickers"
+  - "Character stickers"
+  - "Product/brand mascots"
+
+best_practices:
+  - "Keep animations short (1-3s)"
+  - "Use transparent backgrounds"
+  - "High contrast for visibility"
+  - "Simple, clear expressions"
+  - "Optimize file size aggressively"
+  - "Test on actual messaging apps"

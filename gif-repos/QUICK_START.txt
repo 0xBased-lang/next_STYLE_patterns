@@ -1,0 +1,94 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║          🚀 ANIMATE PEPE - QUICK START                                   ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+✅ SYSTEM READY! Everything is installed and tested!
+
+══════════════════════════════════════════════════════════════════════════════
+📝 THE ONLY 2 COMMANDS YOU NEED
+══════════════════════════════════════════════════════════════════════════════
+
+1. ANIMATE YOUR PEPE:
+   bash /Users/seman/Desktop/gif-repos/animate-pepe.sh ~/Desktop/pepe.png
+
+2. ADD GLITCH EFFECT (optional):
+   cd /Users/seman/Desktop/gif-repos/gif-generator
+   ./gif-gen create creative-effects/glitch-effect \
+     --video ../AnimatedDrawings/pepe_animated.gif \
+     --output ~/Desktop/pepe_glitchy.gif
+
+══════════════════════════════════════════════════════════════════════════════
+📥 BEFORE YOU START
+══════════════════════════════════════════════════════════════════════════════
+
+Save your Pepe image to:
+  ~/Desktop/pepe.png
+
+(Right-click image in chat → Save As → Desktop → Name it pepe.png)
+
+══════════════════════════════════════════════════════════════════════════════
+🎯 ANNOTATION JOINTS TO MARK (First Time Only)
+══════════════════════════════════════════════════════════════════════════════
+
+When the window opens, click to mark these 14 points:
+
+  1. Head (top of head)
+  2. Torso (center of chest)
+  3-5. Right arm (shoulder, elbow, hand)
+  6-8. Left arm (shoulder, elbow, hand)
+  9-11. Right leg (hip, knee, foot)
+  12-14. Left leg (hip, knee, foot)
+
+Click at the CENTER of each joint!
+Takes 5 minutes, one-time setup!
+
+══════════════════════════════════════════════════════════════════════════════
+📍 OUTPUT LOCATION
+══════════════════════════════════════════════════════════════════════════════
+
+Your animated GIF will be saved to:
+  /Users/seman/Desktop/gif-repos/AnimatedDrawings/pepe_animated.gif
+
+══════════════════════════════════════════════════════════════════════════════
+🎬 OTHER ANIMATIONS
+══════════════════════════════════════════════════════════════════════════════
+
+Walking:   bash animate-pepe.sh ~/Desktop/pepe.png
+Jumping:   bash animate-pepe.sh ~/Desktop/pepe.png jumping
+Waving:    bash animate-pepe.sh ~/Desktop/pepe.png wave_hello
+Dabbing:   bash animate-pepe.sh ~/Desktop/pepe.png dab
+Dancing:   bash animate-pepe.sh ~/Desktop/pepe.png jesse_dance
+
+══════════════════════════════════════════════════════════════════════════════
+🆘 TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+"Image not found" error?
+  → Check: ls ~/Desktop/pepe.png
+  → Make sure it's named exactly: pepe.png
+
+Window doesn't appear?
+  → Check your dock - it might be behind other windows
+
+Need more help?
+  → Read: /Users/seman/Desktop/gif-repos/ANIMATE_PEPE_NOW.md
+
+══════════════════════════════════════════════════════════════════════════════
+⏱️ TIMELINE
+══════════════════════════════════════════════════════════════════════════════
+
+Save image:        30 seconds
+Run command:       10 seconds
+Annotation:        5 minutes (first time only!)
+Generate GIF:      30 seconds
+Add effects:       5 minutes (optional)
+
+Total: ~10 minutes to animated Pepe! 🎮🐸
+
+══════════════════════════════════════════════════════════════════════════════
+💰 COST: $0.00 - 100% FREE FOREVER!
+══════════════════════════════════════════════════════════════════════════════
+
+No subscriptions • No watermarks • No limits • Professional quality!
+
+GO CREATE! 🚀

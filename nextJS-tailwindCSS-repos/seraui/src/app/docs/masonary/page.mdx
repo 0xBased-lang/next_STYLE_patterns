@@ -1,0 +1,72 @@
+export const metadata = {
+    title: 'React Masonry Layout Component | Sera UI',
+    description: 'Responsive masonry layout component with dynamic grid positioning and customizable spacing. Perfect for image galleries, portfolios, and content grids.',
+    keywords: [
+        'React masonry layout',
+        'masonry grid',
+        'responsive masonry',
+        'dynamic grid layout',
+        'image masonry',
+        'portfolio layout',
+        'Tailwind CSS masonry',
+        'UI masonry library',
+        'grid component',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Masonry Layout Component | Sera UI',
+        description: 'Responsive React masonry layout component with dynamic grid positioning for image galleries and portfolios.',
+        type: 'article',
+        url: '/docs/masonary',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Masonry Layout Component | Sera UI',
+        description: 'Responsive React masonry layout component with dynamic grid positioning for image galleries and portfolios.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/masonary',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { HideTOC } from "@/components/site/hide-toc";
+import Masonary from "./masonary.tsx"
+
+<HideTOC />
+
+
+
+# Masonary Grid <AI dir="left"/>
+A masonary grid layout with images and titles.
+
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Masonary />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/masonary/masonary.tsx" />
+  </TabsContent>
+</Tabs>

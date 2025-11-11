@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychedelic UI Stack - Button Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0A0A0A;
+            color: #FFFFFF;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .variant-section {
+            background: #1A1A1A;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid #333;
+        }
+
+        .variant-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .variant-description {
+            color: #888;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .button-grid {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Base button styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Size variants */
+        .btn-sm {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-md {
+            height: 2.5rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-lg {
+            height: 3rem;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-xl {
+            height: 3.5rem;
+            padding: 0 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* Conspiracy Establishment Style */
+        .btn-conspiracy {
+            background: #3A1F1F;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            border-radius: 0.375rem;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        .btn-conspiracy:hover:not(:disabled) {
+            background: #D4AF37;
+            color: #3A1F1F;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-conspiracy:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        /* Neon Crypto Style (KEKTECH) */
+        .btn-neon-crypto {
+            background: #0A0E27;
+            color: #00D9FF;
+            border: 2px solid #00D9FF;
+            border-radius: 0.375rem;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+        }
+
+        .btn-neon-crypto:hover:not(:disabled) {
+            background: #00D9FF;
+            color: #0A0E27;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn-neon-crypto:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        /* Organic Harmony Style */
+        .btn-organic {
+            background: linear-gradient(135deg, #FFD93D 0%, #FF6B9D 100%);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(255, 217, 61, 0.3);
+        }
+
+        .btn-organic:hover:not(:disabled) {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+            box-shadow: 0 6px 12px rgba(255, 107, 157, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-organic:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        /* Experimental Psychedelic Style */
+        @keyframes gradient-x {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .btn-experimental {
+            background: linear-gradient(270deg, #9333ea, #ec4899, #3b82f6, #9333ea);
+            background-size: 400% 400%;
+            animation: gradient-x 3s ease infinite;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 0.375rem;
+            box-shadow: 0 8px 16px rgba(147, 51, 234, 0.5);
+        }
+
+        .btn-experimental:hover:not(:disabled) {
+            box-shadow: 0 12px 24px rgba(236, 72, 153, 0.5);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .btn-experimental:active:not(:disabled) {
+            transform: translateY(0) scale(1);
+        }
+
+        .size-label {
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 0.5rem;
+        }
+
+        .code-block {
+            background: #0D1117;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #58a6ff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        .footer a {
+            color: #00D9FF;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Psychedelic UI Stack</h1>
+        <p class="subtitle">Multi-Aesthetic Button Component System</p>
+
+        <!-- Conspiracy Establishment -->
+        <div class="variant-section">
+            <div class="variant-title">
+                🔮 Conspiracy Establishment
+            </div>
+            <p class="variant-description">
+                Traditional boardroom meets Matrix conspiracy tech. Dark mahogany, Matrix green, gold accents.
+            </p>
+            <div class="button-grid">
+                <button class="btn btn-conspiracy btn-sm">Small Button</button>
+                <button class="btn btn-conspiracy btn-md">Medium Button</button>
+                <button class="btn btn-conspiracy btn-lg">Large Button</button>
+                <button class="btn btn-conspiracy btn-xl">Extra Large</button>
+                <button class="btn btn-conspiracy btn-md" disabled>Disabled</button>
+            </div>
+            <div class="code-block">
+                <code>&lt;Button variant="conspiracy"&gt;Access Classified Files&lt;/Button&gt;</code>
+            </div>
+        </div>
+
+        <!-- Neon Crypto -->
+        <div class="variant-section">
+            <div class="variant-title">
+                🌈 Neon Crypto (KEKTECH)
+            </div>
+            <p class="variant-description">
+                Playful Web3 with vibrant neon accents. Dark navy, cyan/green neon glow.
+            </p>
+            <div class="button-grid">
+                <button class="btn btn-neon-crypto btn-sm">Connect Wallet</button>
+                <button class="btn btn-neon-crypto btn-md">Mint NFT</button>
+                <button class="btn btn-neon-crypto btn-lg">View Collection</button>
+                <button class="btn btn-neon-crypto btn-xl">Trade Now</button>
+                <button class="btn btn-neon-crypto btn-md" disabled>Connecting...</button>
+            </div>
+            <div class="code-block">
+                <code>&lt;Button variant="neon-crypto"&gt;Connect Wallet&lt;/Button&gt;</code>
+            </div>
+        </div>
+
+        <!-- Organic Harmony -->
+        <div class="variant-section">
+            <div class="variant-title">
+                🧬 Organic Harmony
+            </div>
+            <p class="variant-description">
+                Soft, flowing, uplifting. Warm gradients, smooth transitions, gentle vibes.
+            </p>
+            <div class="button-grid">
+                <button class="btn btn-organic btn-sm">Join Us</button>
+                <button class="btn btn-organic btn-md">Join Community</button>
+                <button class="btn btn-organic btn-lg">Get Started</button>
+                <button class="btn btn-organic btn-xl">Create Prediction</button>
+                <button class="btn btn-organic btn-md" disabled>Loading...</button>
+            </div>
+            <div class="code-block">
+                <code>&lt;Button variant="organic"&gt;Join Community&lt;/Button&gt;</code>
+            </div>
+        </div>
+
+        <!-- Experimental Psychedelic -->
+        <div class="variant-section">
+            <div class="variant-title">
+                🌌 Experimental Psychedelic
+            </div>
+            <p class="variant-description">
+                Full-spectrum psychedelic with animated gradients. Rainbow colors, extreme effects.
+            </p>
+            <div class="button-grid">
+                <button class="btn btn-experimental btn-sm">Explore</button>
+                <button class="btn btn-experimental btn-md">Enter Experience</button>
+                <button class="btn btn-experimental btn-lg">Dive Deeper</button>
+                <button class="btn btn-experimental btn-xl">Transcend Reality</button>
+                <button class="btn btn-experimental btn-md" disabled>Not Ready</button>
+            </div>
+            <div class="code-block">
+                <code>&lt;Button variant="experimental"&gt;Enter Experience&lt;/Button&gt;</code>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎨 Psychedelic UI Stack - Multi-Aesthetic Component Library</p>
+            <p style="margin-top: 0.5rem;">Built with ❤️ • 4 Visual Aesthetics • Accessibility First • TypeScript • React 19</p>
+        </div>
+    </div>
+</body>
+</html>

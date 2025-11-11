@@ -1,0 +1,138 @@
+# Simple GIF Demo Template
+# Basic video to GIF conversion for testing
+
+name: "Simple GIF Demo"
+description: "Basic video to GIF conversion with optimization"
+version: "1.0.0"
+category: "demo"
+
+# Pipeline with new format (tool, operation, input, output, params)
+pipeline:
+  steps:
+    - tool: "gifcurry"
+      operation: "create_gif"
+      input: "{{video_path}}"
+      output: "temp_output.gif"
+      params:
+        start_time: "{{start_time|0}}"
+        duration: "{{duration|5}}"
+        width: "{{width|640}}"
+        quality: "{{quality|90}}"
+        fps: "{{fps|15}}"
+        text_overlay:
+          enabled: "{{show_text|false}}"
+          text: "{{text_message|Demo}}"
+          font_size: 40
+          color: "white"
+
+    - tool: "gifsicle"
+      operation: "optimize"
+      input: "temp_output.gif"
+      output: "{{output_path}}"
+      params:
+        optimization_level: "{{optimization|3}}"
+        colors: "{{colors|128}}"
+        lossy: "{{lossy|20}}"
+
+# Quality presets
+presets:
+  quick:
+    description: "Fast preview (lower quality)"
+    start_time: 0
+    duration: 3
+    width: 480
+    quality: 70
+    fps: 10
+    optimization: 2
+    colors: 64
+    lossy: 40
+    expected_size: "1-2MB"
+    processing_time: "30s"
+
+  balanced:
+    description: "Balanced quality (recommended)"
+    start_time: 0
+    duration: 5
+    width: 640
+    quality: 90
+    fps: 15
+    optimization: 3
+    colors: 128
+    lossy: 20
+    expected_size: "2-4MB"
+    processing_time: "60s"
+
+  quality:
+    description: "High quality (larger file)"
+    start_time: 0
+    duration: 5
+    width: 800
+    quality: 100
+    fps: 20
+    optimization: 3
+    colors: 256
+    lossy: 10
+    expected_size: "4-8MB"
+    processing_time: "90s"
+
+# Variable definitions
+variables:
+  video_path:
+    type: "file"
+    required: true
+    description: "Source video file"
+
+  output_path:
+    type: "file"
+    required: false
+    default: "output.gif"
+    description: "Output GIF file"
+
+  start_time:
+    type: "float"
+    required: false
+    default: 0
+    description: "Start time in seconds"
+
+  duration:
+    type: "float"
+    required: false
+    default: 5
+    description: "Duration in seconds"
+
+  width:
+    type: "integer"
+    required: false
+    default: 640
+    description: "Output width in pixels"
+
+  show_text:
+    type: "boolean"
+    required: false
+    default: false
+    description: "Show text overlay"
+
+  text_message:
+    type: "string"
+    required: false
+    default: "Demo"
+    description: "Text to display"
+
+# Output validation
+validation:
+  max_file_size_mb: 10
+  duration:
+    min: 1
+    max: 10
+  format: "GIF"
+
+# Metadata
+tags:
+  - demo
+  - simple
+  - basic
+
+use_cases:
+  - "Testing the generator"
+  - "Quick GIF creation"
+  - "Learning the system"

@@ -1,0 +1,170 @@
+export const metadata = {
+  title: "Sera UI Documentation – Beautiful React & Next.js Components",
+  description:
+    "Sera UI is a modern, beautifully designed React component library. Accessible, customizable, and open source. Built with Tailwind CSS and Framer Motion for sleek animations and fast performance.",
+  keywords: [
+    "React components",
+    "Next.js UI components",
+    "Tailwind CSS components",
+    "React UI library",
+    "modern UI library",
+    "accessible React components",
+    "customizable UI",
+    "open source UI kit",
+    "Framer Motion animations",
+    "Sera UI docs",
+  ],
+  openGraph: {
+    title: "Sera UI Documentation – Beautiful React & Next.js Components",
+    description:
+      "Beautifully designed React components you can copy, paste, and customize. Built with Tailwind CSS and Framer Motion.",
+    type: "website",
+    url: "/docs",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Sera UI",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sera UI Documentation – Beautiful React & Next.js Components",
+    description:
+      "Beautifully designed React components you can copy, paste, and customize. Built with Tailwind CSS and Framer Motion.",
+    images: ["/og-image.png"],
+  },
+  alternates: { canonical: "/docs" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+};
+
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import { Table, StatusBadge } from "@/components/ui/table";
+
+# Sera UI
+
+**A modern React & Next.js component library — beautifully designed, accessible, and easy to customize.**
+Built with **Tailwind CSS** for theming and **Framer Motion** for smooth, delightful animations.
+
+---
+
+## What is Sera UI?
+
+Sera UI is built **by a developer, for developers** — to help you ship elegant, production-ready UIs without fighting with bloated libraries or rigid design systems.
+
+It’s a growing collection of **hand-crafted, reusable React components** built with Tailwind CSS and modern web standards.
+Copy the code, drop it into your project, and make it yours.
+
+> ⚡ Not a package. Not a black box. Just code you own and control. -Musharof Chowdhury
+
+---
+
+### Features at a Glance
+
+* 🎨 **Modern & Accessible** — Built with web best practices, ARIA patterns, and performance in mind.
+* 🎯 **Fully Customizable** — Styled with Tailwind utilities; change anything to match your brand.
+* 🌀 **Smooth Animations** — Framer Motion powers polished, delightful transitions.
+* 🧩 **TypeScript Support** — Full type safety out of the box.
+* 🔎 **Icon System** — Pre-integrated with `lucide-react` icons.
+* ⚡ **Framework Ready** — Works seamlessly with **React**, **Next.js**, and any JSX-based stack.
+
+---
+
+### Philosophy
+
+Building beautiful interfaces shouldn’t mean wrestling with opinionated component libraries or complex APIs.
+Sera UI keeps things simple:
+
+* **Full control** – Every line of code is yours to edit.
+* **Modern stack** – React + Tailwind CSS + TypeScript.
+* **Faster shipping** – Skip boilerplate, focus on features.
+* **Polished design** – Components that look great out of the box.
+
+Whether you’re building a **landing page**, a **dashboard**, or a full-blown web app, Sera UI gives you flexible, production-ready building blocks — **without version conflicts or lock-in**.
+
+---
+
+## Getting Started
+
+You can use Sera UI in two ways:
+
+1. **Quick Setup with CLI** *(recommended)*
+2. **Manual Copy & Paste** *(full control)*
+
+---
+
+### Installation
+
+Run one of the following commands to add a Sera UI component (e.g., `Button`) to your project:
+
+<PMTabs>
+  <PNPMTabContent>
+
+```bash
+pnpm dlx shadcn@latest add "https://seraui.com/registry/button.json"
+```
+
+  </PNPMTabContent>
+  <NPMTabContent>
+
+```bash
+npx shadcn@latest add "https://seraui.com/registry/button.json"
+```
+
+  </NPMTabContent>
+  <YarnTabContent>
+
+```bash
+yarn dlx shadcn@latest add "https://seraui.com/registry/button.json"
+```
+
+  </YarnTabContent>
+  <BunTabContent>
+
+```bash
+bunx shadcn@latest add "https://seraui.com/registry/button.json"
+```
+
+  </BunTabContent>
+</PMTabs>
+
+The CLI sets up the component with Tailwind styling and Framer Motion animations — ready to use right away.
+
+---
+
+### Manual Installation
+
+Prefer a **copy-paste** workflow? You can grab components manually.
+
+1. **Browse Components** – Explore the [Sera UI library](https://seraui.com/docs)
+2. **Copy the Code** – Each component includes full source code.
+3. **Paste & Customize** – Edit Tailwind classes or animation props to match your brand.
+
+---
+
+### What's Next
+
+* 📖 [View All Components](https://seraui.com/docs)
+* 🤝 [Contribute on GitHub](https://github.com/seraui/seraui)

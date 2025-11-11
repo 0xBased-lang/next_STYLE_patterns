@@ -1,0 +1,104 @@
+# Terminal Demo Template
+# Creates terminal/CLI demo GIFs from asciinema recordings
+
+name: "Terminal Demo GIF"
+description: "Convert terminal recordings (asciinema) to optimized demo GIFs"
+version: "1.0.0"
+category: "technical-docs"
+
+# Pipeline: asciicast → render → optimize
+pipeline:
+  - tool: "asciicast2gif"
+    config:
+      theme: "{{theme}}"
+      speed: "{{speed}}"
+      cols: 80
+      rows: 24
+      font_size: 14
+      padding: 10
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 256  # Terminal needs many colors
+      lossy: 40    # Less aggressive for text clarity
+
+assets:
+  required:
+    - name: "recording"
+      type: "application/x-asciicast"
+      description: "Asciinema recording file (.cast)"
+
+  optional:
+    - name: "theme_config"
+      type: "config/yaml"
+      description: "Custom terminal theme"
+
+variables:
+  theme:
+    type: "string"
+    default: "monokai"
+    description: "Terminal color scheme"
+
+  speed:
+    type: "number"
+    default: 1.0
+    description: "Playback speed multiplier"
+
+  font_family:
+    type: "string"
+    default: "Monaco"
+    description: "Monospace font family"
+
+presets:
+  installation:  # Installation demos
+    asciicast2gif:
+      speed: 1.5  # Faster for routine commands
+      theme: "solarized-dark"
+    gifsicle:
+      colors: 128
+      lossy: 60
+
+  tutorial:  # Step-by-step tutorials
+    asciicast2gif:
+      speed: 1.0  # Normal speed
+      theme: "monokai"
+      add_markers: true
+    gifsicle:
+      colors: 256
+      lossy: 40
+
+  demo:  # Feature demonstrations
+    asciicast2gif:
+      speed: 1.2
+      theme: "dracula"
+      highlight_cursor: true
+    gifsicle:
+      colors: 256
+      lossy: 50
+
+  quick:  # Quick command showcase
+    asciicast2gif:
+      speed: 2.0  # Fast playback
+      theme: "gruvbox"
+    gifsicle:
+      colors: 64
+      lossy: 80
+
+validation:
+  max_duration: 60
+  max_size_mb: 10
+  min_width: 600
+  required_format: "gif"
+
+metadata:
+  author: "gif-repos generator"
+  tags: [terminal, cli, command-line, documentation, tutorial]
+  tool: ["asciicast2gif", "asciinema"]
+  use_cases:
+    - "Installation instructions"
+    - "CLI tool demonstrations"
+    - "Command tutorials"
+    - "DevOps workflows"
+    - "Debugging sessions"
+    - "Code execution examples"

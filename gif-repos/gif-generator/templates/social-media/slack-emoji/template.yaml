@@ -1,0 +1,111 @@
+# Slack Custom Emoji Template
+# Creates small, optimized GIFs for Slack workspace emojis
+
+name: "Slack Custom Emoji"
+description: "Create custom animated emojis for Slack workspaces (128×128, <128KB)"
+version: "1.0.0"
+category: "social-media"
+
+# Pipeline: video/image → resize to tiny → extreme optimization
+pipeline:
+  - tool: "gifcurry"
+    config:
+      start_time: 0
+      end_time: 2  # Slack emojis should be very short
+      width: 128
+      height: 128
+      fps: 10      # Low FPS for small file
+      quality: 80
+      crop_mode: "center_square"  # Force square crop
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 32   # Very low color count for tiny file
+      lossy: 120   # Aggressive compression
+      # Multiple optimization passes
+      optimize_iterations: 3
+
+assets:
+  required:
+    - name: "source"
+      type: "video/* OR image/*"
+      description: "Video clip or static image to convert"
+
+  optional:
+    - name: "background"
+      type: "image/*"
+      description: "Transparent background support"
+
+variables:
+  emoji_name:
+    type: "string"
+    default: "custom"
+    description: "Emoji name for Slack workspace"
+
+  animation_style:
+    type: "string"
+    default: "loop"
+    description: "Animation style (loop/bounce/once)"
+
+presets:
+  tiny:  # Smallest possible (for strict limits)
+    gifcurry:
+      width: 64
+      height: 64
+      fps: 8
+      end_time: 1
+    gifsicle:
+      colors: 16
+      lossy: 150
+
+  normal:  # Standard Slack emoji (default)
+    gifcurry:
+      width: 128
+      height: 128
+      fps: 10
+      end_time: 2
+    gifsicle:
+      colors: 32
+      lossy: 120
+
+  quality:  # Higher quality (may exceed 128KB)
+    gifcurry:
+      width: 128
+      height: 128
+      fps: 15
+      end_time: 3
+    gifsicle:
+      colors: 64
+      lossy: 80
+
+  reaction:  # Quick reaction emoji
+    gifcurry:
+      width: 128
+      height: 128
+      fps: 12
+      end_time: 1.5
+    gifsicle:
+      colors: 32
+      lossy: 120
+
+validation:
+  max_duration: 3
+  max_size_kb: 128  # Slack's strict limit
+  required_format: "gif"
+  aspect_ratio: [1, 1]  # Must be square
+  max_width: 128
+  max_height: 128
+
+metadata:
+  author: "gif-repos generator"
+  tags: [slack, emoji, reaction, workspace, chat]
+  platform: "slack"
+  strict_limits: true
+  use_cases:
+    - "Team reactions"
+    - "Custom expressions"
+    - "Brand emojis"
+    - "Inside jokes"
+    - "Product logos"
+    - "Animated avatars"

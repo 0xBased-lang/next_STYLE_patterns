@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychedelic UI - Interactive Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .conspiracy-theme {
+      background: #000;
+      color: #00FF41;
+      border-color: #00FF41;
+    }
+
+    .neon-theme {
+      background: #0a0a0a;
+      color: #0ff;
+      border-color: #0ff;
+    }
+
+    .organic-theme {
+      background: #fff;
+      color: #1a1a1a;
+      border-color: #e5e7eb;
+    }
+
+    .experimental-theme {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .glow {
+      box-shadow: 0 0 20px currentColor;
+    }
+
+    .skeleton {
+      animation: skeleton-loading 1.5s ease-in-out infinite;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .tab-active {
+      border-bottom: 2px solid currentColor;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100">
+
+  <!-- Hero Section -->
+  <div class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+        Psychedelic UI
+      </h1>
+      <p class="text-2xl text-slate-600 mb-6">
+        Interactive Component Showcase
+      </p>
+      <div class="flex gap-4 justify-center flex-wrap">
+        <span class="px-4 py-2 bg-purple-100 text-purple-700 rounded-full font-semibold">23 Components</span>
+        <span class="px-4 py-2 bg-pink-100 text-pink-700 rounded-full font-semibold">4 Aesthetic Variants</span>
+        <span class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-semibold">88.80 KB Bundle</span>
+        <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full font-semibold">100% Accessible</span>
+      </div>
+    </div>
+
+    <!-- Aesthetic Switcher -->
+    <div class="max-w-4xl mx-auto mb-12">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">Choose Your Aesthetic</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button onclick="setTheme('conspiracy')" class="p-4 rounded-lg border-2 hover:scale-105 transition-transform conspiracy-theme">
+            <div class="text-sm font-semibold mb-2">Conspiracy</div>
+            <div class="text-xs opacity-75">Matrix-style hacker</div>
+          </button>
+          <button onclick="setTheme('neon')" class="p-4 rounded-lg border-2 hover:scale-105 transition-transform neon-theme">
+            <div class="text-sm font-semibold mb-2">Neon Crypto</div>
+            <div class="text-xs opacity-75">Cyberpunk vibes</div>
+          </button>
+          <button onclick="setTheme('organic')" class="p-4 rounded-lg border-2 hover:scale-105 transition-transform organic-theme">
+            <div class="text-sm font-semibold mb-2">Organic</div>
+            <div class="text-xs opacity-75">Clean & natural</div>
+          </button>
+          <button onclick="setTheme('experimental')" class="p-4 rounded-lg border-2 hover:scale-105 transition-transform experimental-theme">
+            <div class="text-sm font-semibold mb-2">Experimental</div>
+            <div class="text-xs opacity-75">Psychedelic art</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Component Showcase Grid -->
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8">Component Gallery</h2>
+
+      <!-- Tabs Example -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Tabs Component</h3>
+        <div class="border-b mb-4">
+          <div class="flex gap-4">
+            <button class="px-4 py-2 tab-active text-purple-600">Active Predictions</button>
+            <button class="px-4 py-2 text-slate-600 hover:text-slate-900">Resolved</button>
+            <button class="px-4 py-2 text-slate-600 hover:text-slate-900">Trending</button>
+          </div>
+        </div>
+        <div class="p-4 bg-slate-50 rounded">
+          <p class="text-sm text-slate-600">
+            Content for the active tab. Tabs organize content into switchable views with keyboard navigation support.
+          </p>
+        </div>
+      </div>
+
+      <!-- Progress Indicators -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Linear Progress</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-2">
+                <span>Upload Progress</span>
+                <span>75%</span>
+              </div>
+              <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-purple-600 rounded-full" style="width: 75%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Circular Progress</h3>
+          <div class="flex justify-center">
+            <div class="relative w-24 h-24">
+              <svg class="transform -rotate-90 w-24 h-24">
+                <circle cx="48" cy="48" r="40" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                <circle cx="48" cy="48" r="40" stroke="#9333ea" stroke-width="8" fill="none"
+                  stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">87%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Loading Spinner</h3>
+          <div class="flex justify-center">
+            <div class="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avatars -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Avatar Component</h3>
+        <div class="flex items-center gap-6 flex-wrap">
+          <div class="text-center">
+            <div class="w-16 h-16 rounded-full bg-purple-200 flex items-center justify-center text-purple-700 font-bold text-xl mb-2">
+              JD
+            </div>
+            <div class="text-xs text-slate-600">Fallback</div>
+          </div>
+
+          <div class="text-center">
+            <div class="relative">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-400"></div>
+              <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+            </div>
+            <div class="text-xs text-slate-600">Online</div>
+          </div>
+
+          <div class="text-center">
+            <div class="flex -space-x-2">
+              <div class="w-10 h-10 rounded-full bg-purple-400 border-2 border-white"></div>
+              <div class="w-10 h-10 rounded-full bg-pink-400 border-2 border-white"></div>
+              <div class="w-10 h-10 rounded-full bg-blue-400 border-2 border-white"></div>
+              <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs">
+                +12
+              </div>
+            </div>
+            <div class="text-xs text-slate-600">Group</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Notifications -->
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Toast Notifications</h3>
+          <div class="space-y-3">
+            <div class="p-4 rounded-lg border-2 border-green-200 bg-green-50 flex items-start gap-3">
+              <div class="text-green-600">✓</div>
+              <div class="flex-1">
+                <div class="font-semibold text-green-900">Success!</div>
+                <div class="text-sm text-green-700">Your prediction was saved.</div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-lg border-2 border-red-200 bg-red-50 flex items-start gap-3">
+              <div class="text-red-600">✕</div>
+              <div class="flex-1">
+                <div class="font-semibold text-red-900">Error</div>
+                <div class="text-sm text-red-700">Failed to save prediction.</div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-lg border-2 border-yellow-200 bg-yellow-50 flex items-start gap-3">
+              <div class="text-yellow-600">⚠</div>
+              <div class="flex-1">
+                <div class="font-semibold text-yellow-900">Warning</div>
+                <div class="text-sm text-yellow-700">Low confidence detected.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-bold mb-4">Skeleton Loaders</h3>
+          <div class="space-y-3">
+            <div class="h-4 skeleton rounded"></div>
+            <div class="h-4 skeleton rounded w-3/4"></div>
+            <div class="h-4 skeleton rounded w-1/2"></div>
+            <div class="flex gap-3 mt-4">
+              <div class="w-12 h-12 skeleton rounded-full"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-3 skeleton rounded"></div>
+                <div class="h-3 skeleton rounded w-2/3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards & Badges -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-32 bg-gradient-to-br from-purple-400 to-pink-400"></div>
+          <div class="p-4">
+            <div class="flex items-start justify-between mb-2">
+              <h4 class="font-bold">Climate Tech Prediction</h4>
+              <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Active</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">
+              Will renewable energy exceed 50% by 2030?
+            </p>
+            <div class="flex gap-2">
+              <button class="flex-1 px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700">
+                Yes (73%)
+              </button>
+              <button class="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm hover:bg-slate-50">
+                No (27%)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-32 bg-gradient-to-br from-blue-400 to-cyan-400"></div>
+          <div class="p-4">
+            <div class="flex items-start justify-between mb-2">
+              <h4 class="font-bold">Space Exploration</h4>
+              <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">Trending</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">
+              Will SpaceX land humans on Mars by 2030?
+            </p>
+            <div class="flex gap-2">
+              <button class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                Yes (45%)
+              </button>
+              <button class="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm hover:bg-slate-50">
+                No (55%)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div class="h-32 bg-gradient-to-br from-green-400 to-emerald-400"></div>
+          <div class="p-4">
+            <div class="flex items-start justify-between mb-2">
+              <h4 class="font-bold">AI Development</h4>
+              <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">New</span>
+            </div>
+            <p class="text-sm text-slate-600 mb-3">
+              Will AGI be achieved within the next 5 years?
+            </p>
+            <div class="flex gap-2">
+              <button class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700">
+                Yes (62%)
+              </button>
+              <button class="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg text-sm hover:bg-slate-50">
+                No (38%)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Example -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Modal / Dialog Component</h3>
+        <button onclick="showModal()" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+          Open Modal
+        </button>
+        <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50" onclick="hideModal()">
+          <div class="bg-white rounded-lg shadow-2xl max-w-md w-full m-4" onclick="event.stopPropagation()">
+            <div class="p-6 border-b">
+              <h3 class="text-2xl font-bold">Create New Prediction</h3>
+              <p class="text-sm text-slate-600 mt-1">AI will analyze your prediction and provide confidence metrics</p>
+            </div>
+            <div class="p-6">
+              <label class="block text-sm font-medium mb-2">What do you want to predict?</label>
+              <input type="text" placeholder="e.g., Will SpaceX land humans on Mars by 2030?"
+                class="w-full px-4 py-2 border-2 rounded-lg focus:border-purple-600 outline-none">
+
+              <div class="mt-4 p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium">AI Analysis</span>
+                  <div class="flex items-center gap-2">
+                    <div class="relative w-12 h-12">
+                      <svg class="transform -rotate-90 w-12 h-12">
+                        <circle cx="24" cy="24" r="20" stroke="#e5e7eb" stroke-width="4" fill="none"/>
+                        <circle cx="24" cy="24" r="20" stroke="#9333ea" stroke-width="4" fill="none"
+                          stroke-dasharray="125.6" stroke-dashoffset="31.4" stroke-linecap="round"/>
+                      </svg>
+                      <div class="absolute inset-0 flex items-center justify-center text-xs font-bold">75%</div>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600">Based on 1,247 similar predictions and current data trends</p>
+              </div>
+            </div>
+            <div class="p-6 border-t flex gap-3 justify-end">
+              <button onclick="hideModal()" class="px-4 py-2 border-2 rounded-lg hover:bg-slate-50">Cancel</button>
+              <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Create Prediction</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown Menu Example -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Dropdown Menu Component</h3>
+        <div class="relative inline-block">
+          <button onclick="toggleDropdown()" class="px-4 py-2 bg-white border-2 rounded-lg flex items-center gap-2 hover:bg-slate-50">
+            <div class="w-8 h-8 rounded-full bg-purple-400"></div>
+            <span>Dr. Smith</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="dropdown" class="absolute hidden mt-2 w-48 bg-white border-2 rounded-lg shadow-lg z-10">
+            <div class="p-2 border-b">
+              <div class="text-sm font-semibold">My Account</div>
+            </div>
+            <div class="p-2">
+              <button class="w-full text-left px-3 py-2 rounded hover:bg-slate-100 text-sm">Profile Settings</button>
+              <button class="w-full text-left px-3 py-2 rounded hover:bg-slate-100 text-sm">Preferences</button>
+              <button class="w-full text-left px-3 py-2 rounded hover:bg-slate-100 text-sm">Theme</button>
+            </div>
+            <div class="p-2 border-t">
+              <button class="w-full text-left px-3 py-2 rounded hover:bg-slate-100 text-sm text-red-600">Log out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tooltips -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Tooltip Component</h3>
+        <div class="flex gap-4 flex-wrap">
+          <div class="relative group">
+            <button class="px-4 py-2 bg-purple-600 text-white rounded-lg">
+              Hover me
+            </button>
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              This is a tooltip
+              <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
+          </div>
+
+          <div class="relative group">
+            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+              Info button
+            </button>
+            <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 bg-slate-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              AI-powered prediction analysis
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-900"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inputs & Forms -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4">Form Components</h3>
+        <div class="space-y-4 max-w-md">
+          <div>
+            <label class="block text-sm font-medium mb-2">Text Input</label>
+            <input type="text" placeholder="Enter your prediction"
+              class="w-full px-4 py-2 border-2 rounded-lg focus:border-purple-600 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Switch</label>
+            <label class="relative inline-block w-12 h-6">
+              <input type="checkbox" class="sr-only peer">
+              <div class="w-full h-full bg-slate-200 peer-checked:bg-purple-600 rounded-full cursor-pointer transition-colors"></div>
+              <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></div>
+            </label>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Badge Examples</label>
+            <div class="flex gap-2 flex-wrap">
+              <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Active</span>
+              <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">Success</span>
+              <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">Warning</span>
+              <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm">Error</span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">Info</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-lg p-8 text-white text-center">
+        <h2 class="text-3xl font-bold mb-6">Ready to Use in Your Projects!</h2>
+        <div class="grid md:grid-cols-4 gap-6 mb-6">
+          <div>
+            <div class="text-4xl font-bold">23</div>
+            <div class="text-sm opacity-90">Components</div>
+          </div>
+          <div>
+            <div class="text-4xl font-bold">92</div>
+            <div class="text-sm opacity-90">Variants</div>
+          </div>
+          <div>
+            <div class="text-4xl font-bold">100%</div>
+            <div class="text-sm opacity-90">TypeScript</div>
+          </div>
+          <div>
+            <div class="text-4xl font-bold">100%</div>
+            <div class="text-sm opacity-90">Accessible</div>
+          </div>
+        </div>
+        <div class="space-x-4">
+          <a href="https://github.com/your-repo" class="inline-block px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-slate-100">
+            View on GitHub
+          </a>
+          <a href="#" class="inline-block px-6 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10">
+            Read Documentation
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setTheme(theme) {
+      console.log('Theme set to:', theme);
+      // In a real app, this would update component variants
+      alert(`Theme changed to: ${theme}. In the real app, all components would update to this aesthetic!`);
+    }
+
+    function showModal() {
+      document.getElementById('modal').classList.remove('hidden');
+      document.getElementById('modal').classList.add('flex');
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.remove('flex');
+      document.getElementById('modal').classList.add('hidden');
+    }
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdown');
+      dropdown.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('dropdown');
+      if (!e.target.closest('.relative')) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

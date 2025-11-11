@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React Network Component | Sera UI',
+    description: 'Interactive network visualization component with nodes, connections, and dynamic layouts. Perfect for displaying relationships, graphs, and network diagrams.',
+    keywords: [
+        'React network component',
+        'network visualization',
+        'graph component',
+        'node network',
+        'interactive network',
+        'network diagram',
+        'Tailwind CSS network',
+        'UI network library',
+        'data visualization',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Network Component | Sera UI',
+        description: 'Interactive React network visualization component with nodes, connections, and dynamic layouts for displaying relationships.',
+        type: 'article',
+        url: '/docs/network',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Network Component | Sera UI',
+        description: 'Interactive React network visualization component with nodes, connections, and dynamic layouts for displaying relationships.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/network',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+
+import NetworkVisualization from "./network.tsx"
+
+
+
+# Network Visualization <AI dir="left"/>
+This is a network visualization component that displays a network of avatars in a circular layout.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<NetworkVisualization />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/network/network.tsx" />
+  </TabsContent>
+</Tabs>

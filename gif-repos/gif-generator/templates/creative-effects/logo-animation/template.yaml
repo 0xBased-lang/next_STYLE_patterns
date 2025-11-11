@@ -1,0 +1,114 @@
+# Logo Animation Template
+# Creates animated logo reveals and brand animations
+
+name: "Logo Animation"
+description: "Animate logos with reveals, transitions, and effects for branding"
+version: "1.0.0"
+category: "creative-effects"
+
+# Pipeline: logo image → animation effects → loop → optimize
+pipeline:
+  - tool: "custom"  # Will need custom animation script
+    config:
+      animation_type: "{{animation_style}}"
+      duration: 3
+      background: "{{background_color}}"
+      effects:
+        - fade_in
+        - scale
+        - rotate
+        - reveal
+
+  - tool: "gifsicle"
+    config:
+      optimization_level: 3
+      colors: 256  # Logos need clean colors
+      lossy: 20    # Minimal loss for brand quality
+      loop_count: 0  # Infinite loop
+
+assets:
+  required:
+    - name: "logo"
+      type: "image/*"
+      description: "Logo file (PNG with transparency recommended)"
+
+  optional:
+    - name: "background"
+      type: "image/*"
+      description: "Background image or video"
+
+    - name: "music"
+      type: "audio/*"
+      description: "Brand music/sound effect"
+
+variables:
+  animation_style:
+    type: "string"
+    default: "fade_scale"
+    description: "Animation style (fade_scale/slide_in/rotate_reveal/pulse)"
+
+  background_color:
+    type: "string"
+    default: "transparent"
+    description: "Background color (transparent/white/black/custom)"
+
+  duration:
+    type: "number"
+    default: 3
+    description: "Animation duration in seconds"
+
+presets:
+  minimal:  # Simple fade in
+    custom:
+      animation_type: "fade_in"
+      duration: 2
+      effects: ["fade_in"]
+    gifsicle:
+      colors: 128
+      lossy: 30
+
+  dynamic:  # Full animation (default)
+    custom:
+      animation_type: "fade_scale"
+      duration: 3
+      effects: ["fade_in", "scale", "bounce"]
+    gifsicle:
+      colors: 256
+      lossy: 20
+
+  reveal:  # Dramatic reveal
+    custom:
+      animation_type: "wipe_reveal"
+      duration: 4
+      effects: ["wipe", "scale", "glow"]
+    gifsicle:
+      colors: 256
+      lossy: 10
+
+  pulse:  # Pulsing effect
+    custom:
+      animation_type: "pulse"
+      duration: 2
+      effects: ["pulse", "glow"]
+      loop_mode: "ping_pong"
+    gifsicle:
+      colors: 256
+      lossy: 20
+
+validation:
+  max_duration: 10
+  max_size_mb: 5
+  required_format: "gif"
+  preserve_transparency: true
+
+metadata:
+  author: "gif-repos generator"
+  tags: [logo, branding, animation, reveal, corporate]
+  use_cases:
+    - "Brand intros"
+    - "Video watermarks"
+    - "Website headers"
+    - "Email signatures"
+    - "Social media branding"
+    - "Presentation intros"
+    - "App splash screens"

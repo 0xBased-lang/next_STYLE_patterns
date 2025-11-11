@@ -1,0 +1,105 @@
+# Hand-Drawn Character Animation Template
+# Animates hand-drawn characters using ML pose detection
+
+name: "Hand-Drawn Character Animation"
+description: "Bring hand-drawn characters to life using ML pose detection and motion retargeting"
+version: "1.0.0"
+category: "character-animation"
+
+# Pipeline: drawing → pose detection → motion retargeting → animate
+pipeline:
+  - tool: "AnimatedDrawings"
+    config:
+      mode: "auto"
+      detect_pose: true
+      segment_character: true
+      retarget_motion: true
+      output_format: "video"
+
+  - tool: "ffmpeg"
+    config:
+      add_background: "{{background_color}}"
+      codec: "h264"
+      format: "mp4"
+      loop_count: "{{loop_count}}"
+
+assets:
+  required:
+    - name: "drawing"
+      type: "image/*"
+      description: "Hand-drawn character image (clear outline, white background)"
+
+    - name: "motion"
+      type: "motion/bvh"
+      description: "BVH motion file for character animation"
+
+  optional:
+    - name: "mask"
+      type: "image/*"
+      description: "Character mask (auto-detected if not provided)"
+
+    - name: "config"
+      type: "config/yaml"
+      description: "Custom character configuration"
+
+variables:
+  background_color:
+    type: "string"
+    default: "white"
+    description: "Background color (white/transparent/custom)"
+
+  loop_count:
+    type: "number"
+    default: 0
+    description: "Number of loops (0 = infinite)"
+
+  motion_type:
+    type: "string"
+    default: "dance"
+    description: "Type of motion (dance/walk/jump/wave)"
+
+presets:
+  dance:  # Dancing animation
+    AnimatedDrawings:
+      motion_file: "motions/dance.bvh"
+      duration: 5
+    ffmpeg:
+      loop_count: 0
+
+  wave:  # Waving animation
+    AnimatedDrawings:
+      motion_file: "motions/wave.bvh"
+      duration: 3
+    ffmpeg:
+      loop_count: 2
+
+  walk:  # Walking animation
+    AnimatedDrawings:
+      motion_file: "motions/walk.bvh"
+      duration: 4
+    ffmpeg:
+      loop_count: 0
+
+  custom:  # User-provided motion
+    AnimatedDrawings:
+      motion_file: "{{motion}}"
+      duration: "auto"
+    ffmpeg:
+      loop_count: 1
+
+validation:
+  character_detected: true
+  joints_detected: true
+  min_character_size: [100, 100]
+
+metadata:
+  author: "gif-repos generator"
+  tags: [character, animation, hand-drawn, children, education]
+  model: ["AnimatedDrawings"]
+  use_cases:
+    - "Children's drawings come alive"
+    - "Educational content"
+    - "Mascot animations"
+    - "Creative projects"
+    - "Social media content"
+    - "Greeting cards"

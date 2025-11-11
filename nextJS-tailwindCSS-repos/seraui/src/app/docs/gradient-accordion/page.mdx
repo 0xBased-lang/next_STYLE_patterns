@@ -1,0 +1,69 @@
+export const metadata = {
+    title: 'React Gradient Accordion Component | Sera UI',
+    description: 'Modern gradient accordion component with beautiful color transitions, smooth animations, and customizable styling. Perfect for FAQ sections and content organization.',
+    keywords: [
+        'React gradient accordion',
+        'accordion with gradients',
+        'colorful accordion',
+        'gradient UI component',
+        'modern accordion',
+        'animated accordion',
+        'Tailwind CSS gradient accordion',
+        'UI accordion library',
+        'gradient effects',
+        'Sera UI components'
+    ],
+    openGraph: {
+        title: 'React Gradient Accordion Component | Sera UI',
+        description: 'Modern React gradient accordion component with beautiful color transitions and smooth animations.',
+        type: 'article',
+        url: '/docs/gradient-accordion',
+        images: [
+          {
+            url: "/og-image.png",
+            width: 1200,
+            height: 630,
+            alt: "Sera UI - Modern React Component Library",
+          },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Gradient Accordion Component | Sera UI',
+        description: 'Modern React gradient accordion component with beautiful color transitions and smooth animations.',
+        images: ["/og-image.png"]
+    },
+    alternates: {
+        canonical: '/docs/gradient-accordion',
+    },
+};
+
+import { CodeBlock } from "@/components/site/code-block";
+import { ComponentRenderer } from "@/components/site/component-renderer";
+import { Cli } from "@/components/site/cli";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/site/tabs.tsx";
+import { PropsTable } from "@/components/site/props-table.tsx";
+import Gradientaccordion from "./gradient-accordion.tsx"
+
+
+
+#  Gradientaccordion <AI dir="left"/>
+A gradient accordion component for React.
+
+<Tabs defaultValue="preview" className="">
+  <TabsList>
+    <TabsTrigger value="preview">Preview</TabsTrigger>
+    <TabsTrigger value="code">Code</TabsTrigger>
+  </TabsList>
+  <TabsContent value="preview">
+    <ComponentRenderer component={<Gradientaccordion />} />
+  </TabsContent>
+  <TabsContent value="code">
+    <CodeBlock filePath="src/app/docs/gradient-accordion/gradient-accordion.tsx" />
+  </TabsContent>
+</Tabs>
