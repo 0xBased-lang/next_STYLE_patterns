@@ -13,6 +13,8 @@ from .template import Template, substitute_variables
 from ..tools.base import ToolNotFoundError, ToolExecutionError
 from ..tools.gifcurry import GifcurryTool
 from ..tools.gifsicle import GifsicleTool
+from ..tools.liveportrait import LivePortraitTool
+from ..tools.first_order_model import FirstOrderModelTool
 
 
 @dataclass
@@ -43,6 +45,8 @@ class PipelineOrchestrator:
         self.tools = {
             'gifcurry': GifcurryTool(),
             'gifsicle': GifsicleTool(),
+            'liveportrait': LivePortraitTool(),
+            'first-order-model': FirstOrderModelTool(),
         }
 
     def execute(self, template: Template, resolved_vars: Dict[str, Any],

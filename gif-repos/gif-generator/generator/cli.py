@@ -11,6 +11,9 @@ from typing import Optional, Dict, Any
 import json
 
 from .core import TemplateLoader, PipelineOrchestrator, Template
+from .core.validator import TemplateValidator
+from .core.batch import BatchProcessor
+from .config import Config
 from .tools import GifcurryTool, GifsicleTool
 
 
@@ -334,6 +337,190 @@ class CLI:
         print()
         return 0
 
+    def cmd_validate(self, args):
+        """Validate templates"""
+        validator = TemplateValidator()
+
+        # Validate single template or directory
+        path = Path(args.path) if args.path else self.templates_dir
+
+        if path.is_file():
+            # Validate single template
+            print_header(f"Validating: {path}")
+
+            try:
+                validator.validate_template_file(path)
+                print()
+                print_success("Template is valid!")
+
+                if validator.warnings:
+                    print()
+                    print_warning(f"{len(validator.warnings)} warning(s):")
+                    for warning in validator.warnings:
+                        print(f"  • {warning}")
+
+                return 0
+
+            except Exception as e:
+                print()
+                print_error("Validation failed!")
+
+                if validator.errors:
+                    print()
+                    print(f"{Colors.RED}Errors:{Colors.END}")
+                    for error in validator.errors:
+                        print(f"  • {error}")
+
+                if validator.warnings:
+                    print()
+                    print(f"{Colors.YELLOW}Warnings:{Colors.END}")
+                    for warning in validator.warnings:
+                        print(f"  • {warning}")
+
+                return 1
+
+        elif path.is_dir():
+            # Validate all templates in directory
+            print_header(f"Validating templates in: {path}")
+
+            results = validator.validate_directory(path)
+            validator.print_validation_report(results)
+
+            # Return error if any templates invalid
+            if any(errors for errors in results.values()):
+                return 1
+
+            return 0
+
+        else:
+            print_error(f"Path not found: {path}")
+            return 1
+
+    def cmd_config(self, args):
+        """Manage configuration"""
+        if args.init:
+            # Create default config file
+            Config.create_default_config()
+            return 0
+
+        elif args.show:
+            # Show current configuration
+            Config.print_status()
+            return 0
+
+        elif args.edit:
+            # Open config file in editor
+            import subprocess
+            import os
+
+            config_path = Config.USER_CONFIG_FILE
+
+            if not config_path.exists():
+                print_warning(f"Config file not found: {config_path}")
+                print_info("Run 'gif-gen config --init' to create one")
+                return 1
+
+            # Try to open in editor
+            editor = os.environ.get('EDITOR', 'nano')
+
+            try:
+                subprocess.run([editor, str(config_path)])
+                print_success("Config file updated. Reload to see changes.")
+                return 0
+            except Exception as e:
+                print_error(f"Could not open editor: {e}")
+                print_info(f"Manually edit: {config_path}")
+                return 1
+
+        elif args.reset:
+            # Reset to defaults
+            if Config.USER_CONFIG_FILE.exists():
+                backup = Config.USER_CONFIG_FILE.with_suffix('.bak')
+                Config.USER_CONFIG_FILE.rename(backup)
+                print_warning(f"Backed up to: {backup}")
+
+            Config.create_default_config()
+            print_success("Configuration reset to defaults")
+            return 0
+
+        else:
+            # Show current config
+            Config.print_status()
+            return 0
+
+    def cmd_batch(self, args):
+        """Process batch of files"""
+        processor = BatchProcessor(max_workers=args.workers)
+
+        if args.config:
+            # Process from config file
+            config_path = Path(args.config)
+
+            if not config_path.exists():
+                print_error(f"Config file not found: {config_path}")
+                return 1
+
+            try:
+                result = processor.process_from_config(config_path)
+
+                if result.failed == 0:
+                    print_success(f"All {result.successful} jobs completed successfully!")
+                    return 0
+                else:
+                    print_error(f"{result.failed} job(s) failed")
+                    return 1
+
+            except Exception as e:
+                print_error(f"Batch processing failed: {e}")
+                return 1
+
+        elif args.input_dir:
+            # Process directory
+            input_dir = Path(args.input_dir)
+            output_dir = Path(args.output_dir) if args.output_dir else input_dir / 'output'
+
+            if not input_dir.exists():
+                print_error(f"Input directory not found: {input_dir}")
+                return 1
+
+            try:
+                template = self.loader.load_template(args.template)
+            except Exception as e:
+                print_error(f"Error loading template: {e}")
+                return 1
+
+            # Parse common variables
+            common_vars = {}
+            if args.var:
+                for var in args.var:
+                    key, value = var.split('=', 1)
+                    common_vars[key] = value
+
+            try:
+                result = processor.process_directory(
+                    template,
+                    input_dir,
+                    output_dir,
+                    preset_name=args.preset,
+                    pattern=args.pattern,
+                    **common_vars
+                )
+
+                if result.failed == 0:
+                    print_success(f"All {result.successful} jobs completed successfully!")
+                    return 0
+                else:
+                    print_error(f"{result.failed} job(s) failed")
+                    return 1
+
+            except Exception as e:
+                print_error(f"Batch processing failed: {e}")
+                return 1
+
+        else:
+            print_error("Either --config or --input-dir must be specified")
+            return 1
+
 
 def main():
     """Main entry point"""
@@ -387,6 +574,36 @@ For more information, see ORCHESTRATOR_README.md
     presets_parser.add_argument('-v', '--verbose', action='store_true',
                                help='Show detailed preset parameters')
 
+    # Validate command
+    validate_parser = subparsers.add_parser('validate', help='Validate templates')
+    validate_parser.add_argument('path', nargs='?',
+                                help='Template file or directory to validate (default: all templates)')
+
+    # Config command
+    config_parser = subparsers.add_parser('config', help='Manage configuration')
+    config_group = config_parser.add_mutually_exclusive_group()
+    config_group.add_argument('--init', action='store_true',
+                             help='Create default config file (~/.gifgenrc)')
+    config_group.add_argument('--show', action='store_true',
+                             help='Show current configuration')
+    config_group.add_argument('--edit', action='store_true',
+                             help='Edit config file in $EDITOR')
+    config_group.add_argument('--reset', action='store_true',
+                             help='Reset configuration to defaults')
+
+    # Batch command
+    batch_parser = subparsers.add_parser('batch', help='Batch process multiple files')
+    batch_parser.add_argument('--config', '-c', help='Batch config file (JSON)')
+    batch_parser.add_argument('--input-dir', '-i', help='Input directory')
+    batch_parser.add_argument('--output-dir', '-o', help='Output directory')
+    batch_parser.add_argument('--template', '-t', help='Template to use (required with --input-dir)')
+    batch_parser.add_argument('--preset', '-p', default='balanced', help='Preset to use')
+    batch_parser.add_argument('--pattern', default='*.mp4', help='File pattern (default: *.mp4)')
+    batch_parser.add_argument('--workers', '-w', type=int, default=4,
+                            help='Number of parallel workers (default: 4)')
+    batch_parser.add_argument('--var', action='append',
+                            help='Common variable for all jobs (key=value)')
+
     # Create command
     create_parser = subparsers.add_parser('create', help='Create GIF from template')
     create_parser.add_argument('template', help='Template path (e.g., demo/simple-gif)')
@@ -420,6 +637,12 @@ For more information, see ORCHESTRATOR_README.md
             return cli.cmd_check(args)
         elif args.command == 'presets':
             return cli.cmd_presets(args)
+        elif args.command == 'validate':
+            return cli.cmd_validate(args)
+        elif args.command == 'config':
+            return cli.cmd_config(args)
+        elif args.command == 'batch':
+            return cli.cmd_batch(args)
         elif args.command == 'create':
             return cli.cmd_create(args)
         else:
