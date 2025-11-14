@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: "Inter", sans-serif;
+    --font-space-grotesk: "Space Grotesk", sans-serif;
+    --font-jetbrains-mono: "JetBrains Mono", monospace;
+
+    /* Matrix theme colors */
+    --matrix-accent: #00ff41;
+  }
+
+  body {
+    @apply bg-matrix-bg text-matrix-text;
+  }
+
+  /* Custom slider styles */
+  input[type="range"].slider-thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--matrix-accent);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--matrix-accent);
+    transition: all 0.2s;
+  }
+
+  input[type="range"].slider-thumb::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--matrix-accent);
+  }
+
+  input[type="range"].slider-thumb::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--matrix-accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px var(--matrix-accent);
+    transition: all 0.2s;
+  }
+
+  input[type="range"].slider-thumb::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--matrix-accent);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+  }
+
+  .glow {
+    text-shadow: 0 0 20px theme("colors.matrix.accent"),
+      0 0 40px theme("colors.matrix.accent");
+  }
+
+  .glow-box {
+    box-shadow: 0 0 20px theme("colors.matrix.accent"),
+      0 0 40px theme("colors.matrix.accent/50");
+  }
+}
