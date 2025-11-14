@@ -17,6 +17,15 @@ export function ControlPanel() {
     auroraConfig,
     updateAuroraConfig,
     resetAuroraConfig,
+    particleConfig,
+    updateParticleConfig,
+    resetParticleConfig,
+    glitchConfig,
+    updateGlitchConfig,
+    resetGlitchConfig,
+    neonTrailsConfig,
+    updateNeonTrailsConfig,
+    resetNeonTrailsConfig,
     showControls,
     toggleControls,
   } = useStudioStore();
@@ -42,6 +51,12 @@ export function ControlPanel() {
         return "Fluid Controls";
       case "aurora":
         return "Aurora Controls";
+      case "particle":
+        return "Particle Controls";
+      case "glitch":
+        return "Glitch Controls";
+      case "neonTrails":
+        return "Neon Trails Controls";
       default:
         return "Controls";
     }
@@ -57,6 +72,15 @@ export function ControlPanel() {
         break;
       case "aurora":
         resetAuroraConfig();
+        break;
+      case "particle":
+        resetParticleConfig();
+        break;
+      case "glitch":
+        resetGlitchConfig();
+        break;
+      case "neonTrails":
+        resetNeonTrailsConfig();
         break;
     }
   };
@@ -250,10 +274,165 @@ export function ControlPanel() {
         </div>
       )}
 
+      {/* Particle Controls */}
+      {activeAnimation === "particle" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={particleConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateParticleConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Count"
+            value={particleConfig.count}
+            min={50}
+            max={500}
+            onChange={(value) => updateParticleConfig({ count: value })}
+          />
+
+          <Slider
+            label="Size"
+            value={particleConfig.size}
+            min={1}
+            max={10}
+            unit="px"
+            onChange={(value) => updateParticleConfig({ size: value })}
+          />
+
+          <Slider
+            label="Connection Distance"
+            value={particleConfig.connectionDistance}
+            min={50}
+            max={300}
+            unit="px"
+            onChange={(value) => updateParticleConfig({ connectionDistance: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={particleConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateParticleConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color"
+            value={particleConfig.color}
+            onChange={(value) => updateParticleConfig({ color: value })}
+          />
+        </div>
+      )}
+
+      {/* Glitch Controls */}
+      {activeAnimation === "glitch" && (
+        <div className="space-y-4">
+          <Slider
+            label="Intensity"
+            value={glitchConfig.intensity}
+            min={1}
+            max={100}
+            onChange={(value) => updateGlitchConfig({ intensity: value })}
+          />
+
+          <Slider
+            label="Frequency"
+            value={glitchConfig.frequency}
+            min={1}
+            max={100}
+            onChange={(value) => updateGlitchConfig({ frequency: value })}
+          />
+
+          <Slider
+            label="Block Size"
+            value={glitchConfig.blockSize}
+            min={10}
+            max={100}
+            unit="px"
+            onChange={(value) => updateGlitchConfig({ blockSize: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={glitchConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateGlitchConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={glitchConfig.color1}
+            onChange={(value) => updateGlitchConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={glitchConfig.color2}
+            onChange={(value) => updateGlitchConfig({ color2: value })}
+          />
+        </div>
+      )}
+
+      {/* Neon Trails Controls */}
+      {activeAnimation === "neonTrails" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={neonTrailsConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateNeonTrailsConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Trail Length"
+            value={neonTrailsConfig.trailLength}
+            min={10}
+            max={200}
+            onChange={(value) => updateNeonTrailsConfig({ trailLength: value })}
+          />
+
+          <Slider
+            label="Count"
+            value={neonTrailsConfig.count}
+            min={5}
+            max={50}
+            onChange={(value) => updateNeonTrailsConfig({ count: value })}
+          />
+
+          <Slider
+            label="Width"
+            value={neonTrailsConfig.width}
+            min={1}
+            max={10}
+            unit="px"
+            onChange={(value) => updateNeonTrailsConfig({ width: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={neonTrailsConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateNeonTrailsConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color"
+            value={neonTrailsConfig.color}
+            onChange={(value) => updateNeonTrailsConfig({ color: value })}
+          />
+        </div>
+      )}
+
       {/* Info */}
       <div className="pt-4 border-t border-matrix-accent/20">
         <p className="text-xs text-matrix-text/50 font-mono">
-          Phase 2: Multi-Animation System
+          Phase 3: 6 Animation Library
         </p>
       </div>
     </div>

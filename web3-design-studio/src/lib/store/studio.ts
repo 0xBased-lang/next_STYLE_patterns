@@ -4,8 +4,23 @@
  */
 
 import { create } from "zustand";
-import type { MatrixConfig, FluidConfig, AuroraConfig, AnimationType } from "../types/animation";
-import { defaultMatrixConfig, defaultFluidConfig, defaultAuroraConfig } from "../types/animation";
+import type {
+  MatrixConfig,
+  FluidConfig,
+  AuroraConfig,
+  ParticleConfig,
+  GlitchConfig,
+  NeonTrailsConfig,
+  AnimationType
+} from "../types/animation";
+import {
+  defaultMatrixConfig,
+  defaultFluidConfig,
+  defaultAuroraConfig,
+  defaultParticleConfig,
+  defaultGlitchConfig,
+  defaultNeonTrailsConfig
+} from "../types/animation";
 
 interface StudioState {
   // Current active animation
@@ -26,6 +41,21 @@ interface StudioState {
   auroraConfig: AuroraConfig;
   updateAuroraConfig: (config: Partial<AuroraConfig>) => void;
   resetAuroraConfig: () => void;
+
+  // Particle configuration
+  particleConfig: ParticleConfig;
+  updateParticleConfig: (config: Partial<ParticleConfig>) => void;
+  resetParticleConfig: () => void;
+
+  // Glitch configuration
+  glitchConfig: GlitchConfig;
+  updateGlitchConfig: (config: Partial<GlitchConfig>) => void;
+  resetGlitchConfig: () => void;
+
+  // Neon Trails configuration
+  neonTrailsConfig: NeonTrailsConfig;
+  updateNeonTrailsConfig: (config: Partial<NeonTrailsConfig>) => void;
+  resetNeonTrailsConfig: () => void;
 
   // UI state
   showControls: boolean;
@@ -60,6 +90,30 @@ export const useStudioStore = create<StudioState>((set) => ({
       auroraConfig: { ...state.auroraConfig, ...config },
     })),
   resetAuroraConfig: () => set({ auroraConfig: defaultAuroraConfig }),
+
+  // Particle configuration
+  particleConfig: defaultParticleConfig,
+  updateParticleConfig: (config) =>
+    set((state) => ({
+      particleConfig: { ...state.particleConfig, ...config },
+    })),
+  resetParticleConfig: () => set({ particleConfig: defaultParticleConfig }),
+
+  // Glitch configuration
+  glitchConfig: defaultGlitchConfig,
+  updateGlitchConfig: (config) =>
+    set((state) => ({
+      glitchConfig: { ...state.glitchConfig, ...config },
+    })),
+  resetGlitchConfig: () => set({ glitchConfig: defaultGlitchConfig }),
+
+  // Neon Trails configuration
+  neonTrailsConfig: defaultNeonTrailsConfig,
+  updateNeonTrailsConfig: (config) =>
+    set((state) => ({
+      neonTrailsConfig: { ...state.neonTrailsConfig, ...config },
+    })),
+  resetNeonTrailsConfig: () => set({ neonTrailsConfig: defaultNeonTrailsConfig }),
 
   // UI state
   showControls: true,

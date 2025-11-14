@@ -174,3 +174,39 @@ export const defaultAuroraConfig: AuroraConfig = {
   waves: 5,
   fps: 60,
 };
+
+/**
+ * Default Particle Configuration
+ */
+export const defaultParticleConfig: ParticleConfig = {
+  speed: 50,
+  color: "#00d9ff",
+  count: 150,
+  size: 3,
+  connectionDistance: 150,
+  fps: 60,
+};
+
+/**
+ * Default Glitch Configuration
+ */
+export const defaultGlitchConfig: GlitchConfig = {
+  intensity: 50,
+  color1: "#ff0080",
+  color2: "#00ffff",
+  frequency: 30,
+  blockSize: 50,
+  fps: 60,
+};
+
+/**
+ * Default Neon Trails Configuration
+ */
+export const defaultNeonTrailsConfig: NeonTrailsConfig = {
+  speed: 60,
+  color: "#ff00d9",
+  trailLength: 100,
+  count: 15,
+  width: 3,
+  fps: 60,
+};

@@ -4,11 +4,22 @@ import { useStudioStore } from "@/lib/store/studio";
 import { MatrixBackground } from "@/components/animations/MatrixBackground";
 import { FluidBackground } from "@/components/animations/FluidBackground";
 import { AuroraBackground } from "@/components/animations/AuroraBackground";
+import { ParticleBackground } from "@/components/animations/ParticleBackground";
+import { GlitchBackground } from "@/components/animations/GlitchBackground";
+import { NeonTrailsBackground } from "@/components/animations/NeonTrailsBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
 
 export default function Home() {
-  const { activeAnimation, matrixConfig, fluidConfig, auroraConfig } = useStudioStore();
+  const {
+    activeAnimation,
+    matrixConfig,
+    fluidConfig,
+    auroraConfig,
+    particleConfig,
+    glitchConfig,
+    neonTrailsConfig,
+  } = useStudioStore();
 
   return (
     <main className="relative min-h-screen bg-matrix-bg overflow-hidden">
@@ -16,6 +27,9 @@ export default function Home() {
       {activeAnimation === "matrix" && <MatrixBackground config={matrixConfig} />}
       {activeAnimation === "fluid" && <FluidBackground config={fluidConfig} />}
       {activeAnimation === "aurora" && <AuroraBackground config={auroraConfig} />}
+      {activeAnimation === "particle" && <ParticleBackground config={particleConfig} />}
+      {activeAnimation === "glitch" && <GlitchBackground config={glitchConfig} />}
+      {activeAnimation === "neonTrails" && <NeonTrailsBackground config={neonTrailsConfig} />}
 
       {/* Animation Selector */}
       <AnimationSelector />
@@ -35,20 +49,26 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 2: Multi-Animation System Complete
+                ✅ Phase 3: 6 Psychedelic Animations Complete
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← Select an animation • Adjust parameters in real-time →
+              ← Choose from 6 animations • Fine-tune with real-time controls →
             </p>
-            <div className="flex items-center justify-center gap-2 text-xs text-matrix-text/30 font-mono">
+            <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
               <span>•</span>
               <span>🟣 Fluid</span>
               <span>•</span>
               <span>🔵 Aurora</span>
+              <span>•</span>
+              <span>💠 Particle</span>
+              <span>•</span>
+              <span>🌈 Glitch</span>
+              <span>•</span>
+              <span>✨ Neon</span>
             </div>
           </div>
         </div>

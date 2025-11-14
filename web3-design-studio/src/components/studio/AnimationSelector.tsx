@@ -23,6 +23,24 @@ const animations: { id: AnimationType; name: string; icon: string; description: 
     icon: "🔵",
     description: "Northern lights",
   },
+  {
+    id: "particle",
+    name: "Particle",
+    icon: "💠",
+    description: "Connected network",
+  },
+  {
+    id: "glitch",
+    name: "Glitch",
+    icon: "🌈",
+    description: "Cyberpunk RGB",
+  },
+  {
+    id: "neonTrails",
+    name: "Neon",
+    icon: "✨",
+    description: "Tron trails",
+  },
 ];
 
 export function AnimationSelector() {
@@ -69,7 +87,7 @@ export function AnimationSelector() {
       </div>
       <div className="border-t border-matrix-accent/20 pt-2 px-2">
         <div className="text-xs text-matrix-text/30 font-mono">
-          Phase 2 Active
+          Phase 3: 6 Animations
         </div>
       </div>
     </div>
