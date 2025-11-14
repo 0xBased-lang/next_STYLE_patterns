@@ -2,7 +2,7 @@
   "name": "graphic-animation-template",
   "version": "1.0.0",
   "description": "Graphic animation template with BMAD Method integration",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

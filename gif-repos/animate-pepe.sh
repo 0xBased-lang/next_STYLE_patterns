@@ -36,10 +36,13 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 IMAGE_PATH="$1"
 MOTION="${2:-zombie}"  # Default to walking (zombie)
-CHARACTER_DIR="/Users/seman/Desktop/gif-repos/AnimatedDrawings/pepe_character"
-OUTPUT_GIF="/Users/seman/Desktop/gif-repos/AnimatedDrawings/pepe_animated.gif"
+CHARACTER_DIR="$SCRIPT_DIR/AnimatedDrawings/pepe_character"
+OUTPUT_GIF="$SCRIPT_DIR/AnimatedDrawings/pepe_animated.gif"
 
 echo -e "${BLUE}Configuration:${NC}"
 echo "  Image: $IMAGE_PATH"
@@ -55,7 +58,7 @@ if [ ! -f "$IMAGE_PATH" ]; then
     exit 1
 fi
 
-cd /Users/seman/Desktop/gif-repos/AnimatedDrawings
+cd "$SCRIPT_DIR/AnimatedDrawings"
 
 # Check if character already annotated
 if [ ! -d "$CHARACTER_DIR" ]; then
@@ -123,7 +126,7 @@ if [ -f "$OUTPUT_GIF" ]; then
     echo "   open $OUTPUT_GIF"
     echo ""
     echo -e "${YELLOW}2. Add glitch effect:${NC}"
-    echo "   cd /Users/seman/Desktop/gif-repos/gif-generator"
+    echo "   cd $SCRIPT_DIR/gif-generator"
     echo "   ./gif-gen create creative-effects/glitch-effect \\"
     echo "     --video $OUTPUT_GIF \\"
     echo "     --output ~/Desktop/pepe_glitchy.gif"

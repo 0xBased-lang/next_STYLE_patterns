@@ -4,6 +4,9 @@
 
 set -e
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "╔══════════════════════════════════════════════════════════════════════════╗"
 echo "║          🎮 Character Animation Quick Start                              ║"
 echo "╚══════════════════════════════════════════════════════════════════════════╝"
@@ -23,7 +26,7 @@ if ! command -v conda &> /dev/null; then
 fi
 
 echo "${BLUE}Step 1: Setting up AnimatedDrawings environment...${NC}"
-cd /Users/seman/Desktop/gif-repos/AnimatedDrawings
+cd "$SCRIPT_DIR/AnimatedDrawings"
 
 # Check if environment already exists
 if conda env list | grep -q "animated_drawings"; then
@@ -80,18 +83,18 @@ echo "   • Clear background works best"
 echo "   • Full body visible (arms, legs)"
 echo ""
 echo "2. Read the complete guide:"
-echo "   ${GREEN}cat /Users/seman/Desktop/gif-repos/gif-generator/docs/ANIMATE_CHARACTER_GUIDE.md${NC}"
+echo "   ${GREEN}cat $SCRIPT_DIR/gif-generator/docs/ANIMATE_CHARACTER_GUIDE.md${NC}"
 echo ""
 echo "3. When ready to animate your character:"
 echo "   ${GREEN}conda activate animated_drawings${NC}"
-echo "   ${GREEN}cd /Users/seman/Desktop/gif-repos/AnimatedDrawings${NC}"
+echo "   ${GREEN}cd $SCRIPT_DIR/AnimatedDrawings${NC}"
 echo "   ${GREEN}python examples/image_to_annotations.py /path/to/your/pepe.png${NC}"
 echo ""
 echo "4. After annotation, generate animation:"
 echo "   ${GREEN}python -c \"from animated_drawings import render; render.start('your_config.yaml')\"${NC}"
 echo ""
 echo "5. Add effects with gif-generator:"
-echo "   ${GREEN}cd /Users/seman/Desktop/gif-repos/gif-generator${NC}"
+echo "   ${GREEN}cd $SCRIPT_DIR/gif-generator${NC}"
 echo "   ${GREEN}./gif-gen create creative-effects/glitch-effect -i input.gif -o output.gif${NC}"
 echo ""
 echo "╔══════════════════════════════════════════════════════════════════════════╗"

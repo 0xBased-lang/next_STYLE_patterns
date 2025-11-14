@@ -8,11 +8,11 @@
 📝 THE ONLY 2 COMMANDS YOU NEED
 ══════════════════════════════════════════════════════════════════════════════
 
-1. ANIMATE YOUR PEPE:
-   bash /Users/seman/Desktop/gif-repos/animate-pepe.sh ~/Desktop/pepe.png
+1. ANIMATE YOUR PEPE (from the gif-repos directory):
+   bash animate-pepe.sh ~/Desktop/pepe.png
 
 2. ADD GLITCH EFFECT (optional):
-   cd /Users/seman/Desktop/gif-repos/gif-generator
+   cd gif-generator
    ./gif-gen create creative-effects/glitch-effect \
      --video ../AnimatedDrawings/pepe_animated.gif \
      --output ~/Desktop/pepe_glitchy.gif
@@ -47,7 +47,7 @@ Takes 5 minutes, one-time setup!
 ══════════════════════════════════════════════════════════════════════════════
 
 Your animated GIF will be saved to:
-  /Users/seman/Desktop/gif-repos/AnimatedDrawings/pepe_animated.gif
+  gif-repos/AnimatedDrawings/pepe_animated.gif
 
 ══════════════════════════════════════════════════════════════════════════════
 🎬 OTHER ANIMATIONS
@@ -71,7 +71,7 @@ Window doesn't appear?
   → Check your dock - it might be behind other windows
 
 Need more help?
-  → Read: /Users/seman/Desktop/gif-repos/ANIMATE_PEPE_NOW.md
+  → Read: ANIMATE_PEPE_NOW.md (in the gif-repos directory)
 
 ══════════════════════════════════════════════════════════════════════════════
 ⏱️ TIMELINE

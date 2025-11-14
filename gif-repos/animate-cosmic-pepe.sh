@@ -2,23 +2,25 @@
 # Animate Cosmic Purple Pepe - Complete Workflow
 set -e
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "🌌 COSMIC PURPLE PEPE ANIMATOR"
 echo "══════════════════════════════════════════════════════════════"
 echo ""
 
-IMAGE_PATH="/Users/seman/Desktop/gif-repos/cosmic-purple-pepe.png"
-CHARACTER_DIR="/Users/seman/Desktop/gif-repos/AnimatedDrawings/cosmic_pepe_character"
+IMAGE_PATH="$SCRIPT_DIR/cosmic-purple-pepe.png"
+CHARACTER_DIR="$SCRIPT_DIR/AnimatedDrawings/cosmic_pepe_character"
 MOTION="${1:-zombie}"  # Default to walking
 
-cd /Users/seman/Desktop/gif-repos/AnimatedDrawings
+cd "$SCRIPT_DIR/AnimatedDrawings"
 
 # Check if image exists
 if [ ! -f "$IMAGE_PATH" ]; then
     echo "❌ Please save your cosmic purple Pepe image to:"
     echo "   $IMAGE_PATH"
     echo ""
-    echo "You can drag the image from the conversation to your Desktop,"
-    echo "then move it to: /Users/seman/Desktop/gif-repos/"
+    echo "You can drag the image from the conversation to the gif-repos directory"
     echo "and rename it to: cosmic-purple-pepe.png"
     exit 1
 fi

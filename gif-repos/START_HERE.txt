@@ -13,8 +13,8 @@
 1. Save your Pepe image to Desktop:
    Name it: pepe.png
 
-2. Run this command in Terminal:
-   bash /Users/seman/Desktop/gif-repos/animate-pepe.sh ~/Desktop/pepe.png
+2. Run this command in Terminal (from the gif-repos directory):
+   bash animate-pepe.sh ~/Desktop/pepe.png
 
 3. Done! Your animated Pepe is ready!
 
