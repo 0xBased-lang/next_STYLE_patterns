@@ -2,15 +2,23 @@
 
 import { useStudioStore } from "@/lib/store/studio";
 import { MatrixBackground } from "@/components/animations/MatrixBackground";
+import { FluidBackground } from "@/components/animations/FluidBackground";
+import { AuroraBackground } from "@/components/animations/AuroraBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
+import { AnimationSelector } from "@/components/studio/AnimationSelector";
 
 export default function Home() {
-  const { matrixConfig } = useStudioStore();
+  const { activeAnimation, matrixConfig, fluidConfig, auroraConfig } = useStudioStore();
 
   return (
     <main className="relative min-h-screen bg-matrix-bg overflow-hidden">
-      {/* Animated Background */}
-      <MatrixBackground config={matrixConfig} />
+      {/* Animated Background - Conditionally render based on active animation */}
+      {activeAnimation === "matrix" && <MatrixBackground config={matrixConfig} />}
+      {activeAnimation === "fluid" && <FluidBackground config={fluidConfig} />}
+      {activeAnimation === "aurora" && <AuroraBackground config={auroraConfig} />}
+
+      {/* Animation Selector */}
+      <AnimationSelector />
 
       {/* Control Panel */}
       <ControlPanel />
@@ -27,14 +35,21 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 1: Matrix Animation Complete
+                ✅ Phase 2: Multi-Animation System Complete
               </p>
             </div>
           </div>
-          <div className="pt-4">
+          <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              Adjust animation parameters in real-time using the controls →
+              ← Select an animation • Adjust parameters in real-time →
             </p>
+            <div className="flex items-center justify-center gap-2 text-xs text-matrix-text/30 font-mono">
+              <span>🟢 Matrix</span>
+              <span>•</span>
+              <span>🟣 Fluid</span>
+              <span>•</span>
+              <span>🔵 Aurora</span>
+            </div>
           </div>
         </div>
       </div>
