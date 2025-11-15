@@ -18,7 +18,11 @@ const ANIMATION_KEYS: Record<string, AnimationType> = {
   "8": "cosmic",
   "9": "dnaHelix",
   "0": "waveInterference",
-  "-": "plasma", // Extra key for 11th animation
+  "-": "plasma",
+  "=": "fractal",
+  "[": "lightning",
+  "]": "tessellation",
+  "\\": "fire",
 };
 
 export function useKeyboardShortcuts() {
@@ -40,6 +44,10 @@ export function useKeyboardShortcuts() {
     resetDNAHelixConfig,
     resetWaveInterferenceConfig,
     resetPlasmaConfig,
+    resetFractalConfig,
+    resetLightningConfig,
+    resetTessellationConfig,
+    resetFireConfig,
     setGlobalSpeed,
     globalSpeed,
   } = useStudioStore();
@@ -106,6 +114,18 @@ export function useKeyboardShortcuts() {
           case "plasma":
             resetPlasmaConfig();
             break;
+          case "fractal":
+            resetFractalConfig();
+            break;
+          case "lightning":
+            resetLightningConfig();
+            break;
+          case "tessellation":
+            resetTessellationConfig();
+            break;
+          case "fire":
+            resetFireConfig();
+            break;
         }
         event.preventDefault();
         return;
@@ -171,6 +191,10 @@ export function useKeyboardShortcuts() {
     resetDNAHelixConfig,
     resetWaveInterferenceConfig,
     resetPlasmaConfig,
+    resetFractalConfig,
+    resetLightningConfig,
+    resetTessellationConfig,
+    resetFireConfig,
     setGlobalSpeed,
     globalSpeed,
   ]);

@@ -77,6 +77,10 @@ export function KeyboardShortcutsGuide() {
               <ShortcutItem keyLabel="9" description="DNA Helix" />
               <ShortcutItem keyLabel="0" description="Wave Interference" />
               <ShortcutItem keyLabel="-" description="Plasma" />
+              <ShortcutItem keyLabel="=" description="Fractal" />
+              <ShortcutItem keyLabel="[" description="Lightning" />
+              <ShortcutItem keyLabel="]" description="Tessellation" />
+              <ShortcutItem keyLabel="\" description="Fire" />
             </div>
           </div>
 

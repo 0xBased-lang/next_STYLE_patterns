@@ -12,6 +12,10 @@ import { CosmicBackground } from "@/components/animations/CosmicBackground";
 import { DNAHelixBackground } from "@/components/animations/DNAHelixBackground";
 import { WaveInterferenceBackground } from "@/components/animations/WaveInterferenceBackground";
 import { PlasmaBackground } from "@/components/animations/PlasmaBackground";
+import { FractalBackground } from "@/components/animations/FractalBackground";
+import { LightningBackground } from "@/components/animations/LightningBackground";
+import { TessellationBackground } from "@/components/animations/TessellationBackground";
+import { FireBackground } from "@/components/animations/FireBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
 import { PresetManager } from "@/components/studio/PresetManager";
@@ -37,6 +41,10 @@ export default function Home() {
     dnaHelixConfig,
     waveInterferenceConfig,
     plasmaConfig,
+    fractalConfig,
+    lightningConfig,
+    tessellationConfig,
+    fireConfig,
   } = useStudioStore();
 
   return (
@@ -53,6 +61,10 @@ export default function Home() {
       {activeAnimation === "dnaHelix" && <DNAHelixBackground config={dnaHelixConfig} />}
       {activeAnimation === "waveInterference" && <WaveInterferenceBackground config={waveInterferenceConfig} />}
       {activeAnimation === "plasma" && <PlasmaBackground config={plasmaConfig} />}
+      {activeAnimation === "fractal" && <FractalBackground config={fractalConfig} />}
+      {activeAnimation === "lightning" && <LightningBackground config={lightningConfig} />}
+      {activeAnimation === "tessellation" && <TessellationBackground config={tessellationConfig} />}
+      {activeAnimation === "fire" && <FireBackground config={fireConfig} />}
 
       {/* Animation Selector */}
       <AnimationSelector />
@@ -84,13 +96,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 5.3: Interactive Features + Keyboard Shortcuts
+                ✅ Phase 5.4: Expanded Animation Library (15 Total)
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← 11 Animations • Keyboard Shortcuts • Surprise Me! →
+              ← 15 Animations • Keyboard Shortcuts • Surprise Me! →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
@@ -114,6 +126,14 @@ export default function Home() {
               <span>〰️ Waves</span>
               <span>•</span>
               <span>🔥 Plasma</span>
+              <span>•</span>
+              <span>🌀 Fractal</span>
+              <span>•</span>
+              <span>⚡ Lightning</span>
+              <span>•</span>
+              <span>🔶 Voronoi</span>
+              <span>•</span>
+              <span>🌋 Fire</span>
             </div>
           </div>
         </div>

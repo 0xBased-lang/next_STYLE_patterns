@@ -17,6 +17,10 @@ import type {
   DNAHelixConfig,
   WaveInterferenceConfig,
   PlasmaConfig,
+  FractalConfig,
+  LightningConfig,
+  TessellationConfig,
+  FireConfig,
   AnimationType,
   AnimationConfig
 } from "../types/animation";
@@ -31,7 +35,11 @@ import {
   defaultCosmicConfig,
   defaultDNAHelixConfig,
   defaultWaveInterferenceConfig,
-  defaultPlasmaConfig
+  defaultPlasmaConfig,
+  defaultFractalConfig,
+  defaultLightningConfig,
+  defaultTessellationConfig,
+  defaultFireConfig
 } from "../types/animation";
 import type { Preset } from "../types/preset";
 import { allDefaultPresets } from "../presets/defaultPresets";
@@ -95,6 +103,26 @@ interface StudioState {
   plasmaConfig: PlasmaConfig;
   updatePlasmaConfig: (config: Partial<PlasmaConfig>) => void;
   resetPlasmaConfig: () => void;
+
+  // Fractal configuration
+  fractalConfig: FractalConfig;
+  updateFractalConfig: (config: Partial<FractalConfig>) => void;
+  resetFractalConfig: () => void;
+
+  // Lightning configuration
+  lightningConfig: LightningConfig;
+  updateLightningConfig: (config: Partial<LightningConfig>) => void;
+  resetLightningConfig: () => void;
+
+  // Tessellation configuration
+  tessellationConfig: TessellationConfig;
+  updateTessellationConfig: (config: Partial<TessellationConfig>) => void;
+  resetTessellationConfig: () => void;
+
+  // Fire configuration
+  fireConfig: FireConfig;
+  updateFireConfig: (config: Partial<FireConfig>) => void;
+  resetFireConfig: () => void;
 
   // UI state
   showControls: boolean;
@@ -219,6 +247,38 @@ export const useStudioStore = create<StudioState>()(
     })),
   resetPlasmaConfig: () => set({ plasmaConfig: defaultPlasmaConfig }),
 
+  // Fractal configuration
+  fractalConfig: defaultFractalConfig,
+  updateFractalConfig: (config) =>
+    set((state) => ({
+      fractalConfig: { ...state.fractalConfig, ...config },
+    })),
+  resetFractalConfig: () => set({ fractalConfig: defaultFractalConfig }),
+
+  // Lightning configuration
+  lightningConfig: defaultLightningConfig,
+  updateLightningConfig: (config) =>
+    set((state) => ({
+      lightningConfig: { ...state.lightningConfig, ...config },
+    })),
+  resetLightningConfig: () => set({ lightningConfig: defaultLightningConfig }),
+
+  // Tessellation configuration
+  tessellationConfig: defaultTessellationConfig,
+  updateTessellationConfig: (config) =>
+    set((state) => ({
+      tessellationConfig: { ...state.tessellationConfig, ...config },
+    })),
+  resetTessellationConfig: () => set({ tessellationConfig: defaultTessellationConfig }),
+
+  // Fire configuration
+  fireConfig: defaultFireConfig,
+  updateFireConfig: (config) =>
+    set((state) => ({
+      fireConfig: { ...state.fireConfig, ...config },
+    })),
+  resetFireConfig: () => set({ fireConfig: defaultFireConfig }),
+
   // UI state
   showControls: true,
   toggleControls: () => set((state) => ({ showControls: !state.showControls })),
@@ -293,6 +353,18 @@ export const useStudioStore = create<StudioState>()(
         case "plasma":
           updates.plasmaConfig = preset.config as PlasmaConfig;
           break;
+        case "fractal":
+          updates.fractalConfig = preset.config as FractalConfig;
+          break;
+        case "lightning":
+          updates.lightningConfig = preset.config as LightningConfig;
+          break;
+        case "tessellation":
+          updates.tessellationConfig = preset.config as TessellationConfig;
+          break;
+        case "fire":
+          updates.fireConfig = preset.config as FireConfig;
+          break;
       }
 
       updates.activeAnimation = preset.animationType;
@@ -348,6 +420,10 @@ export const useStudioStore = create<StudioState>()(
         dnaHelixConfig: state.dnaHelixConfig,
         waveInterferenceConfig: state.waveInterferenceConfig,
         plasmaConfig: state.plasmaConfig,
+        fractalConfig: state.fractalConfig,
+        lightningConfig: state.lightningConfig,
+        tessellationConfig: state.tessellationConfig,
+        fireConfig: state.fireConfig,
         activeAnimation: state.activeAnimation,
         globalSpeed: state.globalSpeed,
         showPerformance: state.showPerformance,
@@ -382,6 +458,14 @@ function getCurrentConfig(state: StudioState): AnimationConfig {
       return state.waveInterferenceConfig;
     case "plasma":
       return state.plasmaConfig;
+    case "fractal":
+      return state.fractalConfig;
+    case "lightning":
+      return state.lightningConfig;
+    case "tessellation":
+      return state.tessellationConfig;
+    case "fire":
+      return state.fireConfig;
     default:
       return state.matrixConfig;
   }

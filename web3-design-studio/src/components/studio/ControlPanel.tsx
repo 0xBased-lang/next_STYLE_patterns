@@ -41,6 +41,18 @@ export function ControlPanel() {
     plasmaConfig,
     updatePlasmaConfig,
     resetPlasmaConfig,
+    fractalConfig,
+    updateFractalConfig,
+    resetFractalConfig,
+    lightningConfig,
+    updateLightningConfig,
+    resetLightningConfig,
+    tessellationConfig,
+    updateTessellationConfig,
+    resetTessellationConfig,
+    fireConfig,
+    updateFireConfig,
+    resetFireConfig,
     showControls,
     toggleControls,
   } = useStudioStore();
@@ -764,10 +776,310 @@ export function ControlPanel() {
         </div>
       )}
 
+      {/* Fractal Controls */}
+      {activeAnimation === "fractal" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={fractalConfig.speed}
+            min={0.1}
+            max={2.0}
+            step={0.1}
+            onChange={(value) => updateFractalConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Max Iterations"
+            value={fractalConfig.maxIterations}
+            min={50}
+            max={500}
+            onChange={(value) => updateFractalConfig({ maxIterations: value })}
+          />
+
+          <Slider
+            label="Zoom"
+            value={fractalConfig.zoom}
+            min={1}
+            max={1000}
+            onChange={(value) => updateFractalConfig({ zoom: value })}
+          />
+
+          <Slider
+            label="Center X"
+            value={fractalConfig.centerX}
+            min={-2}
+            max={2}
+            step={0.1}
+            onChange={(value) => updateFractalConfig({ centerX: value })}
+          />
+
+          <Slider
+            label="Center Y"
+            value={fractalConfig.centerY}
+            min={-2}
+            max={2}
+            step={0.1}
+            onChange={(value) => updateFractalConfig({ centerY: value })}
+          />
+
+          <Slider
+            label="Color Shift"
+            value={fractalConfig.colorShift}
+            min={0}
+            max={100}
+            onChange={(value) => updateFractalConfig({ colorShift: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={fractalConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateFractalConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={fractalConfig.color1}
+            onChange={(value) => updateFractalConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={fractalConfig.color2}
+            onChange={(value) => updateFractalConfig({ color2: value })}
+          />
+
+          <ColorPicker
+            label="Color 3"
+            value={fractalConfig.color3}
+            onChange={(value) => updateFractalConfig({ color3: value })}
+          />
+        </div>
+      )}
+
+      {/* Lightning Controls */}
+      {activeAnimation === "lightning" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={lightningConfig.speed}
+            min={0.1}
+            max={2.0}
+            step={0.1}
+            onChange={(value) => updateLightningConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Bolt Count"
+            value={lightningConfig.boltCount}
+            min={1}
+            max={10}
+            onChange={(value) => updateLightningConfig({ boltCount: value })}
+          />
+
+          <Slider
+            label="Branch Probability"
+            value={lightningConfig.branchProbability}
+            min={0}
+            max={100}
+            onChange={(value) => updateLightningConfig({ branchProbability: value })}
+          />
+
+          <Slider
+            label="Thickness"
+            value={lightningConfig.thickness}
+            min={1}
+            max={10}
+            onChange={(value) => updateLightningConfig({ thickness: value })}
+          />
+
+          <Slider
+            label="Glow Intensity"
+            value={lightningConfig.glowIntensity}
+            min={0}
+            max={100}
+            onChange={(value) => updateLightningConfig({ glowIntensity: value })}
+          />
+
+          <Slider
+            label="Segments"
+            value={lightningConfig.segments}
+            min={10}
+            max={100}
+            onChange={(value) => updateLightningConfig({ segments: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={lightningConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateLightningConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Primary Color"
+            value={lightningConfig.color1}
+            onChange={(value) => updateLightningConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Glow Color"
+            value={lightningConfig.color2}
+            onChange={(value) => updateLightningConfig({ color2: value })}
+          />
+        </div>
+      )}
+
+      {/* Tessellation Controls */}
+      {activeAnimation === "tessellation" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={tessellationConfig.speed}
+            min={0.1}
+            max={2.0}
+            step={0.1}
+            onChange={(value) => updateTessellationConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Cell Count"
+            value={tessellationConfig.cellCount}
+            min={10}
+            max={100}
+            onChange={(value) => updateTessellationConfig({ cellCount: value })}
+          />
+
+          <Slider
+            label="Cell Movement"
+            value={tessellationConfig.cellMovement}
+            min={0}
+            max={100}
+            onChange={(value) => updateTessellationConfig({ cellMovement: value })}
+          />
+
+          <Slider
+            label="Border Width"
+            value={tessellationConfig.borderWidth}
+            min={0}
+            max={10}
+            onChange={(value) => updateTessellationConfig({ borderWidth: value })}
+          />
+
+          <Slider
+            label="Color Variation"
+            value={tessellationConfig.colorVariation}
+            min={0}
+            max={100}
+            onChange={(value) => updateTessellationConfig({ colorVariation: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={tessellationConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateTessellationConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Cell Color 1"
+            value={tessellationConfig.color1}
+            onChange={(value) => updateTessellationConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Cell Color 2"
+            value={tessellationConfig.color2}
+            onChange={(value) => updateTessellationConfig({ color2: value })}
+          />
+
+          <ColorPicker
+            label="Border Color"
+            value={tessellationConfig.borderColor}
+            onChange={(value) => updateTessellationConfig({ borderColor: value })}
+          />
+        </div>
+      )}
+
+      {/* Fire Controls */}
+      {activeAnimation === "fire" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={fireConfig.speed}
+            min={0.1}
+            max={2.0}
+            step={0.1}
+            onChange={(value) => updateFireConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Particle Count"
+            value={fireConfig.particleCount}
+            min={100}
+            max={2000}
+            onChange={(value) => updateFireConfig({ particleCount: value })}
+          />
+
+          <Slider
+            label="Intensity"
+            value={fireConfig.intensity}
+            min={1}
+            max={100}
+            onChange={(value) => updateFireConfig({ intensity: value })}
+          />
+
+          <Slider
+            label="Wind Speed"
+            value={fireConfig.windSpeed}
+            min={-100}
+            max={100}
+            onChange={(value) => updateFireConfig({ windSpeed: value })}
+          />
+
+          <Slider
+            label="Smoke Amount"
+            value={fireConfig.smokeAmount}
+            min={0}
+            max={100}
+            onChange={(value) => updateFireConfig({ smokeAmount: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={fireConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateFireConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Core Color (Hot)"
+            value={fireConfig.color1}
+            onChange={(value) => updateFireConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Middle Color"
+            value={fireConfig.color2}
+            onChange={(value) => updateFireConfig({ color2: value })}
+          />
+
+          <ColorPicker
+            label="Edge Color (Cool)"
+            value={fireConfig.color3}
+            onChange={(value) => updateFireConfig({ color3: value })}
+          />
+        </div>
+      )}
+
       {/* Info */}
       <div className="pt-4 border-t border-matrix-accent/20">
         <p className="text-xs text-matrix-text/50 font-mono">
-          Phase 5.2: 11 Animation Library
+          Phase 5.4: 15 Animation Library
         </p>
       </div>
     </div>

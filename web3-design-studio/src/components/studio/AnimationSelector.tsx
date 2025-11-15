@@ -71,6 +71,30 @@ const animations: { id: AnimationType; name: string; icon: string; description: 
     icon: "🔥",
     description: "Demo scene classic",
   },
+  {
+    id: "fractal",
+    name: "Fractal",
+    icon: "🌀",
+    description: "Mandelbrot & Julia sets",
+  },
+  {
+    id: "lightning",
+    name: "Lightning",
+    icon: "⚡",
+    description: "Electric bolts",
+  },
+  {
+    id: "tessellation",
+    name: "Voronoi",
+    icon: "🔶",
+    description: "Geometric cells",
+  },
+  {
+    id: "fire",
+    name: "Fire",
+    icon: "🌋",
+    description: "Particle flames",
+  },
 ];
 
 export function AnimationSelector() {
@@ -117,7 +141,7 @@ export function AnimationSelector() {
       </div>
       <div className="border-t border-matrix-accent/20 pt-2 px-2">
         <div className="text-xs text-matrix-text/30 font-mono">
-          Phase 5.2: 11 Animations
+          Phase 5.4: 15 Animations
         </div>
       </div>
     </div>

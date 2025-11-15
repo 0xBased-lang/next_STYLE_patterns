@@ -109,6 +109,56 @@ export interface PlasmaConfig {
   fps: number; // 30-60
 }
 
+export interface FractalConfig {
+  speed: number; // 0.1-2.0 (animation speed)
+  color1: string; // Start color for gradient
+  color2: string; // Mid color for gradient
+  color3: string; // End color for gradient
+  fractalType: "mandelbrot" | "julia"; // Fractal type
+  maxIterations: number; // 50-500 (detail level)
+  zoom: number; // 1-1000 (zoom level)
+  centerX: number; // -2 to 2 (center X coordinate)
+  centerY: number; // -2 to 2 (center Y coordinate)
+  colorShift: number; // 0-100 (color animation speed)
+  fps: number; // 30-60
+}
+
+export interface LightningConfig {
+  speed: number; // 0.1-2.0 (animation speed)
+  color1: string; // Primary lightning color
+  color2: string; // Secondary glow color
+  boltCount: number; // 1-10 (number of lightning bolts)
+  branchProbability: number; // 0-100 (branch chance)
+  thickness: number; // 1-10 (bolt thickness)
+  glowIntensity: number; // 0-100 (glow strength)
+  segments: number; // 10-100 (segments per bolt)
+  fps: number; // 30-60
+}
+
+export interface TessellationConfig {
+  speed: number; // 0.1-2.0 (animation speed)
+  color1: string; // Primary cell color
+  color2: string; // Secondary cell color
+  cellCount: number; // 10-100 (number of cells)
+  cellMovement: number; // 0-100 (cell movement speed)
+  borderWidth: number; // 0-10 (border thickness)
+  borderColor: string; // Border color
+  colorVariation: number; // 0-100 (color variation)
+  fps: number; // 30-60
+}
+
+export interface FireConfig {
+  speed: number; // 0.1-2.0 (animation speed)
+  color1: string; // Fire core color (hot)
+  color2: string; // Fire middle color
+  color3: string; // Fire edge color (cool)
+  particleCount: number; // 100-2000 (number of particles)
+  intensity: number; // 1-100 (fire intensity)
+  windSpeed: number; // -100 to 100 (horizontal wind)
+  smokeAmount: number; // 0-100 (smoke density)
+  fps: number; // 30-60
+}
+
 /**
  * Union type of all animation configs
  */
@@ -123,7 +173,11 @@ export type AnimationConfig =
   | CosmicConfig
   | DNAHelixConfig
   | WaveInterferenceConfig
-  | PlasmaConfig;
+  | PlasmaConfig
+  | FractalConfig
+  | LightningConfig
+  | TessellationConfig
+  | FireConfig;
 
 /**
  * Animation type identifier
@@ -139,7 +193,11 @@ export type AnimationType =
   | "cosmic"
   | "dnaHelix"
   | "waveInterference"
-  | "plasma";
+  | "plasma"
+  | "fractal"
+  | "lightning"
+  | "tessellation"
+  | "fire";
 
 /**
  * Animation Engine Interface
@@ -313,6 +371,68 @@ export const defaultPlasmaConfig: PlasmaConfig = {
   intensity: 80,
   complexity: 60,
   scale: 100,
+  fps: 60,
+};
+
+/**
+ * Default Fractal Configuration
+ */
+export const defaultFractalConfig: FractalConfig = {
+  speed: 1.0,
+  color1: "#00d9ff",
+  color2: "#b565d8",
+  color3: "#ff0080",
+  fractalType: "mandelbrot",
+  maxIterations: 200,
+  zoom: 1.0,
+  centerX: -0.5,
+  centerY: 0.0,
+  colorShift: 30,
+  fps: 60,
+};
+
+/**
+ * Default Lightning Configuration
+ */
+export const defaultLightningConfig: LightningConfig = {
+  speed: 1.0,
+  color1: "#00d9ff",
+  color2: "#60efff",
+  boltCount: 3,
+  branchProbability: 40,
+  thickness: 3,
+  glowIntensity: 60,
+  segments: 50,
+  fps: 60,
+};
+
+/**
+ * Default Tessellation Configuration
+ */
+export const defaultTessellationConfig: TessellationConfig = {
+  speed: 1.0,
+  color1: "#b565d8",
+  color2: "#00d9ff",
+  cellCount: 30,
+  cellMovement: 30,
+  borderWidth: 2,
+  borderColor: "#0a0e0a",
+  colorVariation: 50,
+  fps: 60,
+};
+
+/**
+ * Default Fire Configuration
+ */
+export const defaultFireConfig: FireConfig = {
+  speed: 1.0,
+  color1: "#ffff00",
+  color2: "#ff6600",
+  color3: "#ff0000",
+  particleCount: 500,
+  intensity: 70,
+  windSpeed: 0,
+  smokeAmount: 30,
   fps: 60,
 };
 
