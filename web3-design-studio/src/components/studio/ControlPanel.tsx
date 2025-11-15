@@ -26,6 +26,12 @@ export function ControlPanel() {
     neonTrailsConfig,
     updateNeonTrailsConfig,
     resetNeonTrailsConfig,
+    morphBlobConfig,
+    updateMorphBlobConfig,
+    resetMorphBlobConfig,
+    cosmicConfig,
+    updateCosmicConfig,
+    resetCosmicConfig,
     showControls,
     toggleControls,
   } = useStudioStore();
@@ -57,6 +63,10 @@ export function ControlPanel() {
         return "Glitch Controls";
       case "neonTrails":
         return "Neon Trails Controls";
+      case "morphBlob":
+        return "Morph Blob Controls";
+      case "cosmic":
+        return "Cosmic Controls";
       default:
         return "Controls";
     }
@@ -81,6 +91,12 @@ export function ControlPanel() {
         break;
       case "neonTrails":
         resetNeonTrailsConfig();
+        break;
+      case "morphBlob":
+        resetMorphBlobConfig();
+        break;
+      case "cosmic":
+        resetCosmicConfig();
         break;
     }
   };
@@ -429,10 +445,111 @@ export function ControlPanel() {
         </div>
       )}
 
+      {/* Morph Blob Controls */}
+      {activeAnimation === "morphBlob" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={morphBlobConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateMorphBlobConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Size"
+            value={morphBlobConfig.size}
+            min={50}
+            max={400}
+            unit="px"
+            onChange={(value) => updateMorphBlobConfig({ size: value })}
+          />
+
+          <Slider
+            label="Complexity"
+            value={morphBlobConfig.complexity}
+            min={3}
+            max={20}
+            onChange={(value) => updateMorphBlobConfig({ complexity: value })}
+          />
+
+          <Slider
+            label="Glow"
+            value={morphBlobConfig.glow}
+            min={0}
+            max={100}
+            onChange={(value) => updateMorphBlobConfig({ glow: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={morphBlobConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateMorphBlobConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color"
+            value={morphBlobConfig.color}
+            onChange={(value) => updateMorphBlobConfig({ color: value })}
+          />
+        </div>
+      )}
+
+      {/* Cosmic Controls */}
+      {activeAnimation === "cosmic" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={cosmicConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateCosmicConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Star Count"
+            value={cosmicConfig.starCount}
+            min={100}
+            max={1000}
+            onChange={(value) => updateCosmicConfig({ starCount: value })}
+          />
+
+          <Slider
+            label="Nebula Intensity"
+            value={cosmicConfig.nebulaIntensity}
+            min={1}
+            max={100}
+            onChange={(value) => updateCosmicConfig({ nebulaIntensity: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={cosmicConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateCosmicConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={cosmicConfig.color1}
+            onChange={(value) => updateCosmicConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={cosmicConfig.color2}
+            onChange={(value) => updateCosmicConfig({ color2: value })}
+          />
+        </div>
+      )}
+
       {/* Info */}
       <div className="pt-4 border-t border-matrix-accent/20">
         <p className="text-xs text-matrix-text/50 font-mono">
-          Phase 3: 6 Animation Library
+          Phase 4: 8 Animation Library
         </p>
       </div>
     </div>

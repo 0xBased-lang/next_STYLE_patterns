@@ -41,6 +41,18 @@ const animations: { id: AnimationType; name: string; icon: string; description: 
     icon: "✨",
     description: "Tron trails",
   },
+  {
+    id: "morphBlob",
+    name: "Morph",
+    icon: "💜",
+    description: "Shape-shifting blob",
+  },
+  {
+    id: "cosmic",
+    name: "Cosmic",
+    icon: "🌌",
+    description: "Nebula & stars",
+  },
 ];
 
 export function AnimationSelector() {
@@ -87,7 +99,7 @@ export function AnimationSelector() {
       </div>
       <div className="border-t border-matrix-accent/20 pt-2 px-2">
         <div className="text-xs text-matrix-text/30 font-mono">
-          Phase 3: 6 Animations
+          Phase 4: 8 Animations
         </div>
       </div>
     </div>

@@ -7,6 +7,8 @@ import { AuroraBackground } from "@/components/animations/AuroraBackground";
 import { ParticleBackground } from "@/components/animations/ParticleBackground";
 import { GlitchBackground } from "@/components/animations/GlitchBackground";
 import { NeonTrailsBackground } from "@/components/animations/NeonTrailsBackground";
+import { MorphBlobBackground } from "@/components/animations/MorphBlobBackground";
+import { CosmicBackground } from "@/components/animations/CosmicBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
 import { PresetManager } from "@/components/studio/PresetManager";
@@ -20,6 +22,8 @@ export default function Home() {
     particleConfig,
     glitchConfig,
     neonTrailsConfig,
+    morphBlobConfig,
+    cosmicConfig,
   } = useStudioStore();
 
   return (
@@ -31,6 +35,8 @@ export default function Home() {
       {activeAnimation === "particle" && <ParticleBackground config={particleConfig} />}
       {activeAnimation === "glitch" && <GlitchBackground config={glitchConfig} />}
       {activeAnimation === "neonTrails" && <NeonTrailsBackground config={neonTrailsConfig} />}
+      {activeAnimation === "morphBlob" && <MorphBlobBackground config={morphBlobConfig} />}
+      {activeAnimation === "cosmic" && <CosmicBackground config={cosmicConfig} />}
 
       {/* Animation Selector */}
       <AnimationSelector />
@@ -53,13 +59,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 3.5: Animations + Preset System Complete
+                ✅ Phase 4: Complete 8-Animation Library
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← Choose from 6 animations • Fine-tune with real-time controls →
+              ← Choose from 8 animations • Fine-tune with real-time controls →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
@@ -73,6 +79,10 @@ export default function Home() {
               <span>🌈 Glitch</span>
               <span>•</span>
               <span>✨ Neon</span>
+              <span>•</span>
+              <span>💜 Morph</span>
+              <span>•</span>
+              <span>🌌 Cosmic</span>
             </div>
           </div>
         </div>

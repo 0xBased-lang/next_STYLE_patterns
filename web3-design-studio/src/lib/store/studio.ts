@@ -12,6 +12,8 @@ import type {
   ParticleConfig,
   GlitchConfig,
   NeonTrailsConfig,
+  MorphBlobConfig,
+  CosmicConfig,
   AnimationType,
   AnimationConfig
 } from "../types/animation";
@@ -21,7 +23,9 @@ import {
   defaultAuroraConfig,
   defaultParticleConfig,
   defaultGlitchConfig,
-  defaultNeonTrailsConfig
+  defaultNeonTrailsConfig,
+  defaultMorphBlobConfig,
+  defaultCosmicConfig
 } from "../types/animation";
 import type { Preset } from "../types/preset";
 import { allDefaultPresets } from "../presets/defaultPresets";
@@ -60,6 +64,16 @@ interface StudioState {
   neonTrailsConfig: NeonTrailsConfig;
   updateNeonTrailsConfig: (config: Partial<NeonTrailsConfig>) => void;
   resetNeonTrailsConfig: () => void;
+
+  // Morph Blob configuration
+  morphBlobConfig: MorphBlobConfig;
+  updateMorphBlobConfig: (config: Partial<MorphBlobConfig>) => void;
+  resetMorphBlobConfig: () => void;
+
+  // Cosmic configuration
+  cosmicConfig: CosmicConfig;
+  updateCosmicConfig: (config: Partial<CosmicConfig>) => void;
+  resetCosmicConfig: () => void;
 
   // UI state
   showControls: boolean;
@@ -130,6 +144,22 @@ export const useStudioStore = create<StudioState>()(
     })),
   resetNeonTrailsConfig: () => set({ neonTrailsConfig: defaultNeonTrailsConfig }),
 
+  // Morph Blob configuration
+  morphBlobConfig: defaultMorphBlobConfig,
+  updateMorphBlobConfig: (config) =>
+    set((state) => ({
+      morphBlobConfig: { ...state.morphBlobConfig, ...config },
+    })),
+  resetMorphBlobConfig: () => set({ morphBlobConfig: defaultMorphBlobConfig }),
+
+  // Cosmic configuration
+  cosmicConfig: defaultCosmicConfig,
+  updateCosmicConfig: (config) =>
+    set((state) => ({
+      cosmicConfig: { ...state.cosmicConfig, ...config },
+    })),
+  resetCosmicConfig: () => set({ cosmicConfig: defaultCosmicConfig }),
+
   // UI state
   showControls: true,
   toggleControls: () => set((state) => ({ showControls: !state.showControls })),
@@ -174,6 +204,12 @@ export const useStudioStore = create<StudioState>()(
           break;
         case "neonTrails":
           updates.neonTrailsConfig = preset.config as NeonTrailsConfig;
+          break;
+        case "morphBlob":
+          updates.morphBlobConfig = preset.config as MorphBlobConfig;
+          break;
+        case "cosmic":
+          updates.cosmicConfig = preset.config as CosmicConfig;
           break;
       }
 
@@ -225,6 +261,8 @@ export const useStudioStore = create<StudioState>()(
         particleConfig: state.particleConfig,
         glitchConfig: state.glitchConfig,
         neonTrailsConfig: state.neonTrailsConfig,
+        morphBlobConfig: state.morphBlobConfig,
+        cosmicConfig: state.cosmicConfig,
         activeAnimation: state.activeAnimation,
       }),
     }
@@ -246,6 +284,10 @@ function getCurrentConfig(state: StudioState): AnimationConfig {
       return state.glitchConfig;
     case "neonTrails":
       return state.neonTrailsConfig;
+    case "morphBlob":
+      return state.morphBlobConfig;
+    case "cosmic":
+      return state.cosmicConfig;
     default:
       return state.matrixConfig;
   }

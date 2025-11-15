@@ -417,6 +417,142 @@ export const neonTrailsPresets: Preset[] = [
   },
 ];
 
+// Morph Blob Presets
+export const morphBlobPresets: Preset[] = [
+  {
+    id: "blob-purple",
+    name: "Purple Morph",
+    description: "Smooth purple organic blob",
+    animationType: "morphBlob",
+    config: {
+      speed: 40,
+      color: "#b565d8",
+      complexity: 12,
+      size: 200,
+      glow: 50,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "blob-green",
+    name: "Bio Blob",
+    description: "Organic green life form",
+    animationType: "morphBlob",
+    config: {
+      speed: 30,
+      color: "#00ff87",
+      complexity: 15,
+      size: 250,
+      glow: 70,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "blob-fast",
+    name: "Rapid Morph",
+    description: "Fast shape-shifting",
+    animationType: "morphBlob",
+    config: {
+      speed: 70,
+      color: "#ff006e",
+      complexity: 8,
+      size: 180,
+      glow: 40,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "blob-large",
+    name: "Mega Blob",
+    description: "Large glowing mass",
+    animationType: "morphBlob",
+    config: {
+      speed: 20,
+      color: "#00d9ff",
+      complexity: 18,
+      size: 300,
+      glow: 80,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+];
+
+// Cosmic Presets
+export const cosmicPresets: Preset[] = [
+  {
+    id: "cosmic-nebula",
+    name: "Deep Nebula",
+    description: "Purple cosmic nebula",
+    animationType: "cosmic",
+    config: {
+      speed: 30,
+      color1: "#b565d8",
+      color2: "#7b2cbf",
+      starCount: 500,
+      nebulaIntensity: 60,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "cosmic-starfield",
+    name: "Star Field",
+    description: "Dense star cluster",
+    animationType: "cosmic",
+    config: {
+      speed: 40,
+      color1: "#4169e1",
+      color2: "#00d9ff",
+      starCount: 800,
+      nebulaIntensity: 30,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "cosmic-pink",
+    name: "Pink Galaxy",
+    description: "Vibrant pink nebula",
+    animationType: "cosmic",
+    config: {
+      speed: 25,
+      color1: "#ff006e",
+      color2: "#ff00d9",
+      starCount: 600,
+      nebulaIntensity: 75,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+  {
+    id: "cosmic-green",
+    name: "Alien Sky",
+    description: "Mysterious green cosmos",
+    animationType: "cosmic",
+    config: {
+      speed: 35,
+      color1: "#00ff87",
+      color2: "#00ff41",
+      starCount: 400,
+      nebulaIntensity: 50,
+      fps: 60,
+    },
+    createdAt: Date.now(),
+    isDefault: true,
+  },
+];
+
 // Export all presets
 export const allDefaultPresets = {
   matrix: matrixPresets,
@@ -425,6 +561,6 @@ export const allDefaultPresets = {
   particle: particlePresets,
   glitch: glitchPresets,
   neonTrails: neonTrailsPresets,
-  morphBlob: [],
-  cosmic: [],
+  morphBlob: morphBlobPresets,
+  cosmic: cosmicPresets,
 };

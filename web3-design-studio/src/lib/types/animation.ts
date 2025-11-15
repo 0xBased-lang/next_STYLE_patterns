@@ -210,3 +210,28 @@ export const defaultNeonTrailsConfig: NeonTrailsConfig = {
   width: 3,
   fps: 60,
 };
+
+/**
+ * Default Morph Blob Configuration
+ */
+export const defaultMorphBlobConfig: MorphBlobConfig = {
+  speed: 40,
+  color: "#b565d8",
+  complexity: 12,
+  size: 200,
+  glow: 50,
+  fps: 60,
+};
+
+/**
+ * Default Cosmic Configuration
+ */
+export const defaultCosmicConfig: CosmicConfig = {
+  speed: 30,
+  color1: "#b565d8",
+  color2: "#7b2cbf",
+  starCount: 500,
+  nebulaIntensity: 60,
+  fps: 60,
+};
+
