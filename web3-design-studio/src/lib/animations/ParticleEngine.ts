@@ -21,6 +21,8 @@ export class ParticleEngine implements AnimationEngine<ParticleConfig> {
   private animationId: number | null = null;
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: ParticleConfig) {
     this.config = { ...config };
@@ -89,6 +91,19 @@ export class ParticleEngine implements AnimationEngine<ParticleConfig> {
     }
   }
 
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
+  }
+
   start(): void {
     if (this.animationId !== null) return;
 
@@ -120,9 +135,37 @@ export class ParticleEngine implements AnimationEngine<ParticleConfig> {
     if (!this.canvas) return;
 
     for (const particle of this.particles) {
+      // Apply mouse interaction force if enabled
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dx = this.mousePosition.x - particle.x;
+        const dy = this.mousePosition.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = 200;
+
+        if (distance < maxDistance && distance > 0) {
+          // Attraction force (pull particles toward mouse)
+          const force = (1 - distance / maxDistance) * 0.5;
+          const angle = Math.atan2(dy, dx);
+          particle.vx += Math.cos(angle) * force;
+          particle.vy += Math.sin(angle) * force;
+
+          // Limit velocity
+          const speed = Math.sqrt(particle.vx * particle.vx + particle.vy * particle.vy);
+          const maxSpeed = 5;
+          if (speed > maxSpeed) {
+            particle.vx = (particle.vx / speed) * maxSpeed;
+            particle.vy = (particle.vy / speed) * maxSpeed;
+          }
+        }
+      }
+
       // Update position
       particle.x += particle.vx;
       particle.y += particle.vy;
+
+      // Apply friction to gradually slow down particles
+      particle.vx *= 0.99;
+      particle.vy *= 0.99;
 
       // Wrap around edges
       if (particle.x < 0) particle.x = this.canvas.width;
