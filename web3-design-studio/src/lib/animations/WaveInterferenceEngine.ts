@@ -21,6 +21,8 @@ export class WaveInterferenceEngine implements AnimationEngine<WaveInterferenceC
   private frameInterval: number = 1000 / 60;
   private time: number = 0;
   private waveSources: WaveSource[] = [];
+  private mouseInteractionEnabled: boolean = false;
+  private userAddedSources: WaveSource[] = [];
 
   constructor(config: WaveInterferenceConfig) {
     this.config = { ...config };
@@ -111,6 +113,34 @@ export class WaveInterferenceEngine implements AnimationEngine<WaveInterferenceC
     }
   }
 
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      // Clear user-added sources when disabled
+      this.userAddedSources = [];
+    }
+  }
+
+  handleClick(x: number, y: number): void {
+    if (!this.mouseInteractionEnabled || !this.canvas) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = this.canvas.getBoundingClientRect();
+
+    // Add new wave source at click position
+    this.userAddedSources.push({
+      x: x,
+      y: y,
+      phase: 0,
+      frequency: 0.05,
+    });
+
+    // Limit to 10 user-added sources
+    if (this.userAddedSources.length > 10) {
+      this.userAddedSources.shift();
+    }
+  }
+
   start(): void {
     if (this.animationId !== null) return;
 
@@ -164,8 +194,13 @@ export class WaveInterferenceEngine implements AnimationEngine<WaveInterferenceC
     // Update time based on speed
     this.time += (this.config.speed / 1000) * 0.1;
 
-    // Update wave source phases
+    // Update wave source phases for default sources
     for (const source of this.waveSources) {
+      source.phase = this.time;
+    }
+
+    // Update phases for user-added sources
+    for (const source of this.userAddedSources) {
       source.phase = this.time;
     }
   }
@@ -186,13 +221,16 @@ export class WaveInterferenceEngine implements AnimationEngine<WaveInterferenceC
     const wavelength = this.config.wavelength;
     const amplitude = this.config.amplitude;
 
+    // Combine default and user-added sources
+    const allSources = [...this.waveSources, ...this.userAddedSources];
+
     // Draw interference pattern
     for (let x = 0; x < width; x += resolution) {
       for (let y = 0; y < height; y += resolution) {
         // Calculate interference at this point
         let waveValue = 0;
 
-        for (const source of this.waveSources) {
+        for (const source of allSources) {
           const dx = x - source.x;
           const dy = y - source.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
@@ -208,7 +246,7 @@ export class WaveInterferenceEngine implements AnimationEngine<WaveInterferenceC
         }
 
         // Normalize and apply amplitude
-        waveValue = (waveValue / this.waveSources.length) * (amplitude / 100);
+        waveValue = (waveValue / allSources.length) * (amplitude / 100);
 
         // Map wave value to color intensity
         const intensity = (waveValue + 1) / 2; // Normalize to 0-1

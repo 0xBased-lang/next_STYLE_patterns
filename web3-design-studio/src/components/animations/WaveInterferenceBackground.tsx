@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { WaveInterferenceEngine } from "@/lib/animations/WaveInterferenceEngine";
 import type { WaveInterferenceConfig } from "@/lib/types/animation";
 import { useStudioStore } from "@/lib/store/studio";
+import { useMousePosition } from "@/lib/hooks/useMousePosition";
 
 interface WaveInterferenceBackgroundProps {
   config: WaveInterferenceConfig;
@@ -13,7 +14,8 @@ interface WaveInterferenceBackgroundProps {
 export function WaveInterferenceBackground({ config, className = "" }: WaveInterferenceBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<WaveInterferenceEngine | null>(null);
-  const { isPaused, globalSpeed } = useStudioStore();
+  const { isPaused, globalSpeed, mouseInteraction } = useStudioStore();
+  const mousePosition = useMousePosition(mouseInteraction);
 
   // Initialize engine
   useEffect(() => {
@@ -63,6 +65,23 @@ export function WaveInterferenceBackground({ config, className = "" }: WaveInter
       engineRef.current.updateConfig(adjustedConfig);
     }
   }, [config, globalSpeed]);
+
+  // Handle mouse interaction toggle
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setMouseInteraction(mouseInteraction);
+    }
+  }, [mouseInteraction]);
+
+  // Handle clicks to add wave sources
+  useEffect(() => {
+    if (!mouseInteraction) return;
+
+    const lastClick = mousePosition.clicks[mousePosition.clicks.length - 1];
+    if (lastClick && engineRef.current) {
+      engineRef.current.handleClick(lastClick.x, lastClick.y);
+    }
+  }, [mousePosition.clicks, mouseInteraction]);
 
   return (
     <canvas

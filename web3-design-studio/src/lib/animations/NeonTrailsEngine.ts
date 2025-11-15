@@ -29,6 +29,8 @@ export class NeonTrailsEngine implements AnimationEngine<NeonTrailsConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private gridSize: number = 20;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: NeonTrailsConfig) {
     this.config = { ...config };
@@ -106,6 +108,19 @@ export class NeonTrailsEngine implements AnimationEngine<NeonTrailsConfig> {
     }
   }
 
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
+  }
+
   start(): void {
     if (this.animationId !== null) return;
 
@@ -136,7 +151,9 @@ export class NeonTrailsEngine implements AnimationEngine<NeonTrailsConfig> {
   private update(): void {
     if (!this.canvas) return;
 
-    for (const runner of this.runners) {
+    for (let i = 0; i < this.runners.length; i++) {
+      const runner = this.runners[i];
+
       // Add current position to trail
       runner.trail.push({
         x: runner.x,
@@ -145,41 +162,62 @@ export class NeonTrailsEngine implements AnimationEngine<NeonTrailsConfig> {
       });
 
       // Update trail ages and remove old points
-      for (let i = runner.trail.length - 1; i >= 0; i--) {
-        runner.trail[i].age++;
-        if (runner.trail[i].age > this.config.trailLength) {
-          runner.trail.splice(i, 1);
+      for (let j = runner.trail.length - 1; j >= 0; j--) {
+        runner.trail[j].age++;
+        if (runner.trail[j].age > this.config.trailLength) {
+          runner.trail.splice(j, 1);
         }
       }
 
-      // Move runner
-      runner.x += runner.vx;
-      runner.y += runner.vy;
+      // First runner follows mouse when interaction is enabled
+      if (i === 0 && this.mouseInteractionEnabled && this.mousePosition) {
+        // Smoothly interpolate toward mouse position
+        const dx = this.mousePosition.x - runner.x;
+        const dy = this.mousePosition.y - runner.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-      // Check for direction change
-      runner.nextDirectionChange--;
+        if (distance > 5) {
+          const speed = (this.config.speed / 100) * 8;
+          runner.vx = (dx / distance) * speed;
+          runner.vy = (dy / distance) * speed;
+        } else {
+          runner.vx = 0;
+          runner.vy = 0;
+        }
 
-      if (runner.nextDirectionChange <= 0 || this.shouldChangeDirection(runner)) {
-        this.changeDirection(runner);
-        runner.nextDirectionChange = Math.floor(Math.random() * 100) + 50;
-      }
+        runner.x += runner.vx;
+        runner.y += runner.vy;
+      } else {
+        // Normal grid-based movement for other runners
+        // Move runner
+        runner.x += runner.vx;
+        runner.y += runner.vy;
 
-      // Wrap around edges
-      if (runner.x < 0) {
-        runner.x = this.canvas.width;
-        runner.trail = [];
-      }
-      if (runner.x > this.canvas.width) {
-        runner.x = 0;
-        runner.trail = [];
-      }
-      if (runner.y < 0) {
-        runner.y = this.canvas.height;
-        runner.trail = [];
-      }
-      if (runner.y > this.canvas.height) {
-        runner.y = 0;
-        runner.trail = [];
+        // Check for direction change
+        runner.nextDirectionChange--;
+
+        if (runner.nextDirectionChange <= 0 || this.shouldChangeDirection(runner)) {
+          this.changeDirection(runner);
+          runner.nextDirectionChange = Math.floor(Math.random() * 100) + 50;
+        }
+
+        // Wrap around edges
+        if (runner.x < 0) {
+          runner.x = this.canvas.width;
+          runner.trail = [];
+        }
+        if (runner.x > this.canvas.width) {
+          runner.x = 0;
+          runner.trail = [];
+        }
+        if (runner.y < 0) {
+          runner.y = this.canvas.height;
+          runner.trail = [];
+        }
+        if (runner.y > this.canvas.height) {
+          runner.y = 0;
+          runner.trail = [];
+        }
       }
     }
   }
