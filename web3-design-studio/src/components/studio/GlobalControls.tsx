@@ -2,8 +2,10 @@
 
 import { useStudioStore } from "@/lib/store/studio";
 import { Slider } from "@/components/controls/Slider";
-import { Play, Pause, Activity, MousePointer } from "lucide-react";
+import { Play, Pause, Activity, MousePointer, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { allDefaultPresets } from "@/lib/presets/defaultPresets";
+import type { AnimationType } from "@/lib/types/animation";
 
 export function GlobalControls() {
   const {
@@ -15,7 +17,38 @@ export function GlobalControls() {
     togglePerformance,
     mouseInteraction,
     toggleMouseInteraction,
+    setActiveAnimation,
+    loadPreset,
   } = useStudioStore();
+
+  const handleSurpriseMe = () => {
+    // Get all animation types
+    const animationTypes: AnimationType[] = [
+      "matrix",
+      "fluid",
+      "aurora",
+      "particle",
+      "glitch",
+      "neonTrails",
+      "morphBlob",
+      "cosmic",
+      "dnaHelix",
+      "waveInterference",
+      "plasma",
+    ];
+
+    // Pick random animation
+    const randomAnimation = animationTypes[Math.floor(Math.random() * animationTypes.length)];
+
+    // Get presets for this animation
+    const presetsForAnimation = allDefaultPresets[randomAnimation];
+
+    // Pick random preset
+    const randomPreset = presetsForAnimation[Math.floor(Math.random() * presetsForAnimation.length)];
+
+    // Load it
+    loadPreset(randomPreset);
+  };
 
   return (
     <div className="fixed bottom-6 left-6 glass rounded-xl p-4 space-y-4 animate-slide-in w-72">
@@ -51,6 +84,15 @@ export function GlobalControls() {
             <span>Pause Animation</span>
           </>
         )}
+      </button>
+
+      {/* Surprise Me Button */}
+      <button
+        onClick={handleSurpriseMe}
+        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg transition-all font-medium text-sm bg-gradient-to-r from-matrix-accent/20 to-purple-500/20 hover:from-matrix-accent/30 hover:to-purple-500/30 border border-matrix-accent/40 text-matrix-accent group"
+      >
+        <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+        <span>Surprise Me!</span>
       </button>
 
       {/* Speed Multiplier Slider */}

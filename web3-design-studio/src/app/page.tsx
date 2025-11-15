@@ -17,8 +17,13 @@ import { AnimationSelector } from "@/components/studio/AnimationSelector";
 import { PresetManager } from "@/components/studio/PresetManager";
 import { GlobalControls } from "@/components/studio/GlobalControls";
 import { PerformanceMonitor } from "@/components/studio/PerformanceMonitor";
+import { KeyboardShortcutsGuide } from "@/components/studio/KeyboardShortcutsGuide";
+import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 
 export default function Home() {
+  // Enable keyboard shortcuts
+  useKeyboardShortcuts();
+
   const {
     activeAnimation,
     matrixConfig,
@@ -64,6 +69,9 @@ export default function Home() {
       {/* Performance Monitor */}
       <PerformanceMonitor />
 
+      {/* Keyboard Shortcuts Guide */}
+      <KeyboardShortcutsGuide />
+
       {/* Main Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center space-y-6">
@@ -76,13 +84,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 5.2: 11-Animation Library
+                ✅ Phase 5.3: Interactive Features + Keyboard Shortcuts
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← 11 Animations • Global Controls • Performance Stats →
+              ← 11 Animations • Keyboard Shortcuts • Surprise Me! →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
