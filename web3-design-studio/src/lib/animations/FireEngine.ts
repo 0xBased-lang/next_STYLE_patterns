@@ -36,6 +36,8 @@ export class FireEngine implements AnimationEngine<FireConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private particles: Particle[] = [];
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: FireConfig) {
     this.config = config;
@@ -93,6 +95,19 @@ export class FireEngine implements AnimationEngine<FireConfig> {
     this.stop();
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 
   private generateParticles(): void {
@@ -157,8 +172,20 @@ export class FireEngine implements AnimationEngine<FireConfig> {
     const width = this.canvas.getBoundingClientRect().width;
     const height = this.canvas.getBoundingClientRect().height;
 
+    // Calculate wind from mouse position if interaction is enabled
+    let windForce = this.config.windSpeed / 100;
+    if (this.mouseInteractionEnabled && this.mousePosition) {
+      const centerX = width / 2;
+      const mouseOffsetX = this.mousePosition.x - centerX;
+      // Map mouse position to wind range (-1 to 1)
+      windForce = Math.max(-1, Math.min(1, mouseOffsetX / (width / 2)));
+    }
+
     // Update existing particles
     this.particles.forEach((particle) => {
+      // Apply mouse-controlled wind force
+      particle.vx += (windForce - particle.vx) * 0.1;
+
       particle.x += particle.vx * this.config.speed;
       particle.y += particle.vy * this.config.speed;
       particle.life += this.config.speed;

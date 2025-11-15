@@ -23,6 +23,8 @@ export class FluidEngine implements AnimationEngine<FluidConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private time: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: FluidConfig) {
     this.config = { ...config };
@@ -119,6 +121,22 @@ export class FluidEngine implements AnimationEngine<FluidConfig> {
     this.time += 0.01 * (this.config.speed / 50);
 
     for (const blob of this.blobs) {
+      // Apply mouse repulsion force if interaction is enabled
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dx = blob.x - this.mousePosition.x;
+        const dy = blob.y - this.mousePosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const repulsionRadius = 200;
+
+        if (distance < repulsionRadius && distance > 0) {
+          // Repulsion force (push blobs away from mouse)
+          const force = (1 - distance / repulsionRadius) * 2;
+          const angle = Math.atan2(dy, dx);
+          blob.vx += Math.cos(angle) * force;
+          blob.vy += Math.sin(angle) * force;
+        }
+      }
+
       // Update position
       blob.x += blob.vx;
       blob.y += blob.vy;
@@ -132,6 +150,10 @@ export class FluidEngine implements AnimationEngine<FluidConfig> {
       if (blob.x > this.canvas.width + blob.radius) blob.x = -blob.radius;
       if (blob.y < -blob.radius) blob.y = this.canvas.height + blob.radius;
       if (blob.y > this.canvas.height + blob.radius) blob.y = -blob.radius;
+
+      // Apply friction to slow down over time
+      blob.vx *= 0.98;
+      blob.vy *= 0.98;
 
       // Occasionally change direction slightly
       if (Math.random() < 0.01) {
@@ -261,5 +283,18 @@ export class FluidEngine implements AnimationEngine<FluidConfig> {
     this.blobs = [];
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }
