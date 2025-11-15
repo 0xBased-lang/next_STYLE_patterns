@@ -9,6 +9,9 @@ import { GlitchBackground } from "@/components/animations/GlitchBackground";
 import { NeonTrailsBackground } from "@/components/animations/NeonTrailsBackground";
 import { MorphBlobBackground } from "@/components/animations/MorphBlobBackground";
 import { CosmicBackground } from "@/components/animations/CosmicBackground";
+import { DNAHelixBackground } from "@/components/animations/DNAHelixBackground";
+import { WaveInterferenceBackground } from "@/components/animations/WaveInterferenceBackground";
+import { PlasmaBackground } from "@/components/animations/PlasmaBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
 import { PresetManager } from "@/components/studio/PresetManager";
@@ -26,6 +29,9 @@ export default function Home() {
     neonTrailsConfig,
     morphBlobConfig,
     cosmicConfig,
+    dnaHelixConfig,
+    waveInterferenceConfig,
+    plasmaConfig,
   } = useStudioStore();
 
   return (
@@ -39,6 +45,9 @@ export default function Home() {
       {activeAnimation === "neonTrails" && <NeonTrailsBackground config={neonTrailsConfig} />}
       {activeAnimation === "morphBlob" && <MorphBlobBackground config={morphBlobConfig} />}
       {activeAnimation === "cosmic" && <CosmicBackground config={cosmicConfig} />}
+      {activeAnimation === "dnaHelix" && <DNAHelixBackground config={dnaHelixConfig} />}
+      {activeAnimation === "waveInterference" && <WaveInterferenceBackground config={waveInterferenceConfig} />}
+      {activeAnimation === "plasma" && <PlasmaBackground config={plasmaConfig} />}
 
       {/* Animation Selector */}
       <AnimationSelector />
@@ -67,13 +76,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 5.1: Global Controls + Performance Monitor
+                ✅ Phase 5.2: 11-Animation Library
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← 8 Animations • Global Pause/Speed • Performance Stats →
+              ← 11 Animations • Global Controls • Performance Stats →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
@@ -91,6 +100,12 @@ export default function Home() {
               <span>💜 Morph</span>
               <span>•</span>
               <span>🌌 Cosmic</span>
+              <span>•</span>
+              <span>🧬 DNA</span>
+              <span>•</span>
+              <span>〰️ Waves</span>
+              <span>•</span>
+              <span>🔥 Plasma</span>
             </div>
           </div>
         </div>

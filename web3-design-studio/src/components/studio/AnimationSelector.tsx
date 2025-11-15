@@ -53,6 +53,24 @@ const animations: { id: AnimationType; name: string; icon: string; description: 
     icon: "🌌",
     description: "Nebula & stars",
   },
+  {
+    id: "dnaHelix",
+    name: "DNA",
+    icon: "🧬",
+    description: "Double helix rotation",
+  },
+  {
+    id: "waveInterference",
+    name: "Waves",
+    icon: "〰️",
+    description: "Wave interference",
+  },
+  {
+    id: "plasma",
+    name: "Plasma",
+    icon: "🔥",
+    description: "Demo scene classic",
+  },
 ];
 
 export function AnimationSelector() {
@@ -99,7 +117,7 @@ export function AnimationSelector() {
       </div>
       <div className="border-t border-matrix-accent/20 pt-2 px-2">
         <div className="text-xs text-matrix-text/30 font-mono">
-          Phase 4: 8 Animations
+          Phase 5.2: 11 Animations
         </div>
       </div>
     </div>

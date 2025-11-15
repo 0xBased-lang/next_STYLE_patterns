@@ -14,6 +14,9 @@ import type {
   NeonTrailsConfig,
   MorphBlobConfig,
   CosmicConfig,
+  DNAHelixConfig,
+  WaveInterferenceConfig,
+  PlasmaConfig,
   AnimationType,
   AnimationConfig
 } from "../types/animation";
@@ -25,7 +28,10 @@ import {
   defaultGlitchConfig,
   defaultNeonTrailsConfig,
   defaultMorphBlobConfig,
-  defaultCosmicConfig
+  defaultCosmicConfig,
+  defaultDNAHelixConfig,
+  defaultWaveInterferenceConfig,
+  defaultPlasmaConfig
 } from "../types/animation";
 import type { Preset } from "../types/preset";
 import { allDefaultPresets } from "../presets/defaultPresets";
@@ -74,6 +80,21 @@ interface StudioState {
   cosmicConfig: CosmicConfig;
   updateCosmicConfig: (config: Partial<CosmicConfig>) => void;
   resetCosmicConfig: () => void;
+
+  // DNA Helix configuration
+  dnaHelixConfig: DNAHelixConfig;
+  updateDNAHelixConfig: (config: Partial<DNAHelixConfig>) => void;
+  resetDNAHelixConfig: () => void;
+
+  // Wave Interference configuration
+  waveInterferenceConfig: WaveInterferenceConfig;
+  updateWaveInterferenceConfig: (config: Partial<WaveInterferenceConfig>) => void;
+  resetWaveInterferenceConfig: () => void;
+
+  // Plasma configuration
+  plasmaConfig: PlasmaConfig;
+  updatePlasmaConfig: (config: Partial<PlasmaConfig>) => void;
+  resetPlasmaConfig: () => void;
 
   // UI state
   showControls: boolean;
@@ -174,6 +195,30 @@ export const useStudioStore = create<StudioState>()(
     })),
   resetCosmicConfig: () => set({ cosmicConfig: defaultCosmicConfig }),
 
+  // DNA Helix configuration
+  dnaHelixConfig: defaultDNAHelixConfig,
+  updateDNAHelixConfig: (config) =>
+    set((state) => ({
+      dnaHelixConfig: { ...state.dnaHelixConfig, ...config },
+    })),
+  resetDNAHelixConfig: () => set({ dnaHelixConfig: defaultDNAHelixConfig }),
+
+  // Wave Interference configuration
+  waveInterferenceConfig: defaultWaveInterferenceConfig,
+  updateWaveInterferenceConfig: (config) =>
+    set((state) => ({
+      waveInterferenceConfig: { ...state.waveInterferenceConfig, ...config },
+    })),
+  resetWaveInterferenceConfig: () => set({ waveInterferenceConfig: defaultWaveInterferenceConfig }),
+
+  // Plasma configuration
+  plasmaConfig: defaultPlasmaConfig,
+  updatePlasmaConfig: (config) =>
+    set((state) => ({
+      plasmaConfig: { ...state.plasmaConfig, ...config },
+    })),
+  resetPlasmaConfig: () => set({ plasmaConfig: defaultPlasmaConfig }),
+
   // UI state
   showControls: true,
   toggleControls: () => set((state) => ({ showControls: !state.showControls })),
@@ -239,6 +284,15 @@ export const useStudioStore = create<StudioState>()(
         case "cosmic":
           updates.cosmicConfig = preset.config as CosmicConfig;
           break;
+        case "dnaHelix":
+          updates.dnaHelixConfig = preset.config as DNAHelixConfig;
+          break;
+        case "waveInterference":
+          updates.waveInterferenceConfig = preset.config as WaveInterferenceConfig;
+          break;
+        case "plasma":
+          updates.plasmaConfig = preset.config as PlasmaConfig;
+          break;
       }
 
       updates.activeAnimation = preset.animationType;
@@ -291,6 +345,9 @@ export const useStudioStore = create<StudioState>()(
         neonTrailsConfig: state.neonTrailsConfig,
         morphBlobConfig: state.morphBlobConfig,
         cosmicConfig: state.cosmicConfig,
+        dnaHelixConfig: state.dnaHelixConfig,
+        waveInterferenceConfig: state.waveInterferenceConfig,
+        plasmaConfig: state.plasmaConfig,
         activeAnimation: state.activeAnimation,
         globalSpeed: state.globalSpeed,
         showPerformance: state.showPerformance,
@@ -319,6 +376,12 @@ function getCurrentConfig(state: StudioState): AnimationConfig {
       return state.morphBlobConfig;
     case "cosmic":
       return state.cosmicConfig;
+    case "dnaHelix":
+      return state.dnaHelixConfig;
+    case "waveInterference":
+      return state.waveInterferenceConfig;
+    case "plasma":
+      return state.plasmaConfig;
     default:
       return state.matrixConfig;
   }

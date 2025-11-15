@@ -32,6 +32,15 @@ export function ControlPanel() {
     cosmicConfig,
     updateCosmicConfig,
     resetCosmicConfig,
+    dnaHelixConfig,
+    updateDNAHelixConfig,
+    resetDNAHelixConfig,
+    waveInterferenceConfig,
+    updateWaveInterferenceConfig,
+    resetWaveInterferenceConfig,
+    plasmaConfig,
+    updatePlasmaConfig,
+    resetPlasmaConfig,
     showControls,
     toggleControls,
   } = useStudioStore();
@@ -67,6 +76,12 @@ export function ControlPanel() {
         return "Morph Blob Controls";
       case "cosmic":
         return "Cosmic Controls";
+      case "dnaHelix":
+        return "DNA Helix Controls";
+      case "waveInterference":
+        return "Wave Interference Controls";
+      case "plasma":
+        return "Plasma Controls";
       default:
         return "Controls";
     }
@@ -97,6 +112,15 @@ export function ControlPanel() {
         break;
       case "cosmic":
         resetCosmicConfig();
+        break;
+      case "dnaHelix":
+        resetDNAHelixConfig();
+        break;
+      case "waveInterference":
+        resetWaveInterferenceConfig();
+        break;
+      case "plasma":
+        resetPlasmaConfig();
         break;
     }
   };
@@ -546,10 +570,204 @@ export function ControlPanel() {
         </div>
       )}
 
+      {/* DNA Helix Controls */}
+      {activeAnimation === "dnaHelix" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={dnaHelixConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateDNAHelixConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Helix Radius"
+            value={dnaHelixConfig.helixRadius}
+            min={50}
+            max={200}
+            unit="px"
+            onChange={(value) => updateDNAHelixConfig({ helixRadius: value })}
+          />
+
+          <Slider
+            label="Turns"
+            value={dnaHelixConfig.turns}
+            min={1}
+            max={5}
+            onChange={(value) => updateDNAHelixConfig({ turns: value })}
+          />
+
+          <Slider
+            label="Segments"
+            value={dnaHelixConfig.segments}
+            min={50}
+            max={300}
+            onChange={(value) => updateDNAHelixConfig({ segments: value })}
+          />
+
+          <Slider
+            label="Glow Intensity"
+            value={dnaHelixConfig.glowIntensity}
+            min={0}
+            max={100}
+            onChange={(value) => updateDNAHelixConfig({ glowIntensity: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={dnaHelixConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateDNAHelixConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={dnaHelixConfig.color1}
+            onChange={(value) => updateDNAHelixConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={dnaHelixConfig.color2}
+            onChange={(value) => updateDNAHelixConfig({ color2: value })}
+          />
+        </div>
+      )}
+
+      {/* Wave Interference Controls */}
+      {activeAnimation === "waveInterference" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={waveInterferenceConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updateWaveInterferenceConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Wavelength"
+            value={waveInterferenceConfig.wavelength}
+            min={20}
+            max={200}
+            onChange={(value) => updateWaveInterferenceConfig({ wavelength: value })}
+          />
+
+          <Slider
+            label="Amplitude"
+            value={waveInterferenceConfig.amplitude}
+            min={1}
+            max={100}
+            onChange={(value) => updateWaveInterferenceConfig({ amplitude: value })}
+          />
+
+          <Slider
+            label="Source Count"
+            value={waveInterferenceConfig.sourceCount}
+            min={1}
+            max={8}
+            onChange={(value) => updateWaveInterferenceConfig({ sourceCount: value })}
+          />
+
+          <Slider
+            label="Resolution"
+            value={waveInterferenceConfig.resolution}
+            min={1}
+            max={100}
+            onChange={(value) => updateWaveInterferenceConfig({ resolution: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={waveInterferenceConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updateWaveInterferenceConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={waveInterferenceConfig.color1}
+            onChange={(value) => updateWaveInterferenceConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={waveInterferenceConfig.color2}
+            onChange={(value) => updateWaveInterferenceConfig({ color2: value })}
+          />
+        </div>
+      )}
+
+      {/* Plasma Controls */}
+      {activeAnimation === "plasma" && (
+        <div className="space-y-4">
+          <Slider
+            label="Speed"
+            value={plasmaConfig.speed}
+            min={1}
+            max={100}
+            onChange={(value) => updatePlasmaConfig({ speed: value })}
+          />
+
+          <Slider
+            label="Intensity"
+            value={plasmaConfig.intensity}
+            min={1}
+            max={100}
+            onChange={(value) => updatePlasmaConfig({ intensity: value })}
+          />
+
+          <Slider
+            label="Complexity"
+            value={plasmaConfig.complexity}
+            min={1}
+            max={100}
+            onChange={(value) => updatePlasmaConfig({ complexity: value })}
+          />
+
+          <Slider
+            label="Scale"
+            value={plasmaConfig.scale}
+            min={10}
+            max={200}
+            onChange={(value) => updatePlasmaConfig({ scale: value })}
+          />
+
+          <Slider
+            label="FPS"
+            value={plasmaConfig.fps}
+            min={30}
+            max={60}
+            onChange={(value) => updatePlasmaConfig({ fps: value })}
+          />
+
+          <ColorPicker
+            label="Color 1"
+            value={plasmaConfig.color1}
+            onChange={(value) => updatePlasmaConfig({ color1: value })}
+          />
+
+          <ColorPicker
+            label="Color 2"
+            value={plasmaConfig.color2}
+            onChange={(value) => updatePlasmaConfig({ color2: value })}
+          />
+
+          <ColorPicker
+            label="Color 3"
+            value={plasmaConfig.color3}
+            onChange={(value) => updatePlasmaConfig({ color3: value })}
+          />
+        </div>
+      )}
+
       {/* Info */}
       <div className="pt-4 border-t border-matrix-accent/20">
         <p className="text-xs text-matrix-text/50 font-mono">
-          Phase 4: 8 Animation Library
+          Phase 5.2: 11 Animation Library
         </p>
       </div>
     </div>

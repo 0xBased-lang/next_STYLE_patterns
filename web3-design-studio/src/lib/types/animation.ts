@@ -76,6 +76,39 @@ export interface CosmicConfig {
   fps: number; // 30-60
 }
 
+export interface DNAHelixConfig {
+  speed: number; // 1-100 (rotation speed)
+  color1: string; // First strand color
+  color2: string; // Second strand color
+  helixRadius: number; // 50-200 (helix width)
+  turns: number; // 1-5 (number of complete rotations)
+  segments: number; // 50-300 (detail level)
+  glowIntensity: number; // 0-100
+  fps: number; // 30-60
+}
+
+export interface WaveInterferenceConfig {
+  speed: number; // 1-100 (wave propagation speed)
+  color1: string; // Wave color 1
+  color2: string; // Wave color 2
+  wavelength: number; // 20-200 (distance between peaks)
+  amplitude: number; // 1-100 (wave strength)
+  sourceCount: number; // 1-8 (number of wave sources)
+  resolution: number; // 1-100 (detail level, higher = more detail)
+  fps: number; // 30-60
+}
+
+export interface PlasmaConfig {
+  speed: number; // 1-100 (animation speed)
+  color1: string; // Plasma color 1
+  color2: string; // Plasma color 2
+  color3: string; // Plasma color 3
+  intensity: number; // 1-100 (brightness)
+  complexity: number; // 1-100 (pattern complexity)
+  scale: number; // 10-200 (pattern scale)
+  fps: number; // 30-60
+}
+
 /**
  * Union type of all animation configs
  */
@@ -87,7 +120,10 @@ export type AnimationConfig =
   | GlitchConfig
   | MorphBlobConfig
   | NeonTrailsConfig
-  | CosmicConfig;
+  | CosmicConfig
+  | DNAHelixConfig
+  | WaveInterferenceConfig
+  | PlasmaConfig;
 
 /**
  * Animation type identifier
@@ -100,7 +136,10 @@ export type AnimationType =
   | "glitch"
   | "morphBlob"
   | "neonTrails"
-  | "cosmic";
+  | "cosmic"
+  | "dnaHelix"
+  | "waveInterference"
+  | "plasma";
 
 /**
  * Animation Engine Interface
@@ -232,6 +271,48 @@ export const defaultCosmicConfig: CosmicConfig = {
   color2: "#7b2cbf",
   starCount: 500,
   nebulaIntensity: 60,
+  fps: 60,
+};
+
+/**
+ * Default DNA Helix Configuration
+ */
+export const defaultDNAHelixConfig: DNAHelixConfig = {
+  speed: 40,
+  color1: "#00ff87",
+  color2: "#ff0080",
+  helixRadius: 100,
+  turns: 3,
+  segments: 150,
+  glowIntensity: 60,
+  fps: 60,
+};
+
+/**
+ * Default Wave Interference Configuration
+ */
+export const defaultWaveInterferenceConfig: WaveInterferenceConfig = {
+  speed: 50,
+  color1: "#0a0e0a",
+  color2: "#00d9ff",
+  wavelength: 80,
+  amplitude: 50,
+  sourceCount: 2,
+  resolution: 50,
+  fps: 60,
+};
+
+/**
+ * Default Plasma Configuration
+ */
+export const defaultPlasmaConfig: PlasmaConfig = {
+  speed: 50,
+  color1: "#ff0080",
+  color2: "#7b2cbf",
+  color3: "#00d9ff",
+  intensity: 80,
+  complexity: 60,
+  scale: 100,
   fps: 60,
 };
 
