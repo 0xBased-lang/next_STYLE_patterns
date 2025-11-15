@@ -12,6 +12,8 @@ import { CosmicBackground } from "@/components/animations/CosmicBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
 import { PresetManager } from "@/components/studio/PresetManager";
+import { GlobalControls } from "@/components/studio/GlobalControls";
+import { PerformanceMonitor } from "@/components/studio/PerformanceMonitor";
 
 export default function Home() {
   const {
@@ -47,6 +49,12 @@ export default function Home() {
       {/* Preset Manager */}
       <PresetManager />
 
+      {/* Global Controls */}
+      <GlobalControls />
+
+      {/* Performance Monitor */}
+      <PerformanceMonitor />
+
       {/* Main Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center space-y-6">
@@ -59,13 +67,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 4: Complete 8-Animation Library
+                ✅ Phase 5.1: Global Controls + Performance Monitor
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← Choose from 8 animations • Fine-tune with real-time controls →
+              ← 8 Animations • Global Pause/Speed • Performance Stats →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>

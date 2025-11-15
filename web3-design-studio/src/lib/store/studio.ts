@@ -79,6 +79,20 @@ interface StudioState {
   showControls: boolean;
   toggleControls: () => void;
 
+  // Global animation controls
+  isPaused: boolean;
+  togglePause: () => void;
+  globalSpeed: number;
+  setGlobalSpeed: (speed: number) => void;
+
+  // Performance monitoring
+  showPerformance: boolean;
+  togglePerformance: () => void;
+
+  // Mouse interaction
+  mouseInteraction: boolean;
+  toggleMouseInteraction: () => void;
+
   // Preset management
   userPresets: Preset[];
   savePreset: (name: string, description: string) => void;
@@ -163,6 +177,20 @@ export const useStudioStore = create<StudioState>()(
   // UI state
   showControls: true,
   toggleControls: () => set((state) => ({ showControls: !state.showControls })),
+
+  // Global animation controls
+  isPaused: false,
+  togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
+  globalSpeed: 1.0,
+  setGlobalSpeed: (speed: number) => set({ globalSpeed: Math.max(0.1, Math.min(2.0, speed)) }),
+
+  // Performance monitoring
+  showPerformance: false,
+  togglePerformance: () => set((state) => ({ showPerformance: !state.showPerformance })),
+
+  // Mouse interaction
+  mouseInteraction: false,
+  toggleMouseInteraction: () => set((state) => ({ mouseInteraction: !state.mouseInteraction })),
 
   // Preset management
   userPresets: [],
@@ -264,6 +292,9 @@ export const useStudioStore = create<StudioState>()(
         morphBlobConfig: state.morphBlobConfig,
         cosmicConfig: state.cosmicConfig,
         activeAnimation: state.activeAnimation,
+        globalSpeed: state.globalSpeed,
+        showPerformance: state.showPerformance,
+        mouseInteraction: state.mouseInteraction,
       }),
     }
   )

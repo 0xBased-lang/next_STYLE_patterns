@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { MatrixEngine } from "@/lib/animations/MatrixEngine";
 import type { MatrixConfig } from "@/lib/types/animation";
+import { useStudioStore } from "@/lib/store/studio";
 
 interface MatrixBackgroundProps {
   config: MatrixConfig;
@@ -12,6 +13,7 @@ interface MatrixBackgroundProps {
 export function MatrixBackground({ config, className = "" }: MatrixBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<MatrixEngine | null>(null);
+  const { isPaused, globalSpeed } = useStudioStore();
 
   // Initialize engine
   useEffect(() => {
@@ -19,7 +21,9 @@ export function MatrixBackground({ config, className = "" }: MatrixBackgroundPro
 
     const engine = new MatrixEngine(config);
     engine.init(canvasRef.current);
-    engine.start();
+    if (!isPaused) {
+      engine.start();
+    }
 
     engineRef.current = engine;
 
@@ -38,12 +42,28 @@ export function MatrixBackground({ config, className = "" }: MatrixBackgroundPro
     };
   }, []); // Only run once on mount
 
-  // Update config when it changes
+  // Handle pause/resume
+  useEffect(() => {
+    if (!engineRef.current) return;
+
+    if (isPaused) {
+      engineRef.current.stop();
+    } else {
+      engineRef.current.start();
+    }
+  }, [isPaused]);
+
+  // Update config when it changes (including globalSpeed effect)
   useEffect(() => {
     if (engineRef.current) {
-      engineRef.current.updateConfig(config);
+      // Apply global speed multiplier to the config
+      const adjustedConfig = {
+        ...config,
+        speed: config.speed * globalSpeed,
+      };
+      engineRef.current.updateConfig(adjustedConfig);
     }
-  }, [config]);
+  }, [config, globalSpeed]);
 
   return (
     <canvas

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { GlitchEngine } from "@/lib/animations/GlitchEngine";
 import type { GlitchConfig } from "@/lib/types/animation";
+import { useStudioStore } from "@/lib/store/studio";
 
 interface GlitchBackgroundProps {
   config: GlitchConfig;
@@ -12,6 +13,7 @@ interface GlitchBackgroundProps {
 export function GlitchBackground({ config, className = "" }: GlitchBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<GlitchEngine | null>(null);
+  const { isPaused, globalSpeed } = useStudioStore();
 
   // Initialize engine
   useEffect(() => {
@@ -19,7 +21,9 @@ export function GlitchBackground({ config, className = "" }: GlitchBackgroundPro
 
     const engine = new GlitchEngine(config);
     engine.init(canvasRef.current);
-    engine.start();
+    if (!isPaused) {
+      engine.start();
+    }
 
     engineRef.current = engine;
 
@@ -38,12 +42,28 @@ export function GlitchBackground({ config, className = "" }: GlitchBackgroundPro
     };
   }, []); // Only run once on mount
 
-  // Update config when it changes
+  // Handle pause/resume
+  useEffect(() => {
+    if (!engineRef.current) return;
+
+    if (isPaused) {
+      engineRef.current.stop();
+    } else {
+      engineRef.current.start();
+    }
+  }, [isPaused]);
+
+  // Update config when it changes (including globalSpeed effect)
   useEffect(() => {
     if (engineRef.current) {
-      engineRef.current.updateConfig(config);
+      // Glitch uses frequency instead of speed
+      const adjustedConfig = {
+        ...config,
+        frequency: config.frequency * globalSpeed,
+      };
+      engineRef.current.updateConfig(adjustedConfig);
     }
-  }, [config]);
+  }, [config, globalSpeed]);
 
   return (
     <canvas
