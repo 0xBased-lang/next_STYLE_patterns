@@ -9,6 +9,7 @@ import { GlitchBackground } from "@/components/animations/GlitchBackground";
 import { NeonTrailsBackground } from "@/components/animations/NeonTrailsBackground";
 import { ControlPanel } from "@/components/studio/ControlPanel";
 import { AnimationSelector } from "@/components/studio/AnimationSelector";
+import { PresetManager } from "@/components/studio/PresetManager";
 
 export default function Home() {
   const {
@@ -37,6 +38,9 @@ export default function Home() {
       {/* Control Panel */}
       <ControlPanel />
 
+      {/* Preset Manager */}
+      <PresetManager />
+
       {/* Main Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center space-y-6">
@@ -49,7 +53,7 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 3: 6 Psychedelic Animations Complete
+                ✅ Phase 3.5: Animations + Preset System Complete
               </p>
             </div>
           </div>

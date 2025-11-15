@@ -4,6 +4,7 @@
  */
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type {
   MatrixConfig,
   FluidConfig,
@@ -11,7 +12,8 @@ import type {
   ParticleConfig,
   GlitchConfig,
   NeonTrailsConfig,
-  AnimationType
+  AnimationType,
+  AnimationConfig
 } from "../types/animation";
 import {
   defaultMatrixConfig,
@@ -21,6 +23,8 @@ import {
   defaultGlitchConfig,
   defaultNeonTrailsConfig
 } from "../types/animation";
+import type { Preset } from "../types/preset";
+import { allDefaultPresets } from "../presets/defaultPresets";
 
 interface StudioState {
   // Current active animation
@@ -60,9 +64,20 @@ interface StudioState {
   // UI state
   showControls: boolean;
   toggleControls: () => void;
+
+  // Preset management
+  userPresets: Preset[];
+  savePreset: (name: string, description: string) => void;
+  loadPreset: (preset: Preset) => void;
+  deletePreset: (presetId: string) => void;
+  getPresetsForCurrentAnimation: () => Preset[];
+  exportPreset: (preset: Preset) => string;
+  importPreset: (jsonString: string) => void;
 }
 
-export const useStudioStore = create<StudioState>((set) => ({
+export const useStudioStore = create<StudioState>()(
+  persist(
+    (set, get) => ({
   // Active animation
   activeAnimation: "matrix",
   setActiveAnimation: (animation) => set({ activeAnimation: animation }),
@@ -118,4 +133,120 @@ export const useStudioStore = create<StudioState>((set) => ({
   // UI state
   showControls: true,
   toggleControls: () => set((state) => ({ showControls: !state.showControls })),
-}));
+
+  // Preset management
+  userPresets: [],
+
+  savePreset: (name: string, description: string) =>
+    set((state) => {
+      const config = getCurrentConfig(state);
+      const newPreset: Preset = {
+        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name,
+        description,
+        animationType: state.activeAnimation,
+        config,
+        createdAt: Date.now(),
+        isDefault: false,
+      };
+      return { userPresets: [...state.userPresets, newPreset] };
+    }),
+
+  loadPreset: (preset: Preset) =>
+    set((state) => {
+      const updates: Partial<StudioState> = {};
+
+      switch (preset.animationType) {
+        case "matrix":
+          updates.matrixConfig = preset.config as MatrixConfig;
+          break;
+        case "fluid":
+          updates.fluidConfig = preset.config as FluidConfig;
+          break;
+        case "aurora":
+          updates.auroraConfig = preset.config as AuroraConfig;
+          break;
+        case "particle":
+          updates.particleConfig = preset.config as ParticleConfig;
+          break;
+        case "glitch":
+          updates.glitchConfig = preset.config as GlitchConfig;
+          break;
+        case "neonTrails":
+          updates.neonTrailsConfig = preset.config as NeonTrailsConfig;
+          break;
+      }
+
+      updates.activeAnimation = preset.animationType;
+      return updates;
+    }),
+
+  deletePreset: (presetId: string) =>
+    set((state) => ({
+      userPresets: state.userPresets.filter((p) => p.id !== presetId),
+    })),
+
+  getPresetsForCurrentAnimation: () => {
+    const state = get();
+    const defaultPresets = allDefaultPresets[state.activeAnimation];
+    const userPresetsForAnim = state.userPresets.filter(
+      (p) => p.animationType === state.activeAnimation
+    );
+    return [...defaultPresets, ...userPresetsForAnim];
+  },
+
+  exportPreset: (preset: Preset) => {
+    return JSON.stringify(preset, null, 2);
+  },
+
+  importPreset: (jsonString: string) =>
+    set((state) => {
+      try {
+        const preset: Preset = JSON.parse(jsonString);
+        // Validate preset structure
+        if (!preset.id || !preset.name || !preset.animationType || !preset.config) {
+          throw new Error("Invalid preset format");
+        }
+        // Add as user preset
+        return { userPresets: [...state.userPresets, { ...preset, isDefault: false }] };
+      } catch (error) {
+        console.error("Failed to import preset:", error);
+        return state;
+      }
+    }),
+    }),
+    {
+      name: "web3-design-studio-storage",
+      partialize: (state) => ({
+        userPresets: state.userPresets,
+        matrixConfig: state.matrixConfig,
+        fluidConfig: state.fluidConfig,
+        auroraConfig: state.auroraConfig,
+        particleConfig: state.particleConfig,
+        glitchConfig: state.glitchConfig,
+        neonTrailsConfig: state.neonTrailsConfig,
+        activeAnimation: state.activeAnimation,
+      }),
+    }
+  )
+);
+
+// Helper function to get current configuration based on active animation
+function getCurrentConfig(state: StudioState): AnimationConfig {
+  switch (state.activeAnimation) {
+    case "matrix":
+      return state.matrixConfig;
+    case "fluid":
+      return state.fluidConfig;
+    case "aurora":
+      return state.auroraConfig;
+    case "particle":
+      return state.particleConfig;
+    case "glitch":
+      return state.glitchConfig;
+    case "neonTrails":
+      return state.neonTrailsConfig;
+    default:
+      return state.matrixConfig;
+  }
+}
