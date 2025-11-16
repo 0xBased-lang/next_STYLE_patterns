@@ -32,6 +32,8 @@ export function useKeyboardShortcuts() {
     togglePerformance,
     toggleMouseInteraction,
     toggleControls,
+    toggleExportPanel,
+    toggleCodeInspector,
     activeAnimation,
     resetMatrixConfig,
     resetFluidConfig,
@@ -145,6 +147,20 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // E: Toggle export panel
+      if (key === "e") {
+        toggleExportPanel();
+        event.preventDefault();
+        return;
+      }
+
+      // I: Toggle code inspector
+      if (key === "i") {
+        toggleCodeInspector();
+        event.preventDefault();
+        return;
+      }
+
       // C or Escape: Toggle control panel
       if (key === "c" || key === "escape" || key === "esc") {
         toggleControls();
@@ -180,6 +196,8 @@ export function useKeyboardShortcuts() {
     togglePerformance,
     toggleMouseInteraction,
     toggleControls,
+    toggleExportPanel,
+    toggleCodeInspector,
     resetMatrixConfig,
     resetFluidConfig,
     resetAuroraConfig,

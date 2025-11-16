@@ -26,10 +26,14 @@ import { AnimationTransition } from "@/components/studio/AnimationTransition";
 import { ExportPanel } from "@/components/studio/ExportPanel";
 import { CodeInspector } from "@/components/studio/CodeInspector";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
+import { useURLConfig } from "@/lib/hooks/useURLConfig";
 
 export default function Home() {
   // Enable keyboard shortcuts
   useKeyboardShortcuts();
+
+  // Load configuration from URL parameters
+  useURLConfig();
 
   const {
     activeAnimation,

@@ -102,6 +102,8 @@ export function KeyboardShortcutsGuide() {
               <ShortcutItem keyLabel="P" description="Toggle performance stats" />
               <ShortcutItem keyLabel="M" description="Toggle mouse interaction" />
               <ShortcutItem keyLabel="C" description="Toggle control panel" />
+              <ShortcutItem keyLabel="E" description="Toggle export/import panel" />
+              <ShortcutItem keyLabel="I" description="Toggle code inspector" />
               <ShortcutItem keyLabel="Esc" description="Toggle control panel" />
               <ShortcutItem keyLabel="?" description="Toggle this guide" />
             </div>
