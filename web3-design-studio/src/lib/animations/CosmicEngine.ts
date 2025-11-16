@@ -12,6 +12,10 @@ interface Star {
   twinkle: number;
   twinkleSpeed: number;
   layer: number;
+  vx: number;
+  vy: number;
+  originalX: number;
+  originalY: number;
 }
 
 interface NebulaCloud {
@@ -32,6 +36,8 @@ export class CosmicEngine implements AnimationEngine<CosmicConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private time: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: CosmicConfig) {
     this.config = { ...config };
@@ -58,13 +64,19 @@ export class CosmicEngine implements AnimationEngine<CosmicConfig> {
     this.stars = [];
 
     for (let i = 0; i < starCount; i++) {
+      const x = Math.random() * this.canvas.width;
+      const y = Math.random() * this.canvas.height;
       this.stars.push({
-        x: Math.random() * this.canvas.width,
-        y: Math.random() * this.canvas.height,
+        x,
+        y,
         size: Math.random() * 2 + 0.5,
         twinkle: Math.random(),
         twinkleSpeed: Math.random() * 0.02 + 0.01,
         layer: Math.floor(Math.random() * 3), // 3 depth layers
+        vx: 0,
+        vy: 0,
+        originalX: x,
+        originalY: y,
       });
     }
   }
@@ -133,9 +145,56 @@ export class CosmicEngine implements AnimationEngine<CosmicConfig> {
   private update(): void {
     this.time += 0.01 * (this.config.speed / 50);
 
-    // Update star twinkle
+    // Update star twinkle and position
     for (const star of this.stars) {
       star.twinkle += star.twinkleSpeed;
+
+      // Apply mouse interaction
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dx = this.mousePosition.x - star.x;
+        const dy = this.mousePosition.y - star.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const attractionRadius = 300;
+
+        if (distance < attractionRadius && distance > 0) {
+          // Attraction force (stars move toward mouse)
+          const force = (1 - distance / attractionRadius) * 0.3 * (star.layer + 1);
+          const angle = Math.atan2(dy, dx);
+          star.vx += Math.cos(angle) * force;
+          star.vy += Math.sin(angle) * force;
+        }
+
+        // Return to original position when far from mouse
+        const dxOrig = star.originalX - star.x;
+        const dyOrig = star.originalY - star.y;
+        star.vx += dxOrig * 0.01;
+        star.vy += dyOrig * 0.01;
+
+        // Apply velocity
+        star.x += star.vx;
+        star.y += star.vy;
+
+        // Friction
+        star.vx *= 0.95;
+        star.vy *= 0.95;
+      } else if (star.vx !== 0 || star.vy !== 0) {
+        // Return to original position when interaction disabled
+        const dxOrig = star.originalX - star.x;
+        const dyOrig = star.originalY - star.y;
+        star.x += dxOrig * 0.05;
+        star.y += dyOrig * 0.05;
+
+        // Gradually stop velocity
+        star.vx *= 0.9;
+        star.vy *= 0.9;
+
+        if (Math.abs(dxOrig) < 0.1 && Math.abs(dyOrig) < 0.1) {
+          star.x = star.originalX;
+          star.y = star.originalY;
+          star.vx = 0;
+          star.vy = 0;
+        }
+      }
     }
 
     // Update nebula rotation
@@ -276,5 +335,23 @@ export class CosmicEngine implements AnimationEngine<CosmicConfig> {
     this.nebulaClouds = [];
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+      // Return stars to original positions
+      for (const star of this.stars) {
+        star.vx = 0;
+        star.vy = 0;
+      }
+    }
   }
 }
