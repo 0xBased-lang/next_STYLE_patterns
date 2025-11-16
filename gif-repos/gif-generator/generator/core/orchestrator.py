@@ -14,6 +14,10 @@ from ..tools.base import ToolNotFoundError, ToolExecutionError
 from ..tools.gifcurry import GifcurryTool
 from ..tools.gifsicle import GifsicleTool
 from ..tools.ffmpeg_gif import FFmpegGifTool
+from ..tools.backgroundremover import BackgroundRemoverTool
+from ..tools.neural_style import NeuralStyleTransferTool
+from ..tools.liveportrait import LivePortraitTool
+from ..tools.first_order_model import FirstOrderModelTool
 
 
 @dataclass
@@ -48,9 +52,17 @@ class PipelineOrchestrator:
             print("⚠️  gifcurry not found, using ffmpeg as fallback for GIF creation")
             gifcurry_tool = FFmpegGifTool()
 
+        # Initialize ffmpeg tool (for fallback and direct use)
+        ffmpeg_tool = FFmpegGifTool()
+
         self.tools = {
             'gifcurry': gifcurry_tool,
             'gifsicle': GifsicleTool(),
+            'ffmpeg': ffmpeg_tool,
+            'backgroundremover': BackgroundRemoverTool(),
+            'neural-style-transfer': NeuralStyleTransferTool(),
+            'liveportrait': LivePortraitTool(),
+            'first-order-model': FirstOrderModelTool(),
         }
 
     def execute(self, template: Template, resolved_vars: Dict[str, Any],

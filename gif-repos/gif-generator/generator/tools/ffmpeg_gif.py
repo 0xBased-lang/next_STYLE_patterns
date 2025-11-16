@@ -48,6 +48,27 @@ class FFmpegGifTool(BaseTool):
         elif operation == "process":
             # Generic processing operation
             return self._process(input_path, output_path, params)
+        elif operation == "prepare_image":
+            # Prepare image (crop, scale, format)
+            return self._prepare_image(input_path, output_path, params)
+        elif operation == "apply_vhs_filters":
+            # Apply VHS-style retro effects
+            return self._apply_vhs_filters(input_path, output_path, params)
+        elif operation == "prepare_360_video":
+            # Prepare 360-degree video
+            return self._prepare_360_video(input_path, output_path, params)
+        elif operation == "create_animation":
+            # Create animation from static image
+            return self._create_animation(input_path, output_path, params)
+        elif operation == "composite_background":
+            # Composite with new background
+            return self._composite_background(input_path, output_path, params)
+        elif operation == "smooth_frames":
+            # Smooth frame transitions
+            return self._smooth_frames(input_path, output_path, params)
+        elif operation == "apply_filters":
+            # Apply generic filters (similar to apply_filter but plural form)
+            return self._apply_filter(input_path, output_path, params)
         else:
             raise ValueError(f"Unknown operation: {operation}")
 
@@ -243,6 +264,318 @@ class FFmpegGifTool(BaseTool):
         # Otherwise, do basic conversion
         return self._convert(input_path, output_path, params)
 
+    def _prepare_image(self, input_path: Path, output_path: Path,
+                      params: Dict[str, Any]) -> Path:
+        """
+        Prepare image for animation (crop, scale, format conversion)
+        """
+        # Extract parameters
+        width = params.get('width', params.get('size', 640))
+        height = params.get('height', params.get('size', 640))
+
+        # Build filter chain for image preparation
+        filters = []
+
+        # Scale to desired size
+        if width and height:
+            filters.append(f"scale={width}:{height}:force_original_aspect_ratio=decrease")
+            filters.append(f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2")
+
+        filter_str = ','.join(filters) if filters else "scale=640:640"
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-i', str(input_path),
+            '-vf', filter_str,
+            '-y',  # Overwrite output
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg prepare_image failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg prepare_image completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _apply_vhs_filters(self, input_path: Path, output_path: Path,
+                          params: Dict[str, Any]) -> Path:
+        """
+        Apply VHS-style retro effects to video
+        """
+        # Extract parameters
+        noise_level = int(params.get('noise_level', 30))
+
+        # Build VHS filter chain
+        filters = []
+
+        # Color bleeding effect (reduce saturation, shift colors)
+        filters.append("colorchannelmixer=.8:.2:.2:.2:.8:.2:.2:.2:.8")
+
+        # Add noise (VHS tape grain)
+        filters.append(f"noise=alls={noise_level}:allf=t")
+
+        # Slight blur (VHS quality degradation)
+        filters.append("unsharp=-1.5:-1.5:-1.5:-1.5:0:0")
+
+        # Vignette (edge darkening)
+        filters.append("vignette=angle=PI/4")
+
+        filter_str = ','.join(filters)
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-i', str(input_path),
+            '-vf', filter_str,
+            '-c:a', 'copy',  # Copy audio unchanged
+            '-y',  # Overwrite output
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg VHS filters failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg VHS filters completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _prepare_360_video(self, input_path: Path, output_path: Path,
+                          params: Dict[str, Any]) -> Path:
+        """
+        Prepare 360-degree video (stabilization, cropping, format)
+        """
+        # Extract parameters
+        width = int(params.get('width', 640))
+        rotation = float(params.get('rotation', 0))
+
+        # Build filter chain for 360 video
+        filters = []
+
+        # Scale
+        filters.append(f"scale={width}:-1")
+
+        # Rotate if needed
+        if rotation != 0:
+            filters.append(f"rotate={rotation}*PI/180")
+
+        # Stabilization (basic)
+        filters.append("deshake")
+
+        filter_str = ','.join(filters)
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-i', str(input_path),
+            '-vf', filter_str,
+            '-c:a', 'copy',
+            '-y',
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg 360 video prep failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg 360 video prep completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _create_animation(self, input_path: Path, output_path: Path,
+                         params: Dict[str, Any]) -> Path:
+        """
+        Create animation from static image using motion effects
+        """
+        # Extract parameters
+        duration = float(params.get('duration', 3))
+        fps = int(params.get('fps', 24))
+        animation_type = params.get('animation_type', 'subtle-zoom')
+
+        # Build animation filter based on type
+        if animation_type == 'subtle-zoom':
+            # Slow zoom effect
+            zoom_filter = f"zoompan=z='min(zoom+0.001,1.2)':d={int(duration*fps)}:s=640x640:fps={fps}"
+        elif animation_type == 'subtle-bounce':
+            # Slight bounce effect
+            zoom_filter = f"zoompan=z='if(lte(zoom,1.0),1.05,max(1.00,zoom-0.01))':d={int(duration*fps)}:s=640x640:fps={fps}"
+        elif animation_type == 'pan':
+            # Pan across image
+            zoom_filter = f"zoompan=z='1.5':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={int(duration*fps)}:s=640x640:fps={fps}"
+        else:
+            # Default: simple loop
+            zoom_filter = f"loop=loop={int(duration*fps)}:size=1:start=0,fps={fps}"
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-loop', '1',
+            '-i', str(input_path),
+            '-vf', zoom_filter,
+            '-t', str(duration),
+            '-pix_fmt', 'yuv420p',
+            '-y',
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg animation failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg animation completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _composite_background(self, input_path: Path, output_path: Path,
+                             params: Dict[str, Any]) -> Path:
+        """
+        Composite video with new background (after background removal)
+        """
+        # Extract parameters
+        background_color = params.get('background_color', 'white')
+        background_image = params.get('background_image', None)
+
+        # Build composite command
+        if background_image:
+            # Composite with image background
+            cmd = [
+                str(self.tool_path),
+                '-i', str(background_image),
+                '-i', str(input_path),
+                '-filter_complex', '[0:v][1:v]overlay',
+                '-y',
+                str(output_path)
+            ]
+        else:
+            # Composite with solid color background
+            cmd = [
+                str(self.tool_path),
+                '-i', str(input_path),
+                '-vf', f"colorkey={background_color}:similarity=0.3:blend=0.0",
+                '-y',
+                str(output_path)
+            ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg composite failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg composite completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _smooth_frames(self, input_path: Path, output_path: Path,
+                      params: Dict[str, Any]) -> Path:
+        """
+        Smooth frame transitions (for AI-generated content with artifacts)
+        """
+        # Extract parameters
+        fps = int(params.get('fps', 24))
+
+        # Build smoothing filter chain
+        filters = []
+
+        # Temporal smoothing
+        filters.append("minterpolate=fps=" + str(fps) + ":mi_mode=mci")
+
+        # Slight blur to reduce artifacts
+        filters.append("unsharp=5:5:0.5:5:5:0.0")
+
+        filter_str = ','.join(filters)
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-i', str(input_path),
+            '-vf', filter_str,
+            '-c:a', 'copy',
+            '-y',
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg smooth frames failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg smooth frames completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
     def get_help(self) -> str:
         """Get help text for this tool"""
         return """
@@ -254,7 +587,14 @@ Operations:
   convert: Basic video-to-GIF conversion (faster, simpler)
   convert_to_gif: Alias for create_gif
   apply_filter: Apply custom ffmpeg filters
+  apply_filters: Apply generic filters (plural form)
   process: Generic processing (auto-detects based on params)
+  prepare_image: Prepare image (crop, scale, format)
+  apply_vhs_filters: Apply VHS-style retro effects
+  prepare_360_video: Prepare 360-degree video
+  create_animation: Create animation from static image
+  composite_background: Composite with new background
+  smooth_frames: Smooth frame transitions
 
 Parameters:
   start_time (float): Start time in seconds (default: 0)
