@@ -2,7 +2,7 @@
 
 import { useStudioStore } from "@/lib/store/studio";
 import { Slider } from "@/components/controls/Slider";
-import { Play, Pause, Activity, MousePointer, Sparkles, RotateCw, Shuffle } from "lucide-react";
+import { Play, Pause, Activity, MousePointer, Sparkles, RotateCw, Shuffle, FileJson, Code } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { allDefaultPresets } from "@/lib/presets/defaultPresets";
 import type { AnimationType } from "@/lib/types/animation";
@@ -27,6 +27,8 @@ export function GlobalControls() {
     setAutoRotateInterval,
     setActiveAnimation,
     loadPreset,
+    toggleExportPanel,
+    toggleCodeInspector,
   } = useStudioStore();
 
   const handleSurpriseMe = () => {
@@ -102,6 +104,24 @@ export function GlobalControls() {
         <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
         <span>Surprise Me!</span>
       </button>
+
+      {/* Export/Share and Code Inspector Buttons */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          onClick={toggleExportPanel}
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg transition-all font-medium text-sm bg-matrix-surface/50 hover:bg-matrix-surface border border-matrix-accent/20 hover:border-matrix-accent/40 text-matrix-text/80"
+        >
+          <FileJson className="w-4 h-4" />
+          <span>Export</span>
+        </button>
+        <button
+          onClick={toggleCodeInspector}
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg transition-all font-medium text-sm bg-matrix-surface/50 hover:bg-matrix-surface border border-matrix-accent/20 hover:border-matrix-accent/40 text-matrix-text/80"
+        >
+          <Code className="w-4 h-4" />
+          <span>Code</span>
+        </button>
+      </div>
 
       {/* Speed Multiplier Slider */}
       <div className="space-y-2">

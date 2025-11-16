@@ -162,6 +162,18 @@ interface StudioState {
   getPresetsForCurrentAnimation: () => Preset[];
   exportPreset: (preset: Preset) => string;
   importPreset: (jsonString: string) => void;
+
+  // Export/Share panel
+  showExportPanel: boolean;
+  toggleExportPanel: () => void;
+
+  // Code Inspector panel
+  showCodeInspector: boolean;
+  toggleCodeInspector: () => void;
+
+  // Export current state
+  exportCurrentConfig: () => string;
+  getShareableURL: () => string;
 }
 
 export const useStudioStore = create<StudioState>()(
@@ -428,6 +440,44 @@ export const useStudioStore = create<StudioState>()(
         return state;
       }
     }),
+
+  // Export/Share panel
+  showExportPanel: false,
+  toggleExportPanel: () => set((state) => ({ showExportPanel: !state.showExportPanel })),
+
+  // Code Inspector panel
+  showCodeInspector: false,
+  toggleCodeInspector: () => set((state) => ({ showCodeInspector: !state.showCodeInspector })),
+
+  // Export current configuration
+  exportCurrentConfig: () => {
+    const state = get();
+    const config = getCurrentConfig(state);
+    const exportData = {
+      animation: state.activeAnimation,
+      config,
+      globalSettings: {
+        speed: state.globalSpeed,
+        mouseInteraction: state.mouseInteraction,
+        transitionType: state.transitionType,
+        transitionDuration: state.transitionDuration,
+      },
+      exportedAt: new Date().toISOString(),
+    };
+    return JSON.stringify(exportData, null, 2);
+  },
+
+  // Generate shareable URL
+  getShareableURL: () => {
+    const state = get();
+    const config = getCurrentConfig(state);
+    const params = new URLSearchParams({
+      animation: state.activeAnimation,
+      config: JSON.stringify(config),
+      speed: state.globalSpeed.toString(),
+    });
+    return `${typeof window !== 'undefined' ? window.location.origin : ''}?${params.toString()}`;
+  },
     }),
     {
       name: "web3-design-studio-storage",

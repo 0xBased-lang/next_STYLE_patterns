@@ -23,6 +23,8 @@ import { GlobalControls } from "@/components/studio/GlobalControls";
 import { PerformanceMonitor } from "@/components/studio/PerformanceMonitor";
 import { KeyboardShortcutsGuide } from "@/components/studio/KeyboardShortcutsGuide";
 import { AnimationTransition } from "@/components/studio/AnimationTransition";
+import { ExportPanel } from "@/components/studio/ExportPanel";
+import { CodeInspector } from "@/components/studio/CodeInspector";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 
 export default function Home() {
@@ -87,6 +89,12 @@ export default function Home() {
       {/* Keyboard Shortcuts Guide */}
       <KeyboardShortcutsGuide />
 
+      {/* Export Panel */}
+      <ExportPanel />
+
+      {/* Code Inspector */}
+      <CodeInspector />
+
       {/* Main Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-24">
         <div className="text-center space-y-6">
@@ -99,13 +107,13 @@ export default function Home() {
           <div className="pt-8">
             <div className="inline-block px-6 py-3 bg-matrix-accent/10 border border-matrix-accent/30 rounded-lg backdrop-blur-sm">
               <p className="text-matrix-accent font-mono text-sm">
-                ✅ Phase 5.4: Expanded Animation Library (15 Total)
+                ✅ Phase 6.4 Complete: All 15 Animations w/ Mouse Interaction
               </p>
             </div>
           </div>
           <div className="pt-4 space-y-2">
             <p className="text-matrix-text/50 text-sm font-mono">
-              ← 15 Animations • Keyboard Shortcuts • Surprise Me! →
+              ← 15 Animations • Export/Share • Code Inspector • Surprise Me! →
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-matrix-text/30 font-mono flex-wrap">
               <span>🟢 Matrix</span>
