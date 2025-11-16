@@ -36,6 +36,18 @@ class FFmpegGifTool(BaseTool):
         if operation in ["create_gif", "create_gif_with_text"]:
             return self._create_gif(input_path, output_path, params,
                                   with_text=(operation == "create_gif_with_text"))
+        elif operation == "convert":
+            # Basic video-to-GIF conversion without advanced optimizations
+            return self._convert(input_path, output_path, params)
+        elif operation == "convert_to_gif":
+            # Alternative GIF creation (synonym for create_gif for compatibility)
+            return self._create_gif(input_path, output_path, params, with_text=False)
+        elif operation == "apply_filter":
+            # Apply custom ffmpeg filters
+            return self._apply_filter(input_path, output_path, params)
+        elif operation == "process":
+            # Generic processing operation
+            return self._process(input_path, output_path, params)
         else:
             raise ValueError(f"Unknown operation: {operation}")
 
@@ -131,14 +143,118 @@ class FFmpegGifTool(BaseTool):
 
         return output_path
 
+    def _convert(self, input_path: Path, output_path: Path,
+                params: Dict[str, Any]) -> Path:
+        """
+        Basic video-to-GIF conversion without advanced optimizations
+        Simpler and faster than create_gif
+        """
+        # Extract parameters
+        start_time = float(params.get('start_time', 0))
+        duration = float(params.get('duration', 5))
+        width = int(params.get('width', 640))
+        fps = int(params.get('fps', 15))
+
+        # Build simple ffmpeg command for basic conversion
+        cmd = [
+            str(self.tool_path),
+            '-ss', str(start_time),
+            '-t', str(duration),
+            '-i', str(input_path),
+            '-vf', f'fps={fps},scale={width}:-1:flags=lanczos',
+            '-y',  # Overwrite output
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg convert failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg convert completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _apply_filter(self, input_path: Path, output_path: Path,
+                     params: Dict[str, Any]) -> Path:
+        """
+        Apply custom ffmpeg filter to video
+        """
+        # Extract parameters
+        filter_str = params.get('filter', params.get('vf', ''))
+        if not filter_str:
+            raise ValueError("No filter specified for apply_filter operation")
+
+        start_time = float(params.get('start_time', 0))
+        duration = float(params.get('duration', 5))
+
+        # Build ffmpeg command
+        cmd = [
+            str(self.tool_path),
+            '-ss', str(start_time),
+            '-t', str(duration),
+            '-i', str(input_path),
+            '-vf', filter_str,
+            '-y',  # Overwrite output
+            str(output_path)
+        ]
+
+        # Execute
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=self.timeout
+        )
+
+        if result.returncode != 0:
+            raise ToolExecutionError(
+                f"FFmpeg filter failed: {result.stderr.decode('utf-8', errors='ignore')}"
+            )
+
+        if not output_path.exists():
+            raise ToolExecutionError(
+                f"FFmpeg filter completed but output file not created: {output_path}"
+            )
+
+        return output_path
+
+    def _process(self, input_path: Path, output_path: Path,
+                params: Dict[str, Any]) -> Path:
+        """
+        Generic processing operation - applies whatever parameters are provided
+        Falls back to basic conversion if no specific operations specified
+        """
+        # Check if filter is specified
+        if 'filter' in params or 'vf' in params:
+            return self._apply_filter(input_path, output_path, params)
+
+        # Otherwise, do basic conversion
+        return self._convert(input_path, output_path, params)
+
     def get_help(self) -> str:
         """Get help text for this tool"""
         return """
 FFmpeg GIF Tool - Video to GIF Converter (gifcurry fallback)
 
-Usage:
-  create_gif: Convert video segment to GIF
+Operations:
+  create_gif: Convert video segment to GIF with palette optimization
   create_gif_with_text: Convert with text overlay
+  convert: Basic video-to-GIF conversion (faster, simpler)
+  convert_to_gif: Alias for create_gif
+  apply_filter: Apply custom ffmpeg filters
+  process: Generic processing (auto-detects based on params)
 
 Parameters:
   start_time (float): Start time in seconds (default: 0)
@@ -146,12 +262,14 @@ Parameters:
   width (int): Output width in pixels (default: 640)
   fps (int): Frames per second (default: 15)
   quality/colors (int): Number of colors (default: 256, max: 256)
+  filter/vf (str): Custom ffmpeg filter string (for apply_filter)
   text_overlay (dict): Text overlay settings
     - text (str): Text to display
     - font_size (int): Font size in pixels
     - position (str): Position (top/bottom/center)
 
-Example:
+Examples:
+  # Create GIF with text
   ffmpeg_gif.execute('create_gif_with_text', 'video.mp4', 'output.gif', {
       'start_time': 0,
       'duration': 5,
@@ -162,6 +280,19 @@ Example:
           'font_size': 48,
           'position': 'bottom'
       }
+  })
+
+  # Basic conversion
+  ffmpeg_gif.execute('convert', 'video.mp4', 'output.gif', {
+      'start_time': 2,
+      'duration': 3,
+      'width': 480,
+      'fps': 12
+  })
+
+  # Apply custom filter
+  ffmpeg_gif.execute('apply_filter', 'video.mp4', 'output.gif', {
+      'filter': 'scale=640:-1,fps=15,hue=s=0'
   })
 """
 

@@ -334,6 +334,325 @@ class CLI:
         print()
         return 0
 
+    def cmd_batch(self, args):
+        """Batch process multiple videos with a template"""
+        template_path = args.template
+
+        # Load template
+        try:
+            template = self.loader.load_template(template_path)
+        except FileNotFoundError:
+            print_error(f"Template not found: {template_path}")
+            print_info("Run 'gif-gen list' to see available templates")
+            return 1
+        except Exception as e:
+            print_error(f"Error loading template: {e}")
+            return 1
+
+        print_header(f"Batch Processing: {template.name}")
+        print(f"Template: {template_path}")
+        print()
+
+        # Check tools
+        tool_status = self.orchestrator.check_tools(template)
+        missing_tools = [name for name, available in tool_status.items() if not available]
+
+        if missing_tools:
+            print_error(f"Missing tools: {', '.join(missing_tools)}")
+            print_info("Run 'gif-gen check' for installation instructions")
+            return 1
+
+        # Collect input files
+        input_files = []
+
+        if args.input_dir:
+            input_dir = Path(args.input_dir)
+            if not input_dir.exists():
+                print_error(f"Input directory not found: {args.input_dir}")
+                return 1
+
+            # Find video files
+            video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv', '.wmv']
+            for ext in video_extensions:
+                input_files.extend(input_dir.glob(f'*{ext}'))
+                input_files.extend(input_dir.glob(f'*{ext.upper()}'))
+
+            input_files = sorted(set(input_files))
+
+        elif args.files:
+            for file_path in args.files:
+                file_obj = Path(file_path)
+                if not file_obj.exists():
+                    print_warning(f"File not found: {file_path}")
+                else:
+                    input_files.append(file_obj)
+
+        else:
+            print_error("No input files specified")
+            print_info("Use --input-dir or --files to specify input videos")
+            return 1
+
+        if not input_files:
+            print_error("No video files found")
+            return 1
+
+        print(f"{Colors.BOLD}Found {len(input_files)} video file(s):{Colors.END}")
+        for f in input_files:
+            print(f"  • {f.name}")
+        print()
+
+        # Setup output directory
+        output_dir = Path(args.output_dir) if args.output_dir else Path.cwd()
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"{Colors.BOLD}Output directory:{Colors.END} {output_dir}")
+        print(f"{Colors.BOLD}Preset:{Colors.END} {args.preset}")
+        print()
+
+        # Parse user variables (same for all files)
+        user_vars = {}
+        if args.var:
+            for var_str in args.var:
+                if '=' in var_str:
+                    key, value = var_str.split('=', 1)
+                    user_vars[key] = value
+
+        # Process each file
+        results = {
+            'success': [],
+            'failed': [],
+            'total': len(input_files)
+        }
+
+        for i, input_file in enumerate(input_files, 1):
+            print_header(f"Processing {i}/{len(input_files)}: {input_file.name}")
+
+            # Generate output filename
+            output_filename = input_file.stem + '.gif'
+            output_path = output_dir / output_filename
+
+            # Set up variables for this file
+            file_vars = user_vars.copy()
+            file_vars['video_path'] = str(input_file)
+            file_vars['output_path'] = str(output_path)
+
+            try:
+                # Resolve variables
+                resolved = template.resolve_variables(file_vars, preset_name=args.preset)
+
+                # Validate
+                errors = self.loader.validate_template(template, resolved)
+                if errors:
+                    print_error("Validation errors:")
+                    for error in errors:
+                        print(f"  - {error}")
+                    results['failed'].append((input_file.name, "Validation failed"))
+                    print()
+                    continue
+
+                # Execute
+                result = self.orchestrator.execute(template, resolved, output_path)
+
+                if result.success:
+                    size_kb = output_path.stat().st_size / 1024 if output_path.exists() else 0
+                    print_success(f"Created: {output_filename} ({size_kb:.1f} KB, {result.duration_seconds:.1f}s)")
+                    results['success'].append(input_file.name)
+                else:
+                    print_error(f"Failed: {result.error_message}")
+                    results['failed'].append((input_file.name, result.error_message))
+
+            except Exception as e:
+                print_error(f"Error: {e}")
+                results['failed'].append((input_file.name, str(e)))
+
+            print()
+
+        # Summary
+        print_header("Batch Processing Summary")
+        print(f"{Colors.BOLD}Total files:{Colors.END} {results['total']}")
+        print(f"{Colors.GREEN}Successful:{Colors.END} {len(results['success'])}")
+        print(f"{Colors.RED}Failed:{Colors.END} {len(results['failed'])}")
+
+        if results['success']:
+            print(f"\n{Colors.BOLD}Successfully processed:{Colors.END}")
+            for filename in results['success']:
+                print(f"  ✓ {filename}")
+
+        if results['failed']:
+            print(f"\n{Colors.BOLD}Failed to process:{Colors.END}")
+            for filename, error in results['failed']:
+                print(f"  ✗ {filename}: {error}")
+
+        print()
+
+        # Return 0 if at least one succeeded, 1 if all failed
+        return 0 if results['success'] else 1
+
+    def cmd_validate(self, args):
+        """Validate template without executing"""
+        template_path = args.template
+
+        print_header(f"Validating Template: {template_path}")
+
+        # Load template
+        try:
+            template = self.loader.load_template(template_path)
+            print_success(f"Template loaded: {template.name}")
+        except FileNotFoundError:
+            print_error(f"Template not found: {template_path}")
+            print_info("Run 'gif-gen list' to see available templates")
+            return 1
+        except Exception as e:
+            print_error(f"Failed to load template: {e}")
+            return 1
+
+        errors = []
+        warnings = []
+
+        # Check basic structure
+        print(f"\n{Colors.BOLD}Checking template structure...{Colors.END}")
+
+        if not template.name:
+            errors.append("Missing template name")
+        else:
+            print_success(f"Name: {template.name}")
+
+        if not template.description:
+            warnings.append("Missing description")
+        else:
+            print_success(f"Description: {template.description}")
+
+        if not template.version:
+            warnings.append("Missing version")
+        else:
+            print_success(f"Version: {template.version}")
+
+        # Check pipeline
+        print(f"\n{Colors.BOLD}Checking pipeline ({len(template.pipeline)} steps)...{Colors.END}")
+
+        if not template.pipeline:
+            errors.append("Pipeline is empty")
+        else:
+            for i, step in enumerate(template.pipeline, 1):
+                step_errors = []
+
+                if 'tool' not in step:
+                    step_errors.append("Missing 'tool' field")
+                if 'operation' not in step:
+                    step_errors.append("Missing 'operation' field")
+                if 'params' not in step:
+                    step_errors.append("Missing 'params' field")
+
+                if step_errors:
+                    print_error(f"Step {i}: {', '.join(step_errors)}")
+                    errors.extend([f"Step {i}: {err}" for err in step_errors])
+                else:
+                    tool = step['tool']
+                    operation = step['operation']
+                    migrated = step.get('_migrated', False)
+                    migration_note = " (auto-migrated)" if migrated else ""
+                    print_success(f"Step {i}: {tool} → {operation}{migration_note}")
+
+        # Check tools availability
+        print(f"\n{Colors.BOLD}Checking tool availability...{Colors.END}")
+
+        try:
+            tool_status = self.orchestrator.check_tools(template)
+            missing_tools = [name for name, available in tool_status.items() if not available]
+
+            if missing_tools:
+                for tool in missing_tools:
+                    print_error(f"Tool not available: {tool}")
+                    errors.append(f"Missing tool: {tool}")
+            else:
+                for tool, available in tool_status.items():
+                    if available:
+                        print_success(f"Tool available: {tool}")
+        except Exception as e:
+            print_warning(f"Could not check tools: {e}")
+
+        # Check presets
+        print(f"\n{Colors.BOLD}Checking presets ({len(template.presets)})...{Colors.END}")
+
+        if not template.presets:
+            warnings.append("No presets defined")
+        else:
+            for preset_name, preset_config in template.presets.items():
+                if not preset_config:
+                    warnings.append(f"Preset '{preset_name}' is empty")
+                else:
+                    print_success(f"Preset: {preset_name}")
+
+        # Check variables
+        print(f"\n{Colors.BOLD}Checking variables...{Colors.END}")
+
+        required_vars = [(k, v) for k, v in template.variables.items() if v.get('required', False)]
+        optional_vars = [(k, v) for k, v in template.variables.items() if not v.get('required', False)]
+
+        if required_vars:
+            print(f"  Required variables: {len(required_vars)}")
+            for var_name, var_config in required_vars:
+                var_type = var_config.get('type', 'any')
+                print(f"    - {var_name} ({var_type})")
+
+        if optional_vars:
+            print(f"  Optional variables: {len(optional_vars)}")
+            for var_name, var_config in optional_vars:
+                var_type = var_config.get('type', 'any')
+                default = var_config.get('default', 'no default')
+                print(f"    - {var_name} ({var_type}, default: {default})")
+
+        # If user provided variables, validate them
+        if args.var:
+            print(f"\n{Colors.BOLD}Validating provided variables...{Colors.END}")
+
+            user_vars = {}
+            for var_str in args.var:
+                if '=' in var_str:
+                    key, value = var_str.split('=', 1)
+                    user_vars[key] = value
+
+            try:
+                resolved = template.resolve_variables(user_vars, preset_name=args.preset)
+                validation_errors = self.loader.validate_template(template, resolved)
+
+                if validation_errors:
+                    for err in validation_errors:
+                        print_error(err)
+                        errors.append(err)
+                else:
+                    print_success(f"All variables resolved successfully with preset '{args.preset}'")
+            except Exception as e:
+                print_error(f"Variable resolution failed: {e}")
+                errors.append(f"Variable resolution: {e}")
+
+        # Summary
+        print(f"\n{Colors.BOLD}Validation Summary{Colors.END}")
+        print(f"Template: {template_path}")
+        print(f"Steps: {len(template.pipeline)}")
+        print(f"Presets: {len(template.presets)}")
+        print(f"Variables: {len(template.variables)} ({len(required_vars)} required)")
+
+        if warnings:
+            print(f"\n{Colors.YELLOW}Warnings ({len(warnings)}):{Colors.END}")
+            for warning in warnings:
+                print(f"  ⚠ {warning}")
+
+        if errors:
+            print(f"\n{Colors.RED}Errors ({len(errors)}):{Colors.END}")
+            for error in errors:
+                print(f"  ✗ {error}")
+            print()
+            print_error("Template validation FAILED")
+            return 1
+        else:
+            print()
+            if warnings:
+                print_warning(f"Template is valid but has {len(warnings)} warning(s)")
+            else:
+                print_success("Template validation PASSED ✓")
+            return 0
+
 
 def main():
     """Main entry point"""
@@ -352,7 +671,15 @@ Examples:
   # Check tool availability
   gif-gen check
 
-  # Create a GIF
+  # Validate a template
+  gif-gen validate demo/simple-gif --preset balanced
+
+  # Validate with variables
+  gif-gen validate social-media/twitter-demo \\
+    --var product_name="My Product" \\
+    --preset balanced
+
+  # Create a single GIF
   gif-gen create demo/simple-gif --video my-video.mp4 --preset balanced
 
   # Create with custom variables
@@ -361,6 +688,18 @@ Examples:
     --var product_name="My Product" \\
     --preset balanced \\
     --output output.gif
+
+  # Batch process directory of videos
+  gif-gen batch demo/simple-gif \\
+    --input-dir videos/ \\
+    --output-dir gifs/ \\
+    --preset balanced
+
+  # Batch process specific files
+  gif-gen batch social-media/twitter-demo \\
+    --files video1.mp4 video2.mp4 video3.mp4 \\
+    --output-dir output/ \\
+    --var product_name="My Product"
 
 For more information, see ORCHESTRATOR_README.md
         """
@@ -386,6 +725,26 @@ For more information, see ORCHESTRATOR_README.md
     presets_parser.add_argument('template', help='Template path')
     presets_parser.add_argument('-v', '--verbose', action='store_true',
                                help='Show detailed preset parameters')
+
+    # Validate command
+    validate_parser = subparsers.add_parser('validate', help='Validate template without executing')
+    validate_parser.add_argument('template', help='Template path (e.g., demo/simple-gif)')
+    validate_parser.add_argument('--preset', '-p', default='balanced',
+                                help='Preset to use for validation (default: balanced)')
+    validate_parser.add_argument('--var', action='append',
+                                help='Template variable (key=value, can be used multiple times)')
+
+    # Batch command
+    batch_parser = subparsers.add_parser('batch', help='Batch process multiple videos')
+    batch_parser.add_argument('template', help='Template path (e.g., demo/simple-gif)')
+    batch_input = batch_parser.add_mutually_exclusive_group(required=True)
+    batch_input.add_argument('--input-dir', help='Directory containing video files')
+    batch_input.add_argument('--files', nargs='+', help='List of video files to process')
+    batch_parser.add_argument('--output-dir', '-o', help='Output directory (default: current directory)')
+    batch_parser.add_argument('--preset', '-p', default='balanced',
+                             help='Preset to use (default: balanced)')
+    batch_parser.add_argument('--var', action='append',
+                             help='Template variable (key=value, can be used multiple times)')
 
     # Create command
     create_parser = subparsers.add_parser('create', help='Create GIF from template')
@@ -420,6 +779,10 @@ For more information, see ORCHESTRATOR_README.md
             return cli.cmd_check(args)
         elif args.command == 'presets':
             return cli.cmd_presets(args)
+        elif args.command == 'validate':
+            return cli.cmd_validate(args)
+        elif args.command == 'batch':
+            return cli.cmd_batch(args)
         elif args.command == 'create':
             return cli.cmd_create(args)
         else:
