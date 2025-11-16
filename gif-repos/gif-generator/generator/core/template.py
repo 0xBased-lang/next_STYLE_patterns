@@ -9,6 +9,109 @@ from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 
 
+def infer_operation(tool: str, config: Dict[str, Any]) -> str:
+    """
+    Infer operation name from tool and config (for old format templates)
+
+    Args:
+        tool: Tool name (e.g., 'gifcurry', 'gifsicle')
+        config: Configuration dictionary
+
+    Returns:
+        Inferred operation name
+    """
+    if tool == 'gifcurry':
+        # Check if text overlay is configured
+        if 'text_overlay' in config and config['text_overlay']:
+            return 'create_gif_with_text'
+        else:
+            return 'create_gif'
+
+    elif tool == 'gifsicle':
+        return 'optimize'
+
+    elif tool == 'liveportrait':
+        return 'animate_portrait'
+
+    elif tool == 'first-order-model':
+        return 'transfer_motion'
+
+    elif tool == 'animated_drawings':
+        return 'animate_character'
+
+    elif tool == 'ffmpeg':
+        # Check what operation based on config
+        if 'filter' in config:
+            return 'apply_filter'
+        else:
+            return 'convert'
+
+    else:
+        # Generic fallback
+        return 'process'
+
+
+def normalize_pipeline_step(step: Dict[str, Any], step_index: int,
+                            total_steps: int) -> Dict[str, Any]:
+    """
+    Normalize pipeline step to new format (transparent migration)
+
+    Converts old format (with 'config' key) to new format (with 'operation',
+    'input', 'output', 'params' keys).
+
+    Args:
+        step: Pipeline step dictionary
+        step_index: Index of this step (0-based)
+        total_steps: Total number of steps in pipeline
+
+    Returns:
+        Normalized step in new format
+    """
+    # Already in new format?
+    if 'operation' in step and 'input' in step and 'params' in step:
+        return step
+
+    # Old format - needs migration
+    tool = step.get('tool')
+    if not tool:
+        raise ValueError(f"Step {step_index} missing 'tool' field")
+
+    # Get config (old format) or params (new format)
+    config = step.get('config', step.get('params', {}))
+
+    # Infer operation from tool and config
+    operation = infer_operation(tool, config)
+
+    # Infer input path
+    if step_index == 0:
+        # First step: input from user variable
+        input_path = "{{video_path}}"
+    else:
+        # Subsequent steps: input from previous step output
+        input_path = "{{previous_output}}"
+
+    # Infer output path
+    if step_index == total_steps - 1:
+        # Last step: output to final destination
+        output_path = "{{output_path}}"
+    else:
+        # Intermediate step: temporary file
+        output_path = f"{{{{temp_step_{step_index}.gif}}}}"
+
+    # Build normalized step
+    normalized = {
+        'tool': tool,
+        'operation': operation,
+        'input': input_path,
+        'output': output_path,
+        'params': config,
+        '_migrated': True,  # Flag for debugging/logging
+        '_original_format': 'old' if 'config' in step else 'new'
+    }
+
+    return normalized
+
+
 @dataclass
 class Template:
     """Represents a loaded template"""
@@ -90,6 +193,13 @@ class TemplateLoader:
             pipeline_steps = pipeline
         else:
             raise ValueError("Pipeline must be a list or dict with 'steps' key")
+
+        # Normalize all pipeline steps to new format (transparent migration)
+        total_steps = len(pipeline_steps)
+        pipeline_steps = [
+            normalize_pipeline_step(step, i, total_steps)
+            for i, step in enumerate(pipeline_steps)
+        ]
 
         # Create Template object
         template = Template(

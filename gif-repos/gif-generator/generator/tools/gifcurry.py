@@ -33,7 +33,7 @@ class GifcurryTool(BaseTool):
         """
         self.check_available()
 
-        if operation == "create_gif":
+        if operation == "create_gif" or operation == "create_gif_with_text":
             return self._create_gif(input_path, output_path, params)
         else:
             raise ValueError(f"Unknown operation: {operation}")

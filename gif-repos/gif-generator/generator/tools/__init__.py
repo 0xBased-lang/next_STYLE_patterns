@@ -3,6 +3,7 @@
 from .base import BaseTool, ToolNotFoundError, ToolExecutionError
 from .gifcurry import GifcurryTool
 from .gifsicle import GifsicleTool
+from .ffmpeg_gif import FFmpegGifTool
 
 __all__ = [
     'BaseTool',
@@ -10,4 +11,5 @@ __all__ = [
     'ToolExecutionError',
     'GifcurryTool',
     'GifsicleTool',
+    'FFmpegGifTool',
 ]

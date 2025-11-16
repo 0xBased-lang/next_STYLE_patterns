@@ -43,19 +43,19 @@ class GifsicleTool(BaseTool):
         # Build command
         cmd = [str(self.tool_path)]
 
-        # Optimization level
-        opt_level = params.get('optimization_level', 3)
+        # Optimization level (ensure int)
+        opt_level = int(params.get('optimization_level', 3))
         cmd.append(f"-O{opt_level}")
 
-        # Color reduction
-        colors = params.get('colors', 256)
+        # Color reduction (ensure int)
+        colors = int(params.get('colors', 256))
         if colors < 256:
             cmd.extend(["--colors", str(colors)])
 
-        # Lossy compression
-        lossy = params.get('lossy', 0)
+        # Lossy compression (ensure int)
+        lossy = int(params.get('lossy', 0))
         if lossy > 0:
-            cmd.extend(["--lossy", f"={lossy}"])
+            cmd.append(f"--lossy={lossy}")
 
         # Resize
         if 'resize' in params:
