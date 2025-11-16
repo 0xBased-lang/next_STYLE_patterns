@@ -142,6 +142,18 @@ interface StudioState {
   mouseInteraction: boolean;
   toggleMouseInteraction: () => void;
 
+  // Animation transitions
+  transitionDuration: number;
+  setTransitionDuration: (duration: number) => void;
+  transitionType: "fade" | "crossfade" | "none";
+  setTransitionType: (type: "fade" | "crossfade" | "none") => void;
+
+  // Auto-rotate
+  autoRotate: boolean;
+  toggleAutoRotate: () => void;
+  autoRotateInterval: number;
+  setAutoRotateInterval: (interval: number) => void;
+
   // Preset management
   userPresets: Preset[];
   savePreset: (name: string, description: string) => void;
@@ -297,6 +309,18 @@ export const useStudioStore = create<StudioState>()(
   mouseInteraction: false,
   toggleMouseInteraction: () => set((state) => ({ mouseInteraction: !state.mouseInteraction })),
 
+  // Animation transitions
+  transitionDuration: 500,
+  setTransitionDuration: (duration: number) => set({ transitionDuration: Math.max(0, Math.min(2000, duration)) }),
+  transitionType: "fade",
+  setTransitionType: (type: "fade" | "crossfade" | "none") => set({ transitionType: type }),
+
+  // Auto-rotate
+  autoRotate: false,
+  toggleAutoRotate: () => set((state) => ({ autoRotate: !state.autoRotate })),
+  autoRotateInterval: 10000,
+  setAutoRotateInterval: (interval: number) => set({ autoRotateInterval: Math.max(3000, Math.min(60000, interval)) }),
+
   // Preset management
   userPresets: [],
 
@@ -428,6 +452,10 @@ export const useStudioStore = create<StudioState>()(
         globalSpeed: state.globalSpeed,
         showPerformance: state.showPerformance,
         mouseInteraction: state.mouseInteraction,
+        transitionDuration: state.transitionDuration,
+        transitionType: state.transitionType,
+        autoRotate: state.autoRotate,
+        autoRotateInterval: state.autoRotateInterval,
       }),
     }
   )

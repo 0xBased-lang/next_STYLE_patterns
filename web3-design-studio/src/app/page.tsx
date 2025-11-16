@@ -22,6 +22,7 @@ import { PresetManager } from "@/components/studio/PresetManager";
 import { GlobalControls } from "@/components/studio/GlobalControls";
 import { PerformanceMonitor } from "@/components/studio/PerformanceMonitor";
 import { KeyboardShortcutsGuide } from "@/components/studio/KeyboardShortcutsGuide";
+import { AnimationTransition } from "@/components/studio/AnimationTransition";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
 
 export default function Home() {
@@ -49,22 +50,24 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-matrix-bg overflow-hidden">
-      {/* Animated Background - Conditionally render based on active animation */}
-      {activeAnimation === "matrix" && <MatrixBackground config={matrixConfig} />}
-      {activeAnimation === "fluid" && <FluidBackground config={fluidConfig} />}
-      {activeAnimation === "aurora" && <AuroraBackground config={auroraConfig} />}
-      {activeAnimation === "particle" && <ParticleBackground config={particleConfig} />}
-      {activeAnimation === "glitch" && <GlitchBackground config={glitchConfig} />}
-      {activeAnimation === "neonTrails" && <NeonTrailsBackground config={neonTrailsConfig} />}
-      {activeAnimation === "morphBlob" && <MorphBlobBackground config={morphBlobConfig} />}
-      {activeAnimation === "cosmic" && <CosmicBackground config={cosmicConfig} />}
-      {activeAnimation === "dnaHelix" && <DNAHelixBackground config={dnaHelixConfig} />}
-      {activeAnimation === "waveInterference" && <WaveInterferenceBackground config={waveInterferenceConfig} />}
-      {activeAnimation === "plasma" && <PlasmaBackground config={plasmaConfig} />}
-      {activeAnimation === "fractal" && <FractalBackground config={fractalConfig} />}
-      {activeAnimation === "lightning" && <LightningBackground config={lightningConfig} />}
-      {activeAnimation === "tessellation" && <TessellationBackground config={tessellationConfig} />}
-      {activeAnimation === "fire" && <FireBackground config={fireConfig} />}
+      {/* Animated Background with Transitions */}
+      <AnimationTransition currentAnimation={activeAnimation}>
+        {activeAnimation === "matrix" && <MatrixBackground config={matrixConfig} />}
+        {activeAnimation === "fluid" && <FluidBackground config={fluidConfig} />}
+        {activeAnimation === "aurora" && <AuroraBackground config={auroraConfig} />}
+        {activeAnimation === "particle" && <ParticleBackground config={particleConfig} />}
+        {activeAnimation === "glitch" && <GlitchBackground config={glitchConfig} />}
+        {activeAnimation === "neonTrails" && <NeonTrailsBackground config={neonTrailsConfig} />}
+        {activeAnimation === "morphBlob" && <MorphBlobBackground config={morphBlobConfig} />}
+        {activeAnimation === "cosmic" && <CosmicBackground config={cosmicConfig} />}
+        {activeAnimation === "dnaHelix" && <DNAHelixBackground config={dnaHelixConfig} />}
+        {activeAnimation === "waveInterference" && <WaveInterferenceBackground config={waveInterferenceConfig} />}
+        {activeAnimation === "plasma" && <PlasmaBackground config={plasmaConfig} />}
+        {activeAnimation === "fractal" && <FractalBackground config={fractalConfig} />}
+        {activeAnimation === "lightning" && <LightningBackground config={lightningConfig} />}
+        {activeAnimation === "tessellation" && <TessellationBackground config={tessellationConfig} />}
+        {activeAnimation === "fire" && <FireBackground config={fireConfig} />}
+      </AnimationTransition>
 
       {/* Animation Selector */}
       <AnimationSelector />

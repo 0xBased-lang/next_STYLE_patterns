@@ -2,7 +2,7 @@
 
 import { useStudioStore } from "@/lib/store/studio";
 import { Slider } from "@/components/controls/Slider";
-import { Play, Pause, Activity, MousePointer, Sparkles } from "lucide-react";
+import { Play, Pause, Activity, MousePointer, Sparkles, RotateCw, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { allDefaultPresets } from "@/lib/presets/defaultPresets";
 import type { AnimationType } from "@/lib/types/animation";
@@ -17,6 +17,14 @@ export function GlobalControls() {
     togglePerformance,
     mouseInteraction,
     toggleMouseInteraction,
+    transitionDuration,
+    setTransitionDuration,
+    transitionType,
+    setTransitionType,
+    autoRotate,
+    toggleAutoRotate,
+    autoRotateInterval,
+    setAutoRotateInterval,
     setActiveAnimation,
     loadPreset,
   } = useStudioStore();
@@ -175,6 +183,128 @@ export function GlobalControls() {
             />
           </div>
         </button>
+
+        {/* Auto-Rotate Toggle */}
+        <button
+          onClick={toggleAutoRotate}
+          className={cn(
+            "w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all text-sm",
+            autoRotate
+              ? "bg-matrix-accent/10 border border-matrix-accent/30"
+              : "bg-matrix-surface/50 border border-matrix-accent/10 hover:bg-matrix-surface"
+          )}
+        >
+          <span className="flex items-center gap-2 text-matrix-text/80">
+            <RotateCw className="w-4 h-4" />
+            <span className="font-mono">Auto-Rotate</span>
+          </span>
+          <div
+            className={cn(
+              "w-10 h-5 rounded-full transition-all relative",
+              autoRotate ? "bg-matrix-accent" : "bg-matrix-surface"
+            )}
+          >
+            <div
+              className={cn(
+                "absolute top-0.5 w-4 h-4 rounded-full bg-matrix-text transition-all",
+                autoRotate ? "left-5" : "left-0.5"
+              )}
+            />
+          </div>
+        </button>
+      </div>
+
+      {/* Auto-Rotate Interval (only show when enabled) */}
+      {autoRotate && (
+        <div className="space-y-2 animate-slide-in">
+          <Slider
+            label="Rotate Interval"
+            value={autoRotateInterval / 1000}
+            min={3}
+            max={60}
+            step={1}
+            unit="s"
+            onChange={(value) => setAutoRotateInterval(value * 1000)}
+          />
+          <div className="flex justify-between text-xs text-matrix-text/40 font-mono px-1">
+            <span>3s</span>
+            <span>30s</span>
+            <span>60s</span>
+          </div>
+        </div>
+      )}
+
+      {/* Divider */}
+      <div className="h-px bg-matrix-accent/20" />
+
+      {/* Transition Controls */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Shuffle className="w-4 h-4 text-matrix-accent" />
+          <span className="text-sm font-heading font-semibold text-matrix-text">
+            Transitions
+          </span>
+        </div>
+
+        {/* Transition Type */}
+        <div className="space-y-1">
+          <label className="text-xs font-mono text-matrix-text/60">Type</label>
+          <div className="grid grid-cols-3 gap-1">
+            <button
+              onClick={() => setTransitionType("none")}
+              className={cn(
+                "px-2 py-1.5 rounded text-xs font-mono transition-all",
+                transitionType === "none"
+                  ? "bg-matrix-accent text-matrix-bg"
+                  : "bg-matrix-surface/50 text-matrix-text/60 hover:bg-matrix-surface"
+              )}
+            >
+              None
+            </button>
+            <button
+              onClick={() => setTransitionType("fade")}
+              className={cn(
+                "px-2 py-1.5 rounded text-xs font-mono transition-all",
+                transitionType === "fade"
+                  ? "bg-matrix-accent text-matrix-bg"
+                  : "bg-matrix-surface/50 text-matrix-text/60 hover:bg-matrix-surface"
+              )}
+            >
+              Fade
+            </button>
+            <button
+              onClick={() => setTransitionType("crossfade")}
+              className={cn(
+                "px-2 py-1.5 rounded text-xs font-mono transition-all",
+                transitionType === "crossfade"
+                  ? "bg-matrix-accent text-matrix-bg"
+                  : "bg-matrix-surface/50 text-matrix-text/60 hover:bg-matrix-surface"
+              )}
+            >
+              Cross
+            </button>
+          </div>
+        </div>
+
+        {/* Transition Duration (only show when not "none") */}
+        {transitionType !== "none" && (
+          <div className="space-y-2 animate-slide-in">
+            <Slider
+              label="Duration"
+              value={transitionDuration}
+              min={100}
+              max={2000}
+              step={100}
+              unit="ms"
+              onChange={(value) => setTransitionDuration(value)}
+            />
+            <div className="flex justify-between text-xs text-matrix-text/40 font-mono px-1">
+              <span>100ms</span>
+              <span>1000ms</span>
+              <span>2000ms</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
