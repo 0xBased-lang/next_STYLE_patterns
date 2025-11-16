@@ -20,6 +20,8 @@ export class MatrixEngine implements AnimationEngine<MatrixConfig> {
   private animationId: number | null = null;
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   // Matrix characters to use
   private readonly matrixChars =
@@ -174,8 +176,23 @@ export class MatrixEngine implements AnimationEngine<MatrixConfig> {
     for (let i = 0; i < this.columns.length; i++) {
       const column = this.columns[i];
 
-      // Move column down
-      column.y += column.speed;
+      // Calculate speed modifier based on mouse proximity
+      let speedModifier = 1;
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dx = column.x - this.mousePosition.x;
+        const dy = column.y - this.mousePosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const slowRadius = 150;
+
+        if (distance < slowRadius) {
+          // Slow down columns near mouse (creates "hole" effect)
+          speedModifier = distance / slowRadius;
+          speedModifier = Math.max(0.1, speedModifier); // Minimum speed
+        }
+      }
+
+      // Move column down with speed modifier
+      column.y += column.speed * speedModifier;
 
       // Randomly change characters
       if (Math.random() < 0.05) {
@@ -216,5 +233,18 @@ export class MatrixEngine implements AnimationEngine<MatrixConfig> {
     this.columns = [];
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }

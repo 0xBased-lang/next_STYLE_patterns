@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { LightningEngine, type LightningConfig } from "@/lib/animations/LightningEngine";
 import { useStudioStore } from "@/lib/store/studio";
+import { useMousePosition } from "@/lib/hooks/useMousePosition";
 
 interface LightningBackgroundProps {
   config: LightningConfig;
@@ -11,7 +12,8 @@ interface LightningBackgroundProps {
 export function LightningBackground({ config }: LightningBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<LightningEngine | null>(null);
-  const { isPaused, globalSpeed } = useStudioStore();
+  const { isPaused, globalSpeed, mouseInteraction } = useStudioStore();
+  const mousePosition = useMousePosition(mouseInteraction);
 
   // Initialize the animation engine
   useEffect(() => {
@@ -60,6 +62,20 @@ export function LightningBackground({ config }: LightningBackgroundProps) {
       engineRef.current.updateConfig(adjustedConfig);
     }
   }, [config, globalSpeed]);
+
+  // Handle mouse interaction toggle
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setMouseInteraction(mouseInteraction);
+    }
+  }, [mouseInteraction]);
+
+  // Update mouse position
+  useEffect(() => {
+    if (engineRef.current && mouseInteraction) {
+      engineRef.current.setMousePosition(mousePosition.x, mousePosition.y);
+    }
+  }, [mousePosition, mouseInteraction]);
 
   return (
     <canvas

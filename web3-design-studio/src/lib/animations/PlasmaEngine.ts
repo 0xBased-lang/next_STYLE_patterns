@@ -14,6 +14,8 @@ export class PlasmaEngine implements AnimationEngine<PlasmaConfig> {
   private frameInterval: number = 1000 / 60;
   private time: number = 0;
   private colorPalette: string[] = [];
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: PlasmaConfig) {
     this.config = { ...config };
@@ -160,11 +162,26 @@ export class PlasmaEngine implements AnimationEngine<PlasmaConfig> {
     // Classic plasma algorithm using sine waves
     for (let x = 0; x < width; x += resolution) {
       for (let y = 0; y < height; y += resolution) {
+        // Calculate mouse distortion effect
+        let distortion = 0;
+        if (this.mouseInteractionEnabled && this.mousePosition) {
+          const dx = x - this.mousePosition.x;
+          const dy = y - this.mousePosition.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const distortionRadius = 200;
+
+          if (distance < distortionRadius) {
+            // Create wave distortion effect near mouse
+            const distortionStrength = (1 - distance / distortionRadius) * 5;
+            distortion = Math.sin(distance * 0.1 - this.time * 2) * distortionStrength;
+          }
+        }
+
         // Multiple sine wave combinations for plasma effect
         const value =
-          Math.sin((x * scale + this.time) / 16) +
-          Math.sin((y * scale + this.time) / 8) +
-          Math.sin(((x * scale + y * scale + this.time) / 16) * scale) +
+          Math.sin((x * scale + this.time + distortion) / 16) +
+          Math.sin((y * scale + this.time + distortion) / 8) +
+          Math.sin(((x * scale + y * scale + this.time + distortion) / 16) * scale) +
           Math.sin((Math.sqrt(x * x * scale + y * y * scale + this.time) / 8) * scale);
 
         // Normalize to 0-255 range
@@ -195,6 +212,19 @@ export class PlasmaEngine implements AnimationEngine<PlasmaConfig> {
       this.ctx.filter = "blur(1px)";
       this.ctx.drawImage(this.canvas, 0, 0, width, height);
       this.ctx.filter = "none";
+    }
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
     }
   }
 }

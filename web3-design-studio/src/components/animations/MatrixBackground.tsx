@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { MatrixEngine } from "@/lib/animations/MatrixEngine";
 import type { MatrixConfig } from "@/lib/types/animation";
 import { useStudioStore } from "@/lib/store/studio";
+import { useMousePosition } from "@/lib/hooks/useMousePosition";
 
 interface MatrixBackgroundProps {
   config: MatrixConfig;
@@ -13,7 +14,8 @@ interface MatrixBackgroundProps {
 export function MatrixBackground({ config, className = "" }: MatrixBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<MatrixEngine | null>(null);
-  const { isPaused, globalSpeed } = useStudioStore();
+  const { isPaused, globalSpeed, mouseInteraction } = useStudioStore();
+  const mousePosition = useMousePosition(mouseInteraction);
 
   // Initialize engine
   useEffect(() => {
@@ -64,6 +66,20 @@ export function MatrixBackground({ config, className = "" }: MatrixBackgroundPro
       engineRef.current.updateConfig(adjustedConfig);
     }
   }, [config, globalSpeed]);
+
+  // Handle mouse interaction toggle
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setMouseInteraction(mouseInteraction);
+    }
+  }, [mouseInteraction]);
+
+  // Update mouse position
+  useEffect(() => {
+    if (engineRef.current && mouseInteraction) {
+      engineRef.current.setMousePosition(mousePosition.x, mousePosition.y);
+    }
+  }, [mousePosition, mouseInteraction]);
 
   return (
     <canvas

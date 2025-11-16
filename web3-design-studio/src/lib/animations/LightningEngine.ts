@@ -39,6 +39,8 @@ export class LightningEngine implements AnimationEngine<LightningConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private bolts: LightningBolt[] = [];
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: LightningConfig) {
     this.config = config;
@@ -113,9 +115,18 @@ export class LightningEngine implements AnimationEngine<LightningConfig> {
       const startX = Math.random() * width;
       const startY = 0;
 
-      // Random end point (bottom of screen)
-      const endX = startX + (Math.random() - 0.5) * width * 0.3;
-      const endY = height;
+      // End point: mouse position if interaction enabled, otherwise random bottom position
+      let endX: number;
+      let endY: number;
+
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dpr = window.devicePixelRatio || 1;
+        endX = this.mousePosition.x / dpr;
+        endY = this.mousePosition.y / dpr;
+      } else {
+        endX = startX + (Math.random() - 0.5) * width * 0.3;
+        endY = height;
+      }
 
       const bolt = this.createBolt(
         { x: startX, y: startY },
@@ -221,8 +232,19 @@ export class LightningEngine implements AnimationEngine<LightningConfig> {
 
         const startX = Math.random() * width;
         const startY = 0;
-        const endX = startX + (Math.random() - 0.5) * width * 0.3;
-        const endY = height;
+
+        // End point: mouse position if interaction enabled, otherwise random bottom position
+        let endX: number;
+        let endY: number;
+
+        if (this.mouseInteractionEnabled && this.mousePosition) {
+          const dpr = window.devicePixelRatio || 1;
+          endX = this.mousePosition.x / dpr;
+          endY = this.mousePosition.y / dpr;
+        } else {
+          endX = startX + (Math.random() - 0.5) * width * 0.3;
+          endY = height;
+        }
 
         const newBolt = this.createBolt(
           { x: startX, y: startY },
@@ -301,5 +323,18 @@ export class LightningEngine implements AnimationEngine<LightningConfig> {
 
     // Draw branches
     bolt.branches.forEach((branch) => this.drawBolt(branch));
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }

@@ -28,6 +28,10 @@ export class FractalEngine implements AnimationEngine<FractalConfig> {
   private frameInterval: number = 1000 / 60;
   private colorPalette: string[] = [];
   private timeOffset: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
+  private currentCenterX: number = 0;
+  private currentCenterY: number = 0;
 
   constructor(config: FractalConfig) {
     this.config = config;
@@ -41,6 +45,8 @@ export class FractalEngine implements AnimationEngine<FractalConfig> {
       throw new Error("Could not get 2D context");
     }
     this.ctx = ctx;
+    this.currentCenterX = this.config.centerX;
+    this.currentCenterY = this.config.centerY;
     this.resize();
     this.generateColorPalette();
   }
@@ -150,6 +156,39 @@ export class FractalEngine implements AnimationEngine<FractalConfig> {
   private update(): void {
     // Animate color shift
     this.timeOffset += this.config.speed * (this.config.colorShift / 100) * 0.1;
+
+    // Update fractal center to follow mouse
+    if (this.mouseInteractionEnabled && this.mousePosition && this.canvas) {
+      const rect = this.canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      // Map mouse position to complex plane
+      const aspectRatio = width / height;
+      const viewHeight = 4 / this.config.zoom;
+      const viewWidth = viewHeight * aspectRatio;
+
+      const minRe = this.currentCenterX - viewWidth / 2;
+      const maxRe = this.currentCenterX + viewWidth / 2;
+      const minIm = this.currentCenterY - viewHeight / 2;
+      const maxIm = this.currentCenterY + viewHeight / 2;
+
+      const mouseX = this.mousePosition.x / (window.devicePixelRatio || 1);
+      const mouseY = this.mousePosition.y / (window.devicePixelRatio || 1);
+
+      const targetCenterX = minRe + (mouseX / width) * (maxRe - minRe);
+      const targetCenterY = minIm + (mouseY / height) * (maxIm - minIm);
+
+      // Smoothly interpolate to target
+      const lerpFactor = 0.05;
+      this.currentCenterX += (targetCenterX - this.currentCenterX) * lerpFactor;
+      this.currentCenterY += (targetCenterY - this.currentCenterY) * lerpFactor;
+    } else {
+      // Return to config center when mouse interaction is disabled
+      const lerpFactor = 0.05;
+      this.currentCenterX += (this.config.centerX - this.currentCenterX) * lerpFactor;
+      this.currentCenterY += (this.config.centerY - this.currentCenterY) * lerpFactor;
+    }
   }
 
   private draw(): void {
@@ -157,7 +196,11 @@ export class FractalEngine implements AnimationEngine<FractalConfig> {
 
     const width = this.canvas.width;
     const height = this.canvas.height;
-    const { fractalType, maxIterations, zoom, centerX, centerY } = this.config;
+    const { fractalType, maxIterations, zoom } = this.config;
+
+    // Use current center (which follows mouse when interaction is enabled)
+    const centerX = this.currentCenterX;
+    const centerY = this.currentCenterY;
 
     // Julia set constant (for Julia mode)
     const juliaC = {
@@ -245,5 +288,18 @@ export class FractalEngine implements AnimationEngine<FractalConfig> {
     }
 
     this.ctx.putImageData(imageData, 0, 0);
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }
