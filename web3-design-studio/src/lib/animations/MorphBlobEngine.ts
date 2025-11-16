@@ -23,6 +23,10 @@ export class MorphBlobEngine implements AnimationEngine<MorphBlobConfig> {
   private time: number = 0;
   private centerX: number = 0;
   private centerY: number = 0;
+  private targetCenterX: number = 0;
+  private targetCenterY: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: MorphBlobConfig) {
     this.config = { ...config };
@@ -46,6 +50,8 @@ export class MorphBlobEngine implements AnimationEngine<MorphBlobConfig> {
 
     this.centerX = this.canvas.width / 2;
     this.centerY = this.canvas.height / 2;
+    this.targetCenterX = this.centerX;
+    this.targetCenterY = this.centerY;
 
     const pointCount = Math.floor(this.config.complexity);
     this.points = [];
@@ -107,6 +113,21 @@ export class MorphBlobEngine implements AnimationEngine<MorphBlobConfig> {
 
   private update(): void {
     this.time += 0.01 * (this.config.speed / 50);
+
+    // Update target center based on mouse position
+    if (this.mouseInteractionEnabled && this.mousePosition) {
+      this.targetCenterX = this.mousePosition.x;
+      this.targetCenterY = this.mousePosition.y;
+    } else if (this.canvas) {
+      // Return to canvas center when mouse interaction is disabled
+      this.targetCenterX = this.canvas.width / 2;
+      this.targetCenterY = this.canvas.height / 2;
+    }
+
+    // Smoothly interpolate center position
+    const lerpFactor = 0.05;
+    this.centerX += (this.targetCenterX - this.centerX) * lerpFactor;
+    this.centerY += (this.targetCenterY - this.centerY) * lerpFactor;
 
     // Update point radii for morphing effect
     for (const point of this.points) {
@@ -234,5 +255,18 @@ export class MorphBlobEngine implements AnimationEngine<MorphBlobConfig> {
     this.points = [];
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }

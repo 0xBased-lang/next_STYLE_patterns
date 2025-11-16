@@ -34,6 +34,8 @@ export class TessellationEngine implements AnimationEngine<TessellationConfig> {
   private frameInterval: number = 1000 / 60;
   private cells: Cell[] = [];
   private imageData: ImageData | null = null;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: TessellationConfig) {
     this.config = config;
@@ -188,8 +190,36 @@ export class TessellationEngine implements AnimationEngine<TessellationConfig> {
 
     // Update cell positions
     this.cells.forEach((cell) => {
+      // Apply mouse repulsion if interaction is enabled
+      if (this.mouseInteractionEnabled && this.mousePosition) {
+        const dx = cell.x - this.mousePosition.x;
+        const dy = cell.y - this.mousePosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const repulsionRadius = 150;
+
+        if (distance < repulsionRadius && distance > 0) {
+          // Repulsion force (push cells away from mouse)
+          const force = (1 - distance / repulsionRadius) * 3;
+          const angle = Math.atan2(dy, dx);
+          cell.vx += Math.cos(angle) * force;
+          cell.vy += Math.sin(angle) * force;
+
+          // Limit velocity
+          const speed = Math.sqrt(cell.vx * cell.vx + cell.vy * cell.vy);
+          const maxSpeed = 5;
+          if (speed > maxSpeed) {
+            cell.vx = (cell.vx / speed) * maxSpeed;
+            cell.vy = (cell.vy / speed) * maxSpeed;
+          }
+        }
+      }
+
       cell.x += cell.vx * this.config.speed;
       cell.y += cell.vy * this.config.speed;
+
+      // Apply friction
+      cell.vx *= 0.98;
+      cell.vy *= 0.98;
 
       // Bounce off edges
       if (cell.x < 0 || cell.x > width) {
@@ -265,5 +295,18 @@ export class TessellationEngine implements AnimationEngine<TessellationConfig> {
     }
 
     this.ctx.putImageData(this.imageData, 0, 0);
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }

@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { TessellationEngine, type TessellationConfig } from "@/lib/animations/TessellationEngine";
 import { useStudioStore } from "@/lib/store/studio";
+import { useMousePosition } from "@/lib/hooks/useMousePosition";
 
 interface TessellationBackgroundProps {
   config: TessellationConfig;
@@ -11,7 +12,8 @@ interface TessellationBackgroundProps {
 export function TessellationBackground({ config }: TessellationBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<TessellationEngine | null>(null);
-  const { isPaused, globalSpeed } = useStudioStore();
+  const { isPaused, globalSpeed, mouseInteraction } = useStudioStore();
+  const mousePosition = useMousePosition(mouseInteraction);
 
   // Initialize the animation engine
   useEffect(() => {
@@ -60,6 +62,20 @@ export function TessellationBackground({ config }: TessellationBackgroundProps) 
       engineRef.current.updateConfig(adjustedConfig);
     }
   }, [config, globalSpeed]);
+
+  // Handle mouse interaction toggle
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setMouseInteraction(mouseInteraction);
+    }
+  }, [mouseInteraction]);
+
+  // Update mouse position
+  useEffect(() => {
+    if (engineRef.current && mouseInteraction) {
+      engineRef.current.setMousePosition(mousePosition.x, mousePosition.y);
+    }
+  }, [mousePosition, mouseInteraction]);
 
   return (
     <canvas
