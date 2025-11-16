@@ -13,6 +13,11 @@ from .template import Template, substitute_variables
 from ..tools.base import ToolNotFoundError, ToolExecutionError
 from ..tools.gifcurry import GifcurryTool
 from ..tools.gifsicle import GifsicleTool
+from ..tools.ffmpeg_gif import FFmpegGifTool
+from ..tools.backgroundremover import BackgroundRemoverTool
+from ..tools.neural_style import NeuralStyleTransferTool
+from ..tools.liveportrait import LivePortraitTool
+from ..tools.first_order_model import FirstOrderModelTool
 
 
 @dataclass
@@ -39,10 +44,25 @@ class PipelineOrchestrator:
         self.temp_dir = Path(temp_dir) if temp_dir else Path(tempfile.gettempdir()) / 'gif-generator'
         self.temp_dir.mkdir(parents=True, exist_ok=True)
 
-        # Initialize tools
+        # Initialize tools (with fallbacks)
+        # Try gifcurry first, fallback to ffmpeg
+        gifcurry_tool = GifcurryTool()
+        if not gifcurry_tool.is_available():
+            # Use ffmpeg as fallback
+            print("⚠️  gifcurry not found, using ffmpeg as fallback for GIF creation")
+            gifcurry_tool = FFmpegGifTool()
+
+        # Initialize ffmpeg tool (for fallback and direct use)
+        ffmpeg_tool = FFmpegGifTool()
+
         self.tools = {
-            'gifcurry': GifcurryTool(),
+            'gifcurry': gifcurry_tool,
             'gifsicle': GifsicleTool(),
+            'ffmpeg': ffmpeg_tool,
+            'backgroundremover': BackgroundRemoverTool(),
+            'neural-style-transfer': NeuralStyleTransferTool(),
+            'liveportrait': LivePortraitTool(),
+            'first-order-model': FirstOrderModelTool(),
         }
 
     def execute(self, template: Template, resolved_vars: Dict[str, Any],
@@ -161,13 +181,40 @@ class PipelineOrchestrator:
                      previous_output: Optional[Path]) -> Path:
         """Resolve path with variable substitution"""
 
-        # Substitute variables
-        resolved = substitute_variables(path_template, variables)
-
-        # Handle special cases
-        if resolved == 'previous_output' or resolved == '{{previous_output}}':
+        # Handle special cases first
+        if path_template == 'previous_output' or path_template == '{{previous_output}}':
             if previous_output is None:
                 raise ValueError("No previous output available")
+            return previous_output
+
+        # Add previous_output to variables for substitution
+        vars_with_previous = variables.copy()
+        if previous_output:
+            vars_with_previous['previous_output'] = str(previous_output)
+
+        # Substitute variables
+        resolved = substitute_variables(path_template, vars_with_previous)
+
+        # Handle temp file patterns
+        if resolved.startswith('{{temp_step_'):
+            # Extract temp filename and create in temp dir
+            import re
+            match = re.search(r'\{\{(temp_step_\d+\.\w+)\}\}', resolved)
+            if match:
+                temp_filename = match.group(1)
+                return self.temp_dir / temp_filename
+            else:
+                # Fallback - use the whole thing as filename
+                temp_filename = resolved.replace('{{', '').replace('}}', '')
+                return self.temp_dir / temp_filename
+
+        # If it's a simple temp filename (like "temp_output.gif") and we have previous output,
+        # use the previous output (this handles old-style templates)
+        if previous_output and not '/' in resolved and (
+            resolved.startswith('temp_') or
+            resolved.startswith('step_') or
+            resolved.endswith('_output.gif')
+        ):
             return previous_output
 
         return Path(resolved)
