@@ -25,6 +25,8 @@ export class DNAHelixEngine implements AnimationEngine<DNAHelixConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private rotation: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   // Base pair colors (A-T, G-C pairs)
   private readonly basePairColors = ["#ff6b9d", "#c44569", "#4a69bd", "#0c2461"];
@@ -103,10 +105,26 @@ export class DNAHelixEngine implements AnimationEngine<DNAHelixConfig> {
   };
 
   private update(): void {
-    // Update rotation based on speed
-    this.rotation += (this.config.speed / 1000) * 0.5;
+    // Calculate rotation speed
+    let rotationSpeed = (this.config.speed / 1000) * 0.5;
+
+    // Modify rotation speed based on mouse X position
+    if (this.mouseInteractionEnabled && this.mousePosition && this.canvas) {
+      const width = this.canvas.getBoundingClientRect().width;
+      const centerX = width / 2;
+      // Map mouse X position to rotation multiplier (-2 to 2)
+      const mouseOffsetX = this.mousePosition.x - centerX;
+      const rotationMultiplier = (mouseOffsetX / centerX) * 2;
+      rotationSpeed *= (1 + rotationMultiplier);
+    }
+
+    // Update rotation
+    this.rotation += rotationSpeed;
     if (this.rotation > Math.PI * 2) {
       this.rotation -= Math.PI * 2;
+    }
+    if (this.rotation < 0) {
+      this.rotation += Math.PI * 2;
     }
   }
 
@@ -252,5 +270,18 @@ export class DNAHelixEngine implements AnimationEngine<DNAHelixConfig> {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+    }
   }
 }

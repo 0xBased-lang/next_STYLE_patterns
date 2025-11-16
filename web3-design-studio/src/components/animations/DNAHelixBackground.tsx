@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { DNAHelixEngine } from "@/lib/animations/DNAHelixEngine";
 import type { DNAHelixConfig } from "@/lib/types/animation";
 import { useStudioStore } from "@/lib/store/studio";
+import { useMousePosition } from "@/lib/hooks/useMousePosition";
 
 interface DNAHelixBackgroundProps {
   config: DNAHelixConfig;
@@ -13,7 +14,8 @@ interface DNAHelixBackgroundProps {
 export function DNAHelixBackground({ config, className = "" }: DNAHelixBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<DNAHelixEngine | null>(null);
-  const { isPaused, globalSpeed } = useStudioStore();
+  const { isPaused, globalSpeed, mouseInteraction } = useStudioStore();
+  const mousePosition = useMousePosition(mouseInteraction);
 
   // Initialize engine
   useEffect(() => {
@@ -63,6 +65,20 @@ export function DNAHelixBackground({ config, className = "" }: DNAHelixBackgroun
       engineRef.current.updateConfig(adjustedConfig);
     }
   }, [config, globalSpeed]);
+
+  // Handle mouse interaction toggle
+  useEffect(() => {
+    if (engineRef.current) {
+      engineRef.current.setMouseInteraction(mouseInteraction);
+    }
+  }, [mouseInteraction]);
+
+  // Update mouse position
+  useEffect(() => {
+    if (engineRef.current && mouseInteraction) {
+      engineRef.current.setMousePosition(mousePosition.x, mousePosition.y);
+    }
+  }, [mousePosition, mouseInteraction]);
 
   return (
     <canvas

@@ -23,6 +23,8 @@ export class AuroraEngine implements AnimationEngine<AuroraConfig> {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 60;
   private time: number = 0;
+  private mousePosition: { x: number; y: number } | null = null;
+  private mouseInteractionEnabled: boolean = false;
 
   constructor(config: AuroraConfig) {
     this.config = { ...config };
@@ -119,6 +121,15 @@ export class AuroraEngine implements AnimationEngine<AuroraConfig> {
 
     for (const wave of this.waves) {
       wave.phase += wave.speed * 0.02;
+
+      // Waves gravitate towards mouse Y position
+      if (this.mouseInteractionEnabled && this.mousePosition && this.canvas) {
+        const targetY = this.mousePosition.y;
+        const currentY = wave.yOffset;
+        const diff = targetY - currentY;
+        // Smoothly interpolate towards mouse Y position
+        wave.yOffset += diff * 0.02;
+      }
     }
   }
 
@@ -258,5 +269,20 @@ export class AuroraEngine implements AnimationEngine<AuroraConfig> {
     this.waves = [];
     this.canvas = null;
     this.ctx = null;
+  }
+
+  setMousePosition(x: number, y: number): void {
+    if (!this.canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    this.mousePosition = { x: x * dpr, y: y * dpr };
+  }
+
+  setMouseInteraction(enabled: boolean): void {
+    this.mouseInteractionEnabled = enabled;
+    if (!enabled) {
+      this.mousePosition = null;
+      // Reset wave positions when interaction is disabled
+      this.initWaves();
+    }
   }
 }
