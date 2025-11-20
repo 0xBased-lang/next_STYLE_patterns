@@ -5,10 +5,11 @@ toon-format>=0.1.0
 langchain>=0.1.0
 langchain-core>=0.1.0
 
-# Vector store support (optional)
+# Vector store support (Phase 4 - Semantic Search)
 langchain-community>=0.0.10
-chromadb>=0.4.0
+chromadb>=0.4.22
 sentence-transformers>=2.2.0
+torch>=2.0.0
 
 # OpenAI integration (optional)
 langchain-openai>=0.0.5
@@ -17,3 +18,7 @@ openai>=1.0.0
 # Anthropic integration (optional)
 langchain-anthropic>=0.1.0
 anthropic>=0.7.0
+
+# Additional vector store backends (optional)
+# faiss-cpu>=1.7.4  # For FAISS vector store
+# pinecone-client>=2.2.0  # For Pinecone cloud vector store
