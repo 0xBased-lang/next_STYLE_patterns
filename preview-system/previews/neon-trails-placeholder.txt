@@ -1,0 +1,16 @@
+
+Component Preview Placeholder
+==============================
+
+Component: neon-trails
+Size: 1200x675
+Format: png
+Duration: 3000ms
+
+To generate real previews, install:
+  pip install playwright
+  playwright install
+
+Then run:
+  python preview_generator.py --component neon-trails
+        
