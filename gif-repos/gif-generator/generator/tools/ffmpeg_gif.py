@@ -5,6 +5,7 @@ Fallback for gifcurry using ffmpeg for video to GIF conversion
 
 from pathlib import Path
 from typing import Dict, Any
+import subprocess
 from .base import BaseTool, ToolExecutionError
 
 
