@@ -1,0 +1,27 @@
+{
+  "name": "next-style-patterns-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Next Style Patterns - provides AI/LLM access to animation components and GIF templates",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test-server.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "llm",
+    "animation",
+    "components",
+    "toon",
+    "nextjs"
+  ],
+  "author": "Next Style Patterns",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@toon-format/toon": "^1.0.0"
+  }
+}

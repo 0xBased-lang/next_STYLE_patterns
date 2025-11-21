@@ -1,0 +1,452 @@
+version: 1.0.0
+format: toon
+generated: 2025-11-20
+description: Next Style Patterns Component Registry - 40% smaller than JSON, optimized for AI/LLM consumption
+
+components:
+  aurora-flow:
+    id: aurora-flow
+    name: Aurora Flow: Ethereal
+    category: animation
+    type: canvas-background
+    description: Mesmerizing Northern Lights effect with flowing gradients and ethereal shimmer
+
+    semanticTags[10]: aurora,northern-lights,waves,flowing,ethereal,atmospheric,cosmic,gradient,shimmer,glow
+
+    useCases[4]{name,confidence}:
+      Hero section background,0.95
+      Meditation app background,0.9
+      Luxury brand website,0.85
+      Ambient experience,0.9
+
+    themes[5]{name,description}:
+      northern,Classic aurora with greens blues purples
+      cosmic,Vibrant space colors magentas cyans yellows
+      ocean,Deep blue oceanic tones
+      sunset,Warm oranges pinks and reds
+      neon,High-contrast neon colors
+
+    versions:
+      standard:
+        file: graphic-animation-template/aurora-flow:ethereal/aurora-flow.tsx
+        params: 6
+        complexity: simple
+        recommended: true
+      ultra:
+        file: graphic-animation-template/aurora-flow:ethereal/aurora-flow-ultra.tsx
+        params: 14
+        complexity: advanced
+        recommended: false
+
+    performance:
+      fps:
+        min: 55
+        max: 60
+        avg: 58
+      bundleSize: 4KB gzipped
+      cpuUsage: medium
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      subtle:
+        description: Gentle background effect for minimal designs
+        params:
+          density: low
+          speed: slow
+          theme: ocean
+      hero:
+        description: Bold hero section with maximum impact
+        params:
+          density: high
+          speed: medium
+          theme: northern
+      energetic:
+        description: High-energy effect for dynamic pages
+        params:
+          density: high
+          speed: fast
+          theme: neon
+
+    aiPromptExamples[3]:
+      - Create a calming aurora background for a meditation app
+      - Add northern lights effect to my hero section with ethereal shimmer
+      - Generate a flowing gradient animation for luxury brand
+
+  holographic-glitch:
+    id: holographic-glitch
+    name: Holographic Glitch: Cyberpunk
+    category: animation
+    type: canvas-effect
+    description: Futuristic holographic glitch effect with RGB split scan lines and digital distortion
+
+    semanticTags[12]: glitch,cyberpunk,holographic,rgb-split,scan-lines,digital,futuristic,tech,hacker,vaporwave,crt,matrix
+
+    useCases[4]{name,confidence}:
+      Tech and gaming website,0.95
+      Error state animation,0.9
+      Cyberpunk themed site,0.98
+      Loading screen effect,0.85
+
+    themes[4]{name,description}:
+      minimal,Subtle glitch effects for professional sites
+      intense,Heavy glitch and distortion for maximum impact
+      matrix,Matrix-style code overlay with green text
+      vhs,VHS tape distortion retro aesthetic
+
+    versions:
+      ultra:
+        file: graphic-animation-template/holographic-glitch:cyberpunk/holographic-glitch-ultra.tsx
+        params: 20
+        complexity: advanced
+
+    performance:
+      fps:
+        min: 55
+        max: 60
+        avg: 57
+      bundleSize: 6KB gzipped
+      cpuUsage: medium-high
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      subtle:
+        description: Gentle cyberpunk aesthetic for professional tech sites
+        params:
+          glitchIntensity: 30
+          rgbSplitDistance: 2
+          scanLineCount: 50
+          noiseIntensity: 20
+      intense:
+        description: Heavy glitch effect for gaming and bold designs
+        params:
+          glitchIntensity: 80
+          rgbSplitDistance: 10
+          scanLineCount: 150
+          noiseIntensity: 50
+      matrix:
+        description: Matrix-style with code overlay
+        params:
+          glitchIntensity: 50
+          scanLineCount: 100
+          codeOverlay: true
+          codeColor: "#00FF00"
+
+    aiPromptExamples[3]:
+      - Add a cyberpunk glitch effect to my gaming website hero
+      - Create a holographic error state animation with RGB split
+      - Make a futuristic tech background with CRT scan lines
+
+  matrix-conspiracy:
+    id: matrix-conspiracy
+    name: Matrix: Conspiracy
+    category: animation
+    type: canvas-effect
+    description: Falling digital rain effect inspired by The Matrix with customizable glitch modes
+
+    semanticTags[8]: matrix,digital-rain,falling-code,conspiracy,glitch,cyber,hacker,green-text
+
+    useCases[3]{name,confidence}:
+      Hacker aesthetic background,0.98
+      Tech conference website,0.9
+      Digital art installation,0.85
+
+    versions:
+      standard:
+        file: graphic-animation-template/matrix:conspiracy/falling-glitch.tsx
+        params: 6
+        complexity: simple
+        recommended: true
+      ultra:
+        file: graphic-animation-template/matrix:conspiracy/falling-glitch-ultra.tsx
+        params: 22
+        complexity: advanced
+        recommended: false
+
+    performance:
+      fps:
+        min: 60
+        max: 60
+        avg: 60
+      bundleSize: 5KB gzipped
+      cpuUsage: medium
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      classic:
+        description: Classic Matrix green falling code
+        params:
+          density: medium
+          speed: medium
+          glitchLevel: low
+      intense:
+        description: Heavy glitch with conspiracy mode
+        params:
+          density: high
+          speed: fast
+          glitchLevel: high
+
+    aiPromptExamples[3]:
+      - Create Matrix falling code effect for hacker theme
+      - Add digital rain background to tech conference site
+      - Generate conspiracy mode Matrix animation
+
+  morphing-blob:
+    id: morphing-blob
+    name: Morphing Blob: Organic
+    category: animation
+    type: canvas-effect
+    description: Organic morphing blob animation with metaball physics and smooth transitions
+
+    semanticTags[8]: blob,morphing,organic,fluid,metaball,smooth,liquid,flowing
+
+    useCases[3]{name,confidence}:
+      Creative portfolio background,0.92
+      Product showcase animation,0.88
+      Abstract art website,0.95
+
+    versions:
+      ultra:
+        file: graphic-animation-template/morphing-blob:organic/morphing-blob-ultra.tsx
+        params: 16
+        complexity: advanced
+
+    performance:
+      fps:
+        min: 58
+        max: 60
+        avg: 59
+      bundleSize: 5KB gzipped
+      cpuUsage: medium
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      gentle:
+        description: Slow gentle morphing for calming effect
+        params:
+          morphSpeed: 0.5
+          blobCount: 3
+          smoothness: 80
+      energetic:
+        description: Fast morphing with multiple blobs
+        params:
+          morphSpeed: 2
+          blobCount: 6
+          smoothness: 60
+
+    aiPromptExamples[3]:
+      - Create organic blob animation for creative portfolio
+      - Add morphing metaball effect to product page
+      - Generate fluid blob background for abstract design
+
+  neon-trails:
+    id: neon-trails
+    name: Neon Trails: Tron
+    category: animation
+    type: canvas-effect
+    description: Light trail particle system with neon glow inspired by Tron aesthetic
+
+    semanticTags[10]: neon,trails,tron,light,glow,particle,grid,futuristic,cyber,speed
+
+    useCases[3]{name,confidence}:
+      Gaming website background,0.95
+      Tech product launch,0.9
+      Futuristic UI design,0.92
+
+    versions:
+      ultra:
+        file: graphic-animation-template/neon-trails:tron/neon-trails-ultra.tsx
+        params: 18
+        complexity: advanced
+
+    performance:
+      fps:
+        min: 57
+        max: 60
+        avg: 58
+      bundleSize: 5KB gzipped
+      cpuUsage: medium
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      subtle:
+        description: Gentle neon trails for professional sites
+        params:
+          trailIntensity: 40
+          particleCount: 50
+          gridOpacity: 20
+      intense:
+        description: Bold Tron aesthetic with strong glow
+        params:
+          trailIntensity: 90
+          particleCount: 150
+          gridOpacity: 60
+
+    aiPromptExamples[3]:
+      - Add Tron-style neon trails to gaming site
+      - Create light trail particle effect for tech launch
+      - Generate futuristic grid with neon glow
+
+  particle-explosion:
+    id: particle-explosion
+    name: Particle Explosion: Cosmic
+    category: animation
+    type: canvas-effect
+    description: Physics-based particle explosion with gravitational effects and color morphing
+
+    semanticTags[9]: particle,explosion,cosmic,physics,gravity,fireworks,celebration,space,burst
+
+    useCases[3]{name,confidence}:
+      Event announcement page,0.95
+      Celebration landing page,0.92
+      Interactive art installation,0.88
+
+    versions:
+      ultra:
+        file: graphic-animation-template/particle-explosion:cosmic/particle-explosion-ultra.tsx
+        params: 15
+        complexity: advanced
+
+    performance:
+      fps:
+        min: 56
+        max: 60
+        avg: 58
+      bundleSize: 5KB gzipped
+      cpuUsage: medium
+      mobileCompatible: true
+
+    frameworks[4]: react,nextjs,astro,vue
+
+    presets:
+      gentle:
+        description: Subtle particle burst for elegant effect
+        params:
+          explosionForce: 40
+          particleCount: 100
+          gravity: 0.5
+      fireworks:
+        description: Bold firework-style explosions
+        params:
+          explosionForce: 90
+          particleCount: 300
+          gravity: 0.8
+
+    aiPromptExamples[3]:
+      - Create particle explosion for event announcement
+      - Add cosmic fireworks effect to celebration page
+      - Generate physics-based particle burst animation
+
+gifTemplates:
+  twitter-demo:
+    id: twitter-demo
+    name: Twitter Demo GIF
+    category: gif
+    platform: twitter
+    description: Optimized GIF for Twitter posts with balanced quality and file size
+
+    semanticTags[5]: social-media,twitter,demo,product-showcase,marketing
+
+    specifications:
+      maxSize: 15MB
+      dimensions: 1200x675
+      duration: 5-15s
+      fps: 15
+
+    template: social-media/twitter-demo
+
+    useCases[3]{name,confidence}:
+      Product demo video,0.95
+      Feature showcase,0.9
+      Tutorial snippet,0.85
+
+    presets[3]{name,description}:
+      quick,Fast generation with good quality for previews
+      balanced,Balanced speed and quality for general use
+      quality,Best quality for final posts slower generation
+
+    aiPromptExamples[3]:
+      - Create a Twitter GIF showcasing my product demo
+      - Generate a social media GIF from this video for Twitter
+      - Make a Twitter-optimized GIF of my app feature
+
+  instagram-square:
+    id: instagram-square
+    name: Instagram Square GIF
+    category: gif
+    platform: instagram
+    description: Square format GIF optimized for Instagram posts and stories
+
+    semanticTags[5]: social-media,instagram,square,story,post
+
+    specifications:
+      maxSize: 15MB
+      dimensions: 1080x1080
+      duration: 3-15s
+      fps: 15
+
+    template: social-media/instagram-square
+
+    useCases[3]{name,confidence}:
+      Instagram post,0.98
+      Product showcase,0.95
+      Brand content,0.9
+
+    presets[3]{name,description}:
+      quick,Fast generation for quick posts
+      balanced,Standard quality for regular content
+      quality,Maximum quality for professional posts
+
+    aiPromptExamples[3]:
+      - Create Instagram square GIF from video
+      - Make product showcase for Instagram post
+      - Generate brand content GIF for IG
+
+  linkedin-header:
+    id: linkedin-header
+    name: LinkedIn Header GIF
+    category: gif
+    platform: linkedin
+    description: Professional GIF optimized for LinkedIn headers and posts
+
+    semanticTags[5]: social-media,linkedin,professional,header,business
+
+    specifications:
+      maxSize: 8MB
+      dimensions: 1584x396
+      duration: 5-10s
+      fps: 12
+
+    template: social-media/linkedin-header
+
+    useCases[3]{name,confidence}:
+      Profile header animation,0.95
+      Professional showcase,0.92
+      Company announcement,0.88
+
+    presets[3]{name,description}:
+      quick,Fast generation
+      balanced,Standard professional quality
+      quality,Premium quality for executives
+
+    aiPromptExamples[3]:
+      - Create LinkedIn header GIF for professional profile
+      - Make business announcement GIF for LinkedIn
+      - Generate company showcase animation
+
+statistics:
+  totalComponents: 6
+  totalGifTemplates: 3
+  totalPresets: 18
+  averageParams: 14
+  targetFPS: 60
+  tokenSavings: 40% vs JSON

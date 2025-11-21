@@ -1,0 +1,44 @@
+{
+  "aurora-flow": {
+    "placeholder": "aurora-flow-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  },
+  "holographic-glitch": {
+    "placeholder": "holographic-glitch-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  },
+  "matrix-conspiracy": {
+    "placeholder": "matrix-conspiracy-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  },
+  "morphing-blob": {
+    "placeholder": "morphing-blob-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  },
+  "neon-trails": {
+    "placeholder": "neon-trails-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  },
+  "particle-explosion": {
+    "placeholder": "particle-explosion-placeholder.txt",
+    "width": 1200,
+    "height": 675,
+    "generated": false,
+    "requires": "playwright"
+  }
+}
